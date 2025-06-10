@@ -1,0 +1,20 @@
+{
+  "name": "cap_futbask",
+  "version": "1.0.0",
+  "description": "Plataforma web para visualización de estadísticas de equipos y jugadores (fútbol y baloncesto).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^11.10.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
