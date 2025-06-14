@@ -1,15 +1,160 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estadísticas - Plataforma</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas del Jugador</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem;
+      background-color: #121212;
+      color: #fff;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .player-info {
+      font-size: 1.5rem;
+    }
+
+    .player-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background-color: #1e1e1e;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .card h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .highlight {
+      background-color: gold;
+      color: #000;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .chart-container {
+      background-color: #1e1e1e;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+  </style>
 </head>
 <body>
-  <main>
-    <h1>Bienvenido a la Plataforma de Estadísticas</h1>
-    <p>Aquí podrás ver las estadísticas y datos de equipos y jugadores.</p>
-  </main>
+  <div class="header">
+    <div class="player-info">#10 Lionel Messi – Delantero</div>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Messi_vs_Nigeria_2018.jpg" alt="Foto del jugador" class="player-photo">
+  </div>
+
+  <div class="dashboard">
+    <!-- Delantero -->
+    <div class="card">
+      <h2>Estadísticas generales</h2>
+      <div class="stat"><span>Efectividad</span><span>60%</span></div>
+      <div class="stat"><span>Participación clave</span><span>95</span></div>
+      <div class="stat"><span>Regates</span><span>88</span></div>
+      <div class="stat"><span>Velocidad</span><span>92</span></div>
+      <div class="stat"><span>Salto / Físico</span><span>84</span></div>
+      <div class="stat"><span>Fuerza disparo</span><span>90</span></div>
+    </div>
+
+    <!-- Gráfico radar -->
+    <div class="chart-container">
+      <h2>Rendimiento</h2>
+      <canvas id="radarChart"></canvas>
+    </div>
+
+    <!-- Jugador destacado -->
+    <div class="card">
+      <h2>Reconocimientos</h2>
+      <p>Lionel Messi</p>
+      <div class="highlight">⭐ Jugador del Partido</div>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    const radarChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: [
+          'Efectividad',
+          'Participación',
+          'Regates',
+          'Velocidad',
+          'Salto/Físico',
+          'Disparo'
+        ],
+        datasets: [{
+          label: 'Estadísticas Messi',
+          data: [60, 95, 88, 92, 84, 90],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          pointBackgroundColor: '#fff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        scales: {
+          r: {
+            angleLines: { color: '#333' },
+            grid: { color: '#444' },
+            pointLabels: { color: '#ccc' },
+            ticks: {
+              backdropColor: 'transparent',
+              color: '#fff'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#fff'
+            }
+          }
+        }
+      }
+    });
+  </script>
 </body>
 </html>
