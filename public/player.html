@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crear Jugador</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <div class="card">
+    <h2>Crear Jugador</h2>
+    <form id="playerForm">
+      <div class="form-group">
+        <label for="playerName">Nombre</label>
+        <input type="text" id="playerName" required />
+      </div>
+      <div class="form-group">
+        <label for="position">Posición</label>
+        <select id="position" required>
+          <option value="">Selecciona</option>
+          <option>Portero</option>
+          <option>Defensa</option>
+          <option>Mediocampista</option>
+          <option>Delantero</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="foot">Pie dominante</label>
+        <select id="foot" required>
+          <option value="">Selecciona</option>
+          <option>Derecho</option>
+          <option>Izquierdo</option>
+          <option>Ambidiestro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="number">Número</label>
+        <input type="number" id="number" min="1" max="99" required />
+      </div>
+      <button type="submit">Agregar jugador</button>
+    </form>
+  </div>
+
+  <!-- Tabla dinámica -->
+  <div>
+    <table id="jugadoresTable">
+  <thead>
+    <tr><th>Número</th><th>Nombre</th><th>Posición</th><th>Pie</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+  </div>
+  <script src="js/register.js"></script>
+</body>
+</html>

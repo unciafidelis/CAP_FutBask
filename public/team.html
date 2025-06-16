@@ -3,226 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crear Equipo y Jugadores</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    body {
-      background-color: #121212;
-      color: #fff;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .flex-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
-
-    .card {
-      background-color: #1e1e1e;
-      border-radius: 16px;
-      padding: 1.5rem;
-      width: 350px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-
-    .card h2 {
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.4rem;
-      color: #ccc;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
-      width: 100%;
-      padding: 0.6rem;
-      border-radius: 8px;
-      border: none;
-      background-color: #2c2c2c;
-      color: #fff;
-    }
-
-    button {
-      background-color: #3d5afe;
-      color: #fff;
-      padding: 0.6rem 1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 0.5rem;
-    }
-
-    button:hover {
-      background-color: #2c41c4;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #1e1e1e;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 12px 16px;
-      color: #ddd;
-    }
-
-    th {
-      background-color: #2c2c2c;
-      font-weight: normal;
-    }
-
-    tr:not(:last-child) {
-      border-bottom: 1px solid #333;
-    }
-
-    caption {
-      caption-side: top;
-      text-align: left;
-      padding: 0.75rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    @media (max-width: 768px) {
-      .card {
-        width: 100%;
-      }
-    }
-  </style>
+  <title>Crear Equipo</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
-  <div class="flex-row">
-    <!-- Crear equipo -->
-    <div class="card">
-      <h2>Crear Equipo</h2>
-      <form id="teamForm">
-        <div class="form-group">
-          <label for="teamName">Nombre del equipo</label>
-          <input type="text" id="teamName" required />
-        </div>
-        <div class="form-group">
-          <label for="teamLeague">Liga</label>
-          <input type="text" id="teamLeague" required />
-        </div>
-        <button type="submit">Agregar equipo</button>
-      </form>
-      <ul id="teamList"></ul>
-    </div>
-
-    <!-- Crear jugador -->
-    <div class="card">
-      <h2>Crear Jugador</h2>
-      <form id="playerForm">
-        <div class="form-group">
-          <label for="playerName">Nombre</label>
-          <input type="text" id="playerName" required />
-        </div>
-        <div class="form-group">
-          <label for="position">Posición</label>
-          <select id="position" required>
-            <option value="">Selecciona</option>
-            <option>Portero</option>
-            <option>Defensa</option>
-            <option>Mediocampista</option>
-            <option>Delantero</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="foot">Pie dominante</label>
-          <select id="foot" required>
-            <option value="">Selecciona</option>
-            <option>Derecho</option>
-            <option>Izquierdo</option>
-            <option>Ambidiestro</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="number">Número</label>
-          <input type="number" id="number" min="1" max="99" required />
-        </div>
-        <button type="submit">Agregar jugador</button>
-      </form>
-    </div>
+  <div class="card">
+    <h2>Crear Equipo</h2>
+    <form id="teamForm">
+      <div class="form-group">
+        <label for="teamName">Nombre del equipo</label>
+        <input type="text" id="teamName" required />
+      </div>
+      <div class="form-group">
+        <label for="teamLeague">Liga</label>
+        <input type="text" id="teamLeague" required />
+      </div>
+      <button type="submit">Agregar equipo</button>
+    </form>
   </div>
 
-  <!-- Tabla de jugadores -->
+  <!-- Tabla dinámica de equipos -->
   <div>
-    <table>
-      <caption>Jugadores del equipo</caption>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Posición</th>
-          <th>Pie</th>
-        </tr>
-      </thead>
-      <tbody id="playerTableBody">
-        <!-- Se agregan dinámicamente -->
-      </tbody>
-    </table>
+    <table id="equiposTable">
+  <thead>
+    <tr><th>Nombre</th><th>Liga</th><th>Registrado</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
   </div>
-
-  <script>
-    const teamForm = document.getElementById('teamForm');
-    const teamList = document.getElementById('teamList');
-    const playerForm = document.getElementById('playerForm');
-    const playerTableBody = document.getElementById('playerTableBody');
-
-    teamForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('teamName').value;
-      const league = document.getElementById('teamLeague').value;
-      const li = document.createElement('li');
-      li.textContent = `Equipo: ${name} (${league})`;
-      teamList.innerHTML = ''; // solo un equipo a la vez
-      teamList.appendChild(li);
-      teamForm.reset();
-    });
-
-    playerForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('playerName').value;
-      const position = document.getElementById('position').value;
-      const foot = document.getElementById('foot').value;
-      const number = document.getElementById('number').value;
-
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${number}</td>
-        <td>${name}</td>
-        <td>${position}</td>
-        <td>${foot}</td>
-      `;
-      playerTableBody.appendChild(row);
-
-      playerForm.reset();
-    });
-  </script>
+   <script src="js/register.js"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const db = require('../db/db');
 
 const app = express();
 const PORT = 3000;
@@ -60,15 +61,9 @@ app.post('/api/register-referee', (req, res) => {
     }
 });
 
-// Iniciar server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
-
 // API para obtener lista de árbitros
 app.get('/api/referees', (req, res) => {
     const dbPath = path.join(__dirname, '../db/referees.json');
-
     try {
         if (fs.existsSync(dbPath)) {
             const data = fs.readFileSync(dbPath, 'utf8');
@@ -81,5 +76,135 @@ app.get('/api/referees', (req, res) => {
         console.error('Error al leer árbitros:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
+});
+
+//equipo JSON
+
+// API para registrar equipo
+app.post('/api/register-team', (req, res) => {
+    const { nombre, liga } = req.body;
+
+    if (!nombre || !liga) {
+        return res.status(400).json({ message: 'Nombre y liga son obligatorios.' });
+    }
+
+    const equipo = {
+        id: Date.now(),
+        nombre,
+        liga,
+        created_at: new Date().toISOString()
+    };
+
+    const dbPath = path.join(__dirname, '../db/teams.json');
+    let equipos = [];
+
+    try {
+        if (fs.existsSync(dbPath)) {
+            const data = fs.readFileSync(dbPath, 'utf8');
+            equipos = JSON.parse(data);
+        }
+
+        const duplicate = equipos.find(e => e.nombre.toLowerCase() === nombre.toLowerCase());
+        if (duplicate) {
+            return res.status(409).json({ message: 'El nombre del equipo ya existe.' });
+        }
+
+        equipos.push(equipo);
+        fs.writeFileSync(dbPath, JSON.stringify(equipos, null, 2));
+
+        res.status(201).json({ message: 'Equipo registrado con éxito.' });
+    } catch (error) {
+        console.error('Error al guardar equipo:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// API para obtener lista de equipos
+app.get('/api/teams', (req, res) => {
+    const dbPath = path.join(__dirname, '../db/teams.json');
+
+    try {
+        if (fs.existsSync(dbPath)) {
+            const data = fs.readFileSync(dbPath, 'utf8');
+            const equipos = JSON.parse(data);
+            res.json(equipos);
+        } else {
+            res.json([]);
+        }
+    } catch (error) {
+        console.error('Error al leer equipos:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+//jugador JSON
+
+// API para registrar jugador
+app.post('/api/register-player', (req, res) => {
+    const { nombre, posicion, pie, equipo_id, numero } = req.body;
+
+    if (!nombre || !posicion || !pie || !equipo_id || !numero) {
+        return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+    }
+
+    const jugador = {
+        nombre,
+        posicion,
+        pie,
+        numero,
+        created_at: new Date().toISOString()
+    };
+
+    const dbPath = path.join(__dirname, '../db/players.json');
+    let jugadores = [];
+
+    try {
+        if (fs.existsSync(dbPath)) {
+            const data = fs.readFileSync(dbPath, 'utf8');
+            jugadores = JSON.parse(data);
+        }
+
+        jugadores.push(jugador);
+        fs.writeFileSync(dbPath, JSON.stringify(jugadores, null, 2));
+
+        res.status(201).json({ message: 'Jugador registrado con éxito.' });
+    } catch (error) {
+        console.error('Error al guardar jugador:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// API para obtener lista de jugadores
+app.get('/api/players', (req, res) => {
+    const jugadoresPath = path.join(__dirname, '../db/players.json');
+    const equiposPath = path.join(__dirname, '../db/teams.json');
+
+    try {
+        const jugadores = fs.existsSync(jugadoresPath)
+            ? JSON.parse(fs.readFileSync(jugadoresPath, 'utf8'))
+            : [];
+
+        const equipos = fs.existsSync(equiposPath)
+            ? JSON.parse(fs.readFileSync(equiposPath, 'utf8'))
+            : [];
+
+        // Agregar el nombre del equipo a cada jugador
+        const jugadoresConEquipo = jugadores.map(jugador => {
+            const equipo = equipos.find(e => e.id == jugador.equipo_id);
+            return {
+                ...jugador,
+                equipo_nombre: equipo ? equipo.nombre : 'Desconocido'
+            };
+        });
+
+        res.json(jugadoresConEquipo);
+    } catch (error) {
+        console.error('Error al leer jugadores:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
