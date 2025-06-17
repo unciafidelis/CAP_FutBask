@@ -22,5 +22,11 @@
     "posicion": "Defensa",
     "pie": "Derecho",
     "numero": "11"
+  },
+  {
+    "nombre": "Alex",
+    "posicion": "Defensa",
+    "pie": "Ambidiestro",
+    "numero": "1"
   }
 ]
