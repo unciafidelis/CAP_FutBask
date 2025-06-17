@@ -125,6 +125,4 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error de red al intentar eliminar.');
         }
     };
-
-    
 });
