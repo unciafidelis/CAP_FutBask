@@ -29,7 +29,6 @@ db.prepare(`
     posicion TEXT NOT NULL,
     pie TEXT NOT NULL,
     numero INTEGER NOT NULL,
-    equipo_id INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(equipo_id) REFERENCES equipos(id)
   )

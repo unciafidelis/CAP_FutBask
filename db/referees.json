@@ -1,47 +1,29 @@
 [
   {
-    "id": 1750097459327,
-    "nombre": "morgan gutierrez",
+    "id": 1750112507642,
+    "nombre": "Jorge Alejandro",
     "celular": "345",
     "email": "unciafidelis@gmail.com",
     "alias": "AlexMorgan",
     "password": "123",
-    "created_at": "2025-06-16T18:10:59.327Z"
+    "created_at": "2025-06-16T22:21:47.642Z"
   },
   {
-    "id": 1750099025240,
-    "nombre": "Jorge Alejandro",
+    "id": 1750115460545,
+    "nombre": "morgan gutierrez",
     "celular": "345",
     "email": "unciafidelisx@gmail.com",
-    "alias": "AlexMorgany",
+    "alias": "AlexMorganx",
     "password": "123",
-    "created_at": "2025-06-16T18:37:05.240Z"
+    "created_at": "2025-06-16T23:11:00.545Z"
   },
   {
-    "id": 1750104245349,
+    "id": 1750115601133,
     "nombre": "Jorge Alejandro x",
     "celular": "345",
-    "email": "unciafidelis@gmail.comx",
-    "alias": "AlexMorganyxxxx",
-    "password": "123",
-    "created_at": "2025-06-16T20:04:05.349Z"
-  },
-  {
-    "id": 1750105279623,
-    "nombre": "Jorge Alejandro xx",
-    "celular": "345",
-    "email": "unciafidelisss@gmail.com",
-    "alias": "AlexMorganyx",
-    "password": "123",
-    "created_at": "2025-06-16T20:21:19.623Z"
-  },
-  {
-    "id": 1750105823600,
-    "nombre": "morgan gutierrezx",
-    "celular": "345",
-    "email": "unciafidesdflis@gmail.com",
-    "alias": "AlexMorganyxcv",
-    "password": "123",
-    "created_at": "2025-06-16T20:30:23.600Z"
+    "email": "unciafideliszzz@gmail.com",
+    "alias": "AlexMorganzzz",
+    "password": "456",
+    "created_at": "2025-06-16T23:13:21.133Z"
   }
 ]

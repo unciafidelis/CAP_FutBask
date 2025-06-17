@@ -141,9 +141,9 @@ app.get('/api/teams', (req, res) => {
 
 // API para registrar jugador
 app.post('/api/register-player', (req, res) => {
-    const { nombre, posicion, pie, equipo_id, numero } = req.body;
+    const { nombre, posicion, pie, numero } = req.body;
 
-    if (!nombre || !posicion || !pie || !equipo_id || !numero) {
+    if (!nombre || !posicion || !pie || !numero) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
 
@@ -152,20 +152,19 @@ app.post('/api/register-player', (req, res) => {
         posicion,
         pie,
         numero,
-        created_at: new Date().toISOString()
     };
 
-    const dbPath = path.join(__dirname, '../db/players.json');
+    const playerPath = path.join(__dirname, '../db/players.json');
     let jugadores = [];
 
     try {
-        if (fs.existsSync(dbPath)) {
-            const data = fs.readFileSync(dbPath, 'utf8');
+        if (fs.existsSync(playerPath)) {
+            const data = fs.readFileSync(playerPath, 'utf8');
             jugadores = JSON.parse(data);
         }
 
         jugadores.push(jugador);
-        fs.writeFileSync(dbPath, JSON.stringify(jugadores, null, 2));
+        fs.writeFileSync(playerPath, JSON.stringify(jugadores, null, 2));
 
         res.status(201).json({ message: 'Jugador registrado con éxito.' });
     } catch (error) {
@@ -175,31 +174,20 @@ app.post('/api/register-player', (req, res) => {
 });
 
 // API para obtener lista de jugadores
+
 app.get('/api/players', (req, res) => {
-    const jugadoresPath = path.join(__dirname, '../db/players.json');
-    const equiposPath = path.join(__dirname, '../db/teams.json');
+    const playerPath = path.join(__dirname, '../db/players.json');
 
     try {
-        const jugadores = fs.existsSync(jugadoresPath)
-            ? JSON.parse(fs.readFileSync(jugadoresPath, 'utf8'))
-            : [];
-
-        const equipos = fs.existsSync(equiposPath)
-            ? JSON.parse(fs.readFileSync(equiposPath, 'utf8'))
-            : [];
-
-        // Agregar el nombre del equipo a cada jugador
-        const jugadoresConEquipo = jugadores.map(jugador => {
-            const equipo = equipos.find(e => e.id == jugador.equipo_id);
-            return {
-                ...jugador,
-                equipo_nombre: equipo ? equipo.nombre : 'Desconocido'
-            };
-        });
-
-        res.json(jugadoresConEquipo);
+        if (fs.existsSync(playerPath)) {
+            const data = fs.readFileSync(playerPath, 'utf8');
+            const players = JSON.parse(data);
+            res.json(players);
+        } else {
+            res.json([]);
+        }
     } catch (error) {
-        console.error('Error al leer jugadores:', error);
+        console.error('Error al leer equipos:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
@@ -207,4 +195,3 @@ app.get('/api/players', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-

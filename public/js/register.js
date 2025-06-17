@@ -134,7 +134,7 @@ formTeam.addEventListener('submit', async (event) => {
 
 //Form jugadores
 
-formJugadores.addEventListener('submit', async (event) => {
+formPlayer.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const formPlayerData = {

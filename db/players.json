@@ -1,8 +1,26 @@
 [
-    {
-    "nombre": "morgan gutierrez",
-    "numero": "34",
-    "posicion":"Delantero",
-    "pie":"Derecho"
+  {
+    "nombre": "Alex",
+    "posicion": "Portero",
+    "pie": "Izquierdo",
+    "numero": "12"
+  },
+  {
+    "nombre": "Alex",
+    "posicion": "Mediocampista",
+    "pie": "Izquierdo",
+    "numero": "17"
+  },
+  {
+    "nombre": "Alex",
+    "posicion": "Defensa",
+    "pie": "Ambidiestro",
+    "numero": "13"
+  },
+  {
+    "nombre": "Alex",
+    "posicion": "Defensa",
+    "pie": "Derecho",
+    "numero": "11"
   }
 ]
