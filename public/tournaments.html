@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crear Equipo</title>
+  <title>Crear Torneo</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
   <div class="card">
-    <h2>Crear Equipo</h2>
-    <form id="teamForm">
+    <h2>Crear Torneo</h2>
+    <form id="tournamentForm">
       <div class="form-group">
-        <label for="teamName">Nombre del equipo</label>
-        <input type="text" id="teamName" required />
+        <label for="tournamentName">Nombre del torneo</label>
+        <input type="text" id="tournamentName" required />
       </div>
 
       <div class="form-group">
@@ -33,18 +33,21 @@
         </select>
       </div>
 
-      <button type="submit">Agregar equipo</button>
+      <div class="form-group">
+        <label for="teams">Equipos</label>
+        <select id="teams" multiple size="8" required></select>
+      </div>
+
+      <button type="submit">Crear torneo</button>
     </form>
   </div>
 
-  <div>
-    <table id="TeamTable">
+   <div>
+    <table id="TournamentTable">
       <thead>
         <tr>
           <th data-sort="true">Nombre</th>
-          <th>División</th>
-          <th>Deporte</th>
-          <th>Registrado</th>
+          <th>Equipos</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -52,7 +55,7 @@
     </table>
   </div>
 
-  <script src="js/registerTeam.js"></script>
+  <script src="js/registerTournament.js"></script>
   <script src="js/order.js"></script>
 </body>
 </html>

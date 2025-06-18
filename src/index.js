@@ -12,6 +12,8 @@ app.use(express.static('public'));
 const refereeFile = path.join(__dirname, 'data', '../db/referees.json');
 const teamsFile = path.join(__dirname, 'data', '../db/teams.json');
 const playersFile = path.join(__dirname, 'data', '../db/players.json');
+const tournamentsFile = path.join(__dirname, 'data', '../db/tournaments.json');
+
 
 // === Funciones Utilitarias ===
 function readJSON(file) {
@@ -184,6 +186,36 @@ app.delete('/api/players/:id', (req, res) => {
     writeJSON(playersFile, filtered);
     res.status(200).json({ message: 'Jugador eliminado' });
 });
+
+// === TORNEOS ===
+app.get('/api/tournaments', (req, res) => {
+    res.json(readJSON(tournamentsFile));
+});
+
+app.post('/api/register-tournament', (req, res) => {
+    const torneos = readJSON(tournamentsFile);
+    const newTorneo = {
+        id: getNextId(torneos),
+        ...req.body,
+        created_at: new Date()
+    };
+    torneos.push(newTorneo);
+    writeJSON(tournamentsFile, torneos);
+    res.status(201).json(newTorneo);
+});
+
+app.delete('/api/tournaments/:id', (req, res) => {
+    const torneos = readJSON(tournamentsFile);
+    const filtered = torneos.filter(t => t.id != req.params.id);
+    if (filtered.length === torneos.length) {
+        return res.status(404).json({ error: 'Torneo no encontrado' });
+    }
+    writeJSON(tournamentsFile, filtered);
+    res.status(200).json({ message: 'Torneo eliminado' });
+});
+
+
+
 
 // === SERVER ===
 const PORT = process.env.PORT || 3000;

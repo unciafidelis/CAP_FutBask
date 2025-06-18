@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Match Centre</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/stylesIndex.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1 id="matchTitle" class="match-title">Grupo H • Partido n.º 14</h1>
+  </header>
+
+  <main class="match-centre">
+    <div class="scoreboard">
+      <div class="team">
+        <h2 id="teamA" class="team-name">EQUIPO A</h2>
+      </div>
+      <div class="score">
+        <span id="scoreDisplay" class="score-number">1 - 0</span>
+        <button class="live-button">EN DIRECTO 37'</button>
+      </div>
+      <div class="team">
+        <h2 id="teamB" class="team-name">EQUIPO B</h2>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="live">COBERTURA EN DIRECTO</button>
+      <button class="tab" data-tab="stats">ESTADÍSTICAS</button>
+      <button class="tab" data-tab="table">CLASIFICACIÓN</button>
+      <button class="tab" data-tab="players">JUGADORES</button>
+    </div>
+
+    <section id="live" class="tab-content active">
+      <div class="possession">
+        <h3>Posesión</h3>
+        <div class="possession-bar">
+          <span id="posTeamA" style="width: 60%">60%</span>
+          <span id="posTeamB" style="width: 40%">40%</span>
+        </div>
+      </div>
+
+      <table class="events-table">
+        <thead>
+          <tr><th>Equipo</th><th>Jugador</th><th>Evento</th><th>Minuto</th></tr>
+        </thead>
+        <tbody id="eventsTableBody">
+          <!-- Eventos se llenan dinámicamente -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="stats" class="tab-content">
+      <h3>Estadísticas por equipo</h3>
+      <p>Próximamente...</p>
+    </section>
+
+    <section id="table" class="tab-content">
+      <h3>Clasificación</h3>
+      <table class="standings-table">
+        <thead>
+          <tr><th>Equipo</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>DG</th><th>Pts</th></tr>
+        </thead>
+        <tbody id="standingsTableBody">
+          <!-- Se llenará dinámicamente si se desea -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="players" class="tab-content">
+      <h3>Jugadores</h3>
+      <div class="players-group">
+        <h4 id="labelTeamA">Equipo A</h4>
+        <ul id="playersTeamA" class="players-list"></ul>
+
+        <h4 id="labelTeamB">Equipo B</h4>
+        <ul id="playersTeamB" class="players-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/gameStats.js"></script>
+</body>
+</html>

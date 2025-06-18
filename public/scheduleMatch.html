@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Programar Partido</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body>
+  <main class="card">
+    <h2>Programar Partido</h2>
+    <form id="matchForm">
+      <div class="form-group">
+        <label for="torneo">Torneo</label>
+        <select id="torneo" required>
+          <option value="">Selecciona un torneo</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="equipoA">Equipo A</label>
+        <select id="equipoA" required>
+          <option value="">Selecciona equipo A</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="equipoB">Equipo B</label>
+        <select id="equipoB" required>
+          <option value="">Selecciona equipo B</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="fecha">Fecha del Partido</label>
+        <input type="date" id="fecha" required />
+      </div>
+
+      <div class="form-group">
+        <label for="hora">Hora del Partido</label>
+        <input type="time" id="hora" required />
+      </div>
+
+      <button type="submit">Guardar Partido</button>
+    </form>
+  </main>
+
+  <script src="js/scheduleMatch.js"></script>
+</body>
+</html>

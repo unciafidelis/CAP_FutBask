@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": 1,
+    "nombre": "Jorge Alejandro",
+    "celular": "345",
+    "email": "unciafidelis@gmail.com",
+    "alias": "AlexMorgan",
+    "password": "123",
+    "created_at": "2025-06-18T17:33:08.504Z"
+  },
+  {
+    "id": 2,
+    "nombre": "Al morgan gutierrez",
+    "celular": "345",
+    "email": "unciafidelis@gmail.com",
+    "alias": "AlexMorgany",
+    "password": "123",
+    "created_at": "2025-06-18T17:33:25.011Z"
+  }
+]

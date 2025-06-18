@@ -47,6 +47,8 @@
     input[type="tel"],
     input[type="email"],
     input[type="password"],
+    input[type="date"],
+    input[type="time"],
     select {
       width: 100%;
       padding: 0.6rem;
@@ -119,8 +121,40 @@
     }
     .icon-button.edit { color: #4caf50; }
     .icon-button.delete { color: #f44336; }
-    .actions-cell {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-    }
+
+    th[data-sort="true"] {
+  position: relative;
+  padding-right: 20px;
+}
+
+th[data-sort="true"]::after {
+  content: "⇅"; /* Indicador neutral */
+  position: absolute;
+  right: 5px;
+  color: #999;
+  font-size: 0.9em;
+  transition: transform 0.2s ease;
+}
+
+th[data-sort="true"]:hover::after {
+  color: #333;
+}
+
+th[data-sort="true"][data-order="asc"]::after {
+  content: "↓";
+  color: #999;
+}
+
+th[data-sort="true"][data-order="desc"]::after {
+  content: "↑";
+  color: #999;
+}
+
+/* Calendario y hora estilo FIFA */
+
+input[type="date"]:focus,
+input[type="time"]:focus,
+select:focus {
+  border-color: #007BFF;
+  outline: none;
+}

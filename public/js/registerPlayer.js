@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${j.nombre}</td>
                 <td>${j.posicion}</td>
                 <td>${j.pie}</td>
-                <td class="actions-cell">
+                <td>
                     <button class="icon-button edit" onclick="editJugador('${j.id}')">
                         <span class="material-icons">edit</span>
                     </button>

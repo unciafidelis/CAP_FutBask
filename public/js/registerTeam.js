@@ -1,46 +1,89 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const formTeam = document.getElementById('teamForm');
-    const submitTeamHandler = submitNewTeam;
+    const form = document.getElementById('teamForm');
+    const nameInput = document.getElementById('teamName');
+    const divisionSelect = document.getElementById('division');
+    const sportSelect = document.getElementById('sport');
+    const tableBody = document.querySelector('#TeamTable tbody');
+
+    let editingId = null;
+
+    const divisiones = {
+        Futbol: [
+            "Libre varonil",
+            "Libre varonil Sabatino",
+            "Infantil Varonil dominical",
+            "Libre femenil dominical",
+            "Libre varonil Dominical"
+        ],
+        Basketbol: [
+            "Varonil Juvenil",
+            "Femenil juvenil",
+            "Libre varonil",
+            "Libre varonil Sabatino",
+            "Libre femenil Sabatino"
+        ]
+    };
+
+    // Cambiar opciones de división según el deporte
+    sportSelect.addEventListener('change', () => {
+        const sport = sportSelect.value;
+        divisionSelect.innerHTML = '<option value="">Selecciona una división</option>';
+
+        if (divisiones[sport]) {
+            divisiones[sport].forEach(div => {
+                const option = document.createElement('option');
+                option.value = div;
+                option.textContent = div;
+                divisionSelect.appendChild(option);
+            });
+        }
+    });
 
     loadEquipos();
-    formTeam.addEventListener('submit', submitTeamHandler);
 
-    async function submitNewTeam(event) {
-        event.preventDefault();
-        const formTeamData = {
-            nombre: document.getElementById('teamName').value,
-            liga: document.getElementById('teamLeague').value
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const equipo = {
+            nombre: nameInput.value,
+            division: divisionSelect.value,
+            deporte: sportSelect.value
         };
 
-        const response = await fetch('/api/register-team', {
-            method: 'POST',
+        const url = editingId ? `/api/teams/${editingId}` : '/api/register-team';
+        const method = editingId ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formTeamData)
+            body: JSON.stringify(equipo)
         });
 
-        const result = await response.json();
         if (response.ok) {
-            alert('Equipo registrado.');
-            formTeam.reset();
+            alert(editingId ? 'Equipo actualizado' : 'Equipo agregado');
+            form.reset();
+            editingId = null;
+            divisionSelect.innerHTML = '<option value="">Selecciona un deporte primero</option>';
             loadEquipos();
         } else {
-            alert('Error al registrar equipo: ' + (result.message || ''));
+            const result = await response.json();
+            alert('Error: ' + (result.message || 'No se pudo procesar'));
         }
-    }
+    });
 
     async function loadEquipos() {
         const response = await fetch('/api/teams');
         const equipos = await response.json();
-        const tbody = document.querySelector('#TeamTable tbody');
-        tbody.innerHTML = '';
+        tableBody.innerHTML = '';
 
         equipos.forEach(eq => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${eq.nombre}</td>
-                <td>${eq.liga}</td>
+                <td>${eq.division}</td>
+                <td>${eq.deporte}</td>
                 <td>${new Date(eq.created_at).toLocaleString()}</td>
-                <td class="actions-cell">
+                <td>
                     <button class="icon-button edit" onclick="editEquipo('${eq.id}')">
                         <span class="material-icons">edit</span>
                     </button>
@@ -49,41 +92,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </td>
             `;
-            tbody.appendChild(tr);
+            tableBody.appendChild(tr);
         });
     }
 
-    window.editEquipo = async function (id) {
+    window.editEquipo = async function(id) {
         const response = await fetch(`/api/teams/${id}`);
-        const eq = await response.json();
+        const equipo = await response.json();
 
-        document.getElementById('teamName').value = eq.nombre;
-        document.getElementById('teamLeague').value = eq.liga;
+        nameInput.value = equipo.nombre;
+        sportSelect.value = equipo.deporte;
 
-        formTeam.removeEventListener('submit', submitTeamHandler);
-        formTeam.addEventListener('submit', async function updateHandler(e) {
-            e.preventDefault();
-            const updated = {
-                nombre: document.getElementById('teamName').value,
-                liga: document.getElementById('teamLeague').value
-            };
+        // Disparar el cambio para cargar divisiones correspondientes
+        sportSelect.dispatchEvent(new Event('change'));
 
-            await fetch(`/api/teams/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updated)
-            });
-
-            alert('Equipo actualizado');
-            formTeam.reset();
-            loadEquipos();
-
-            formTeam.removeEventListener('submit', updateHandler);
-            formTeam.addEventListener('submit', submitTeamHandler);
-        });
+        divisionSelect.value = equipo.division;
+        editingId = equipo.id;
     };
 
-    window.deleteEquipo = async function (id) {
+    window.deleteEquipo = async function(id) {
         if (!confirm('¿Eliminar este equipo?')) return;
         await fetch(`/api/teams/${id}`, { method: 'DELETE' });
         alert('Equipo eliminado');

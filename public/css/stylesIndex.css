@@ -1,0 +1,135 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  background: #1e1e1e;
+  color: white;
+}
+
+header {
+  text-align: center;
+  padding: 1rem;
+  background: #111;
+}
+
+.match-title {
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.match-centre {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #222;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.team-name {
+  font-size: 2rem;
+}
+
+.score-number {
+  font-size: 3rem;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+}
+
+.live-button {
+  background: orange;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  border-bottom: 1px solid #333;
+}
+
+.tab {
+  padding: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  border-bottom: 3px solid orange;
+  color: orange;
+}
+
+.tab-content {
+  display: none;
+  margin-top: 2rem;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.possession-bar {
+  display: flex;
+  height: 30px;
+  background: #333;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.possession-bar span {
+  display: block;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+  font-weight: bold;
+}
+
+.possession-bar span:first-child {
+  background: #00aaff;
+}
+
+.possession-bar span:last-child {
+  background: #aa00ff;
+}
+
+.events-table,
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.events-table th,
+.events-table td,
+.standings-table th,
+.standings-table td {
+  padding: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid #444;
+}
+
+.players-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.players-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #444;
+}

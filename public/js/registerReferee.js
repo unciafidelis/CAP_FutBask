@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${ref.email}</td>
                     <td>${ref.alias}</td>
                     <td>${new Date(ref.created_at).toLocaleString()}</td>
-                    <td class="actions-cell">
+                    <td>
                         <button class="icon-button edit" onclick="editReferee('${ref.id}')">
                             <span class="material-icons">edit</span>
                         </button>
