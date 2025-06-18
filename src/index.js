@@ -1,87 +1,190 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
+
 const app = express();
-const PORT = 3000;
-
-const DATA_FILE = path.join(__dirname, '../db/referees.json');
-
 app.use(express.json());
+app.use(cors());
 app.use(express.static('public'));
 
-function readData() {
-    const data = fs.readFileSync(DATA_FILE, 'utf8');
-    return JSON.parse(data || '[]');
+// === Archivos JSON ===
+const refereeFile = path.join(__dirname, 'data', '../db/referees.json');
+const teamsFile = path.join(__dirname, 'data', '../db/teams.json');
+const playersFile = path.join(__dirname, 'data', '../db/players.json');
+
+// === Funciones Utilitarias ===
+function readJSON(file) {
+    if (!fs.existsSync(file)) return [];
+    const data = fs.readFileSync(file);
+    return JSON.parse(data);
 }
 
-function writeData(data) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+function writeJSON(file, data) {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-function generateId() {
-    return Date.now().toString();
+function getNextId(items) {
+    if (items.length === 0) return 1;
+    return Math.max(...items.map(item => item.id)) + 1;
 }
 
-// GET all referees
+// === REFEREES ===
 app.get('/api/referees', (req, res) => {
-    const data = readData();
-    res.json(data);
+    res.json(readJSON(refereeFile));
 });
 
-// GET one referee by ID
-app.get('/api/referees/:id', (req, res) => {
-    const data = readData();
-    const referee = data.find(r => r.id === req.params.id);
-    if (referee) {
-        res.json(referee);
-    } else {
-        res.status(404).json({ message: 'Árbitro no encontrado.' });
-    }
-});
-
-// CREATE new referee
 app.post('/api/register-referee', (req, res) => {
-    const data = readData();
+    const referees = readJSON(refereeFile);
     const newReferee = {
-        id: generateId(),
+        id: getNextId(referees),
         ...req.body,
-        created_at: new Date().toISOString()
+        created_at: new Date()
     };
-    data.push(newReferee);
-    writeData(data);
+    referees.push(newReferee);
+    writeJSON(refereeFile, referees);
     res.status(201).json(newReferee);
 });
 
-// UPDATE referee by ID
+app.get('/api/referees/:id', (req, res) => {
+    const referees = readJSON(refereeFile);
+    const referee = referees.find(r => r.id == req.params.id);
+    if (referee) {
+        res.json(referee);
+    } else {
+        res.status(404).json({ error: 'No encontrado' });
+    }
+});
+
 app.put('/api/referees/:id', (req, res) => {
-    const data = readData();
-    const index = data.findIndex(r => r.id === req.params.id);
-    if (index === -1) {
-        return res.status(404).json({ message: 'Árbitro no encontrado.' });
-    }
-
-    data[index] = {
-        ...data[index],
-        ...req.body,
-    };
-    writeData(data);
-    res.json(data[index]);
+    let referees = readJSON(refereeFile);
+    let updated = false;
+    referees = referees.map(r => {
+        if (r.id == req.params.id) {
+            updated = true;
+            return { ...r, ...req.body };
+        }
+        return r;
+    });
+    writeJSON(refereeFile, referees);
+    updated
+        ? res.status(200).json({ message: 'Árbitro actualizado' })
+        : res.status(404).json({ error: 'No encontrado' });
 });
 
-// DELETE referee by ID
 app.delete('/api/referees/:id', (req, res) => {
-    let data = readData();
-    const index = data.findIndex(r => r.id === req.params.id);
-    if (index === -1) {
-        return res.status(404).json({ message: 'Árbitro no encontrado.' });
+    const referees = readJSON(refereeFile);
+    const filtered = referees.filter(r => r.id != req.params.id);
+    if (filtered.length === referees.length) {
+        return res.status(404).json({ error: 'No encontrado' });
     }
-
-    const deleted = data.splice(index, 1);
-    writeData(data);
-    res.json({ message: 'Árbitro eliminado.', deleted: deleted[0] });
+    writeJSON(refereeFile, filtered);
+    res.status(200).json({ message: 'Árbitro eliminado' });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Servidor iniciado en http://localhost:${PORT}`);
+
+// === TEAMS ===
+app.get('/api/teams', (req, res) => {
+    res.json(readJSON(teamsFile));
 });
+
+app.post('/api/register-team', (req, res) => {
+    const teams = readJSON(teamsFile);
+    const newTeam = {
+        id: getNextId(teams),
+        ...req.body,
+        created_at: new Date()
+    };
+    teams.push(newTeam);
+    writeJSON(teamsFile, teams);
+    res.status(201).json(newTeam);
+});
+
+app.get('/api/teams/:id', (req, res) => {
+    const teams = readJSON(teamsFile);
+    const team = teams.find(t => t.id == req.params.id);
+    team
+        ? res.json(team)
+        : res.status(404).json({ error: 'Equipo no encontrado' });
+});
+
+app.put('/api/teams/:id', (req, res) => {
+    let teams = readJSON(teamsFile);
+    let updated = false;
+    teams = teams.map(t => {
+        if (t.id == req.params.id) {
+            updated = true;
+            return { ...t, ...req.body };
+        }
+        return t;
+    });
+    writeJSON(teamsFile, teams);
+    updated
+        ? res.status(200).json({ message: 'Equipo actualizado' })
+        : res.status(404).json({ error: 'Equipo no encontrado' });
+});
+
+app.delete('/api/teams/:id', (req, res) => {
+    const teams = readJSON(teamsFile);
+    const filtered = teams.filter(t => t.id != req.params.id);
+    if (filtered.length === teams.length) {
+        return res.status(404).json({ error: 'Equipo no encontrado' });
+    }
+    writeJSON(teamsFile, filtered);
+    res.status(200).json({ message: 'Equipo eliminado' });
+});
+
+// === PLAYERS ===
+app.get('/api/players', (req, res) => {
+    res.json(readJSON(playersFile));
+});
+
+app.post('/api/register-player', (req, res) => {
+    const players = readJSON(playersFile);
+    const newPlayer = {
+        id: getNextId(players),
+        ...req.body,
+        created_at: new Date()
+    };
+    players.push(newPlayer);
+    writeJSON(playersFile, players);
+    res.status(201).json(newPlayer);
+});
+
+app.get('/api/players/:id', (req, res) => {
+    const players = readJSON(playersFile);
+    const player = players.find(p => p.id == req.params.id);
+    player
+        ? res.json(player)
+        : res.status(404).json({ error: 'Jugador no encontrado' });
+});
+
+app.put('/api/players/:id', (req, res) => {
+    let players = readJSON(playersFile);
+    let updated = false;
+    players = players.map(p => {
+        if (p.id == req.params.id) {
+            updated = true;
+            return { ...p, ...req.body };
+        }
+        return p;
+    });
+    writeJSON(playersFile, players);
+    updated
+        ? res.status(200).json({ message: 'Jugador actualizado' })
+        : res.status(404).json({ error: 'Jugador no encontrado' });
+});
+
+app.delete('/api/players/:id', (req, res) => {
+    const players = readJSON(playersFile);
+    const filtered = players.filter(p => p.id != req.params.id);
+    if (filtered.length === players.length) {
+        return res.status(404).json({ error: 'Jugador no encontrado' });
+    }
+    writeJSON(playersFile, filtered);
+    res.status(200).json({ message: 'Jugador eliminado' });
+});
+
+// === SERVER ===
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

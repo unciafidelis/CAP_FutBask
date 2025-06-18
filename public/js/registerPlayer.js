@@ -1,64 +1,101 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('playerForm');
+    const formPlayer = document.getElementById('playerForm');
+    const submitPlayerHandler = submitNewPlayer;
 
-    // Cargar tablas al iniciar
-    loadPlayer();
+    loadJugadores();
+    formPlayer.addEventListener('submit', submitPlayerHandler);
 
-    form.addEventListener('submit', async (event) => {
+    async function submitNewPlayer(event) {
         event.preventDefault();
 
-        const formData = {
+        const formPlayerData = {
             nombre: document.getElementById('playerName').value,
             posicion: document.getElementById('position').value,
             pie: document.getElementById('foot').value,
-            numero: document.getElementById('number').value,
+            numero: document.getElementById('number').value
         };
 
-        try {
-            const response = await fetch('/api/register-player', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+        const response = await fetch('/api/register-player', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formPlayerData)
+        });
 
-            const result = await response.json();
-
-            if (response.ok) {
-                alert('Jugador registrado con éxito.');
-                form.reset();
-                loadPlayer(); // Recargar tabla
-            } else {
-                alert('Error: ' + (result.message || 'No se pudo registrar el árbitro.'));
-            }
-
-        } catch (error) {
-            console.error('Error en la solicitud:', error);
-            alert('Error de red. Inténtalo nuevamente.');
-        }
-    });
-
-    async function loadPlayer() {
-        try {
-            const response = await fetch('/api/players');
-            const Player = await response.json();
-
-            const tbody = document.querySelector('#PlayerTable tbody');
-            tbody.innerHTML = '';
-
-            Player.forEach(j => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${j.numero}</td>
-                    <td>${j.nombre}</td>
-                    <td>${j.posicion}</td>
-                    <td>${j.pie}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        } catch (error) {
-            console.error('Error al cargar jugadores:', error);
+        const result = await response.json();
+        if (response.ok) {
+            alert('Jugador registrado.');
+            formPlayer.reset();
+            loadJugadores();
+        } else {
+            alert('Error al registrar jugador: ' + (result.message || ''));
         }
     }
+
+    async function loadJugadores() {
+        const response = await fetch('/api/players');
+        const jugadores = await response.json();
+        const tbody = document.querySelector('#PlayerTable tbody');
+        tbody.innerHTML = '';
+
+        jugadores.forEach(j => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${j.numero}</td>
+                <td>${j.nombre}</td>
+                <td>${j.posicion}</td>
+                <td>${j.pie}</td>
+                <td class="actions-cell">
+                    <button class="icon-button edit" onclick="editJugador('${j.id}')">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="icon-button delete" onclick="deleteJugador('${j.id}')">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    window.editJugador = async function (id) {
+        const response = await fetch(`/api/players/${id}`);
+        const j = await response.json();
+
+        document.getElementById('playerName').value = j.nombre;
+        document.getElementById('position').value = j.posicion;
+        document.getElementById('foot').value = j.pie;
+        document.getElementById('number').value = j.numero;
+
+        formPlayer.removeEventListener('submit', submitPlayerHandler);
+        formPlayer.addEventListener('submit', async function updateHandler(e) {
+            e.preventDefault();
+
+            const updated = {
+                nombre: document.getElementById('playerName').value,
+                posicion: document.getElementById('position').value,
+                pie: document.getElementById('foot').value,
+                numero: document.getElementById('number').value
+            };
+
+            await fetch(`/api/players/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updated)
+            });
+
+            alert('Jugador actualizado');
+            formPlayer.reset();
+            loadJugadores();
+
+            formPlayer.removeEventListener('submit', updateHandler);
+            formPlayer.addEventListener('submit', submitPlayerHandler);
+        });
+    };
+
+    window.deleteJugador = async function (id) {
+        if (!confirm('¿Eliminar este jugador?')) return;
+        await fetch(`/api/players/${id}`, { method: 'DELETE' });
+        alert('Jugador eliminado');
+        loadJugadores();
+    };
 });
