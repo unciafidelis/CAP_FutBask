@@ -1,50 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Programar Partido</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-  <main class="card">
+  <div class="card">
     <h2>Programar Partido</h2>
     <form id="matchForm">
       <div class="form-group">
-        <label for="torneo">Torneo</label>
-        <select id="torneo" required>
-          <option value="">Selecciona un torneo</option>
-        </select>
+        <label for="tournamentSelect">Selecciona Torneo</label>
+        <select id="tournamentSelect" required></select>
       </div>
 
       <div class="form-group">
         <label for="equipoA">Equipo A</label>
-        <select id="equipoA" required>
-          <option value="">Selecciona equipo A</option>
-        </select>
+        <select id="equipoA" required></select>
       </div>
 
       <div class="form-group">
         <label for="equipoB">Equipo B</label>
-        <select id="equipoB" required>
-          <option value="">Selecciona equipo B</option>
-        </select>
+        <select id="equipoB" required></select>
       </div>
 
       <div class="form-group">
-        <label for="fecha">Fecha del Partido</label>
-        <input type="date" id="fecha" required />
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" required>
       </div>
 
       <div class="form-group">
-        <label for="hora">Hora del Partido</label>
-        <input type="time" id="hora" required />
+        <label for="hora">Hora</label>
+        <input type="time" id="hora" required>
       </div>
 
       <button type="submit">Guardar Partido</button>
     </form>
-  </main>
+  </div>
 
   <script src="js/scheduleMatch.js"></script>
 </body>

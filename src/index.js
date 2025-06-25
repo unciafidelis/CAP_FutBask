@@ -13,6 +13,7 @@ const refereeFile = path.join(__dirname, 'data', '../db/referees.json');
 const teamsFile = path.join(__dirname, 'data', '../db/teams.json');
 const playersFile = path.join(__dirname, 'data', '../db/players.json');
 const tournamentsFile = path.join(__dirname, 'data', '../db/tournaments.json');
+const matchesFile = path.join(__dirname, 'data', '../db/matches.json');
 
 
 // === Funciones Utilitarias ===
@@ -192,6 +193,23 @@ app.get('/api/tournaments', (req, res) => {
     res.json(readJSON(tournamentsFile));
 });
 
+app.get('/api/tournaments/:id', (req, res) => {
+  const torneos = readJSON(tournamentsFile);
+  const torneo = torneos.find(t => t.id == req.params.id);
+
+  if (!torneo) {
+    return res.status(404).send('Torneo no encontrado');
+  }
+
+  // Expandir IDs de equipos a objetos
+  const allTeams = readJSON(teamsFile);
+  const equiposExpandido = torneo.equipos
+    .map(id => allTeams.find(e => e.id === id))
+    .filter(Boolean); // Elimina equipos que ya no existan
+
+  res.json({ ...torneo, equipos: equiposExpandido });
+});
+
 app.post('/api/register-tournament', (req, res) => {
     const torneos = readJSON(tournamentsFile);
     const newTorneo = {
@@ -212,6 +230,32 @@ app.delete('/api/tournaments/:id', (req, res) => {
     }
     writeJSON(tournamentsFile, filtered);
     res.status(200).json({ message: 'Torneo eliminado' });
+});
+
+// Matches
+
+// Obtener todos los partidos o por torneo
+app.post('/api/matches', (req, res) => {
+  const { torneo_id, equipoA, equipoB, fecha, hora } = req.body;
+
+  if (!torneo_id || !equipoA || !equipoB || !fecha || !hora) {
+    return res.status(400).json({ message: "Todos los campos son obligatorios." });
+  }
+
+  const matches = readJSON(matchesFile);
+  const newMatch = {
+    id: getNextId(matches),
+    torneo_id,
+    equipoA,
+    equipoB,
+    fecha,
+    hora,
+    created_at: new Date()
+  };
+
+  matches.push(newMatch);
+  writeJSON(matchesFile, matches);
+  res.status(201).json(newMatch);
 });
 
 

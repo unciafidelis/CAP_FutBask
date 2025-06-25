@@ -1,78 +1,134 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const torneoSelect = document.getElementById('torneo');
+document.addEventListener('DOMContentLoaded', () => {
+  const tournamentSelect = document.getElementById('tournamentSelect');
   const equipoASelect = document.getElementById('equipoA');
   const equipoBSelect = document.getElementById('equipoB');
-  const form = document.getElementById('matchForm');
+  const matchForm = document.getElementById('matchForm');
+  const fechaInput = document.getElementById('fecha');
+  const horaInput = document.getElementById('hora');
 
-  let allTeams = [];
-  let tournaments = [];
+  let torneos = [];
+  let equipos = [];
 
   // Cargar torneos
-  tournaments = await fetch('/api/tournaments').then(res => res.json());
-  tournaments.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t.id;
-    opt.textContent = t.nombre;
-    torneoSelect.appendChild(opt);
-  });
+  async function loadTorneos() {
+    const res = await fetch('/api/tournaments');
+    torneos = await res.json();
 
-  // Cambiar lista de equipos según torneo
-  torneoSelect.addEventListener('change', async () => {
-    const selectedTorneoId = parseInt(torneoSelect.value);
-    equipoASelect.innerHTML = '<option value="">Selecciona equipo A</option>';
-    equipoBSelect.innerHTML = '<option value="">Selecciona equipo B</option>';
+    tournamentSelect.innerHTML = '<option value="">Selecciona Torneo</option>';
+    torneos.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = `${t.nombre} (${t.division} - ${t.deporte})`;
+      tournamentSelect.appendChild(opt);
+    });
+  }
 
-    if (!selectedTorneoId) return;
+  // Cargar equipos del torneo seleccionado
+  tournamentSelect.addEventListener('change', async () => {
+    const torneoId = parseInt(tournamentSelect.value);
+    equipos.forEach(eq => {
+  const optionA = document.createElement('option');
+  optionA.value = eq.id;
+  optionA.textContent = eq.nombre;
+  equipoASelect.appendChild(optionA);
 
-    const teams = await fetch('/api/teams').then(res => res.json());
-    allTeams = teams.filter(t => t.torneo_id == selectedTorneoId);
+  const optionB = document.createElement('option');
+  optionB.value = eq.id;
+  optionB.textContent = eq.nombre;
+  equipoBSelect.appendChild(optionB);
+});
+    equipoASelect.innerHTML = '<option value="">Selecciona Equipo A</option>';
+    equipoBSelect.innerHTML = '<option value="">Selecciona Equipo B</option>';
 
-    allTeams.forEach(team => {
-      const optA = new Option(team.nombre, team.id);
-      const optB = new Option(team.nombre, team.id);
+    const torneo = torneos.find(t => t.id === torneoId);
+    if (!torneo) return;
+
+    const allEquipos = await (await fetch('/api/teams')).json();
+    equipos = allEquipos.filter(eq => torneo.equipos.includes(eq.id));
+
+    equipos.forEach(eq => {
+      const optA = document.createElement('option');
+      optA.value = eq.id;
+      optA.textContent = eq.nombre;
       equipoASelect.appendChild(optA);
+
+      const optB = document.createElement('option');
+      optB.value = eq.id;
+      optB.textContent = eq.nombre;
       equipoBSelect.appendChild(optB);
     });
   });
 
-  // Remover equipo A de lista B
+  // Evitar que se seleccione el mismo equipo
   equipoASelect.addEventListener('change', () => {
-    const equipoAId = equipoASelect.value;
-    equipoBSelect.innerHTML = '<option value="">Selecciona equipo B</option>';
-
-    allTeams
-      .filter(t => t.id != equipoAId)
-      .forEach(team => {
-        const opt = new Option(team.nombre, team.id);
+    const selected = parseInt(equipoASelect.value);
+    equipoBSelect.innerHTML = '<option value="">Selecciona Equipo B</option>';
+    equipos.forEach(eq => {
+      if (eq.id !== selected) {
+        const opt = document.createElement('option');
+        opt.value = eq.id;
+        opt.textContent = eq.nombre;
         equipoBSelect.appendChild(opt);
-      });
+      }
+    });
   });
+
+  // Actualiza disponibilidad sin perder selección
+function actualizarDisponibilidadEquipos() {
+  const idA = parseInt(equipoASelect.value);
+  const idB = parseInt(equipoBSelect.value);
+
+  [...equipoASelect.options].forEach(opt => {
+    opt.disabled = parseInt(opt.value) === idB;
+  });
+
+  [...equipoBSelect.options].forEach(opt => {
+    opt.disabled = parseInt(opt.value) === idA;
+  });
+}
+
+equipoASelect.addEventListener('change', actualizarDisponibilidadEquipos);
+equipoBSelect.addEventListener('change', actualizarDisponibilidadEquipos);
 
   // Enviar formulario
-  form.addEventListener('submit', async (e) => {
+  matchForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const partido = {
-      torneo_id: parseInt(torneoSelect.value),
-      equipo_a: parseInt(equipoASelect.value),
-      equipo_b: parseInt(equipoBSelect.value),
-      fecha: document.getElementById('fecha').value,
-      hora: document.getElementById('hora').value
+    const data = {
+      torneo_id: parseInt(tournamentSelect.value),
+      equipoA: parseInt(equipoASelect.value),
+      equipoB: parseInt(equipoBSelect.value),
+      fecha: fechaInput.value,
+      hora: horaInput.value
     };
 
-    const response = await fetch('/api/matches', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(partido)
-    });
+    if (!data.torneo_id || !data.equipoA || !data.equipoB || !data.fecha || !data.hora) {
+      alert('Todos los campos son obligatorios.');
+      console.warn('Datos enviados incompletos:', data);
+      return;
+    }
 
-    if (response.ok) {
-      alert('Partido programado correctamente.');
-      form.reset();
-      equipoASelect.innerHTML = '<option value="">Selecciona equipo A</option>';
-      equipoBSelect.innerHTML = '<option value="">Selecciona equipo B</option>';
-    } else {
-      alert('Error al guardar partido');
+    try {
+      const res = await fetch('/api/matches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        alert('Partido guardado correctamente.');
+        matchForm.reset();
+        equipoASelect.innerHTML = '<option value="">Selecciona Equipo A</option>';
+        equipoBSelect.innerHTML = '<option value="">Selecciona Equipo B</option>';
+      } else {
+        const text = await res.text();
+        alert('Error en el servidor: ' + text);
+      }
+    } catch (err) {
+      console.error('Error de red:', err);
+      alert('Fallo en la red o el servidor no está disponible.');
     }
   });
+
+  loadTorneos();
 });
