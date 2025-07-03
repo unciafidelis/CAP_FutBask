@@ -1,0 +1,65 @@
+[
+  {
+    "jugador": "MESSI",
+    "numero": "10",
+    "posicion": "FW",
+    "equipo": "Equipo A",
+    "accion": "Gol (Equipo A)",
+    "tipo": "gol",
+    "timestamp": "2025-06-28T21:15:57.213Z"
+  },
+  {
+    "jugador": "MESSI",
+    "numero": "10",
+    "posicion": "FW",
+    "equipo": "Equipo A",
+    "accion": "Gol (Equipo A)",
+    "tipo": "gol",
+    "timestamp": "2025-06-28T21:16:00.297Z"
+  },
+  {
+    "jugador": "MESSI",
+    "numero": "10",
+    "posicion": "FW",
+    "equipo": "Equipo A",
+    "accion": "Gol (Equipo A)",
+    "tipo": "gol",
+    "timestamp": "2025-06-28T21:24:30.135Z"
+  },
+  {
+    "jugador": "TORRES",
+    "numero": "9",
+    "posicion": "FW",
+    "equipo": "Equipo B",
+    "accion": "Gol (Equipo B)",
+    "tipo": "gol",
+    "timestamp": "2025-06-28T21:29:29.382Z"
+  },
+  {
+    "jugador": "MESSI",
+    "numero": "10",
+    "posicion": "FW",
+    "equipo": "Equipo A",
+    "accion": "Gol (Equipo A)",
+    "tipo": "gol",
+    "timestamp": "2025-06-30T16:05:09.782Z"
+  },
+  {
+    "jugador": "VALDES",
+    "numero": "1",
+    "posicion": "GK",
+    "equipo": "Equipo A",
+    "accion": "Seguridad",
+    "tipo": "accion",
+    "timestamp": "2025-06-30T16:05:11.582Z"
+  },
+  {
+    "jugador": "ROSA",
+    "numero": "5",
+    "posicion": "D",
+    "equipo": "Equipo A",
+    "accion": "Salida",
+    "tipo": "accion",
+    "timestamp": "2025-06-30T16:05:13.332Z"
+  }
+]

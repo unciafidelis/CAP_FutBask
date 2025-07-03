@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Administración</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- ENCABEZADO SUPERIOR -->
+  <header class="admin-header">
+    <div class="logo-area">
+      <img src="./img/logoCAP.png" alt="Logo" id="adminLogo"/>
+      <span class="app-title">CAP Panel</span>
+    </div>
+    <!-- Dentro del header de admin.html -->
+<div class="admin-user">
+  <span id="refereeName">Árbitro: </span>
+  <button id="logoutBtn" class="btn-logout" title="Cerrar sesión">
+    <img src="img/logout-icon.svg" alt="logout" />
+  </button>
+</div>
+
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="admin-main">
+
+    <!-- MENÚ DE CARDS PEQUEÑAS (DESPLEGABLE) -->
+    <aside class="cards-nav" id="cardsNav">
+      <!-- Mini cards se insertan aquí dinámicamente -->
+    </aside>
+
+    <!-- BOTONES DE MENÚ: OCULTAR Y MOSTRAR -->
+    <div class="menu-toggle-wrapper">
+      <button id="toggleMenuBtn" class="toggle-menu">▲</button>
+      <button id="showMenuBtn" class="show-menu hidden">▼ Mostrar menú</button>
+    </div>
+
+    <!-- SECCIÓN DE CARDS GRANDES -->
+    <section class="card-deck" id="cardDeck">
+      <!-- Cards grandes dinámicas -->
+    </section>
+
+    <!-- ÁREA DE VISUALIZACIÓN DINÁMICA -->
+    <section class="content-display" id="contentDisplay">
+      <iframe id="contentFrame" src="" frameborder="0"></iframe>
+    </section>
+
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="js/admin.js"></script>
+  <!-- Modal de Confirmación de Logout -->
+<div id="logoutModal" class="modal hidden">
+  <div class="modal-content">
+    <p>¿Estás seguro de que deseas cerrar sesión?</p>
+    <div class="modal-actions">
+      <button id="confirmLogout" class="btn btn-danger">Cerrar sesión</button>
+      <button id="cancelLogout" class="btn btn-secondary">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

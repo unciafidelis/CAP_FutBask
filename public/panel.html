@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Vista Partido</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="css/panel.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+ 
+  <!-- Botones flotantes -->
+  <div class="toggle toggle-left" id="toggleLeft">&#9654;</div>
+  <div class="toggle toggle-right" id="toggleRight">&#9664;</div>
+
+  <!-- Panel Equipo A -->
+  <div class="sidebar sidebar-left" id="sidebarLeft">
+    <h3>Equipo A</h3>
+    <div class="subtitulo">En cancha</div>
+    <ul>
+      <li>Jugador A1</li><li>Jugador A2</li><li>Jugador A3</li>
+    </ul>
+    <div class="subtitulo">En banca</div>
+    <ul>
+      <li>Jugador A4</li><li>Jugador A5</li>
+    </ul>
+  </div>
+
+  <!-- Panel Equipo B -->
+  <div class="sidebar sidebar-right" id="sidebarRight">
+    <h3>Equipo B</h3>
+    <div class="subtitulo">En cancha</div>
+    <ul>
+      <li>Jugador B1</li><li>Jugador B2</li><li>Jugador B3</li>
+    </ul>
+    <div class="subtitulo">En banca</div>
+    <ul>
+      <li>Jugador B4</li><li>Jugador B5</li>
+    </ul>
+  </div>
+
+  <!-- Botonera superior -->
+ <div class="button-column">
+  <button class="action-btn" data-action="Efectividad">Efectividad</button>
+  <button class="action-btn" data-action="ATA">Ataque</button>
+  <button class="action-btn" data-action="Clave">Clave</button>
+  <button class="action-btn" data-action="Recuperación">Recuperación</button>
+  <button class="action-btn" data-action="Regates">Regates</button>
+  <button class="action-btn" data-action="Salida">Salida</button>
+  <button class="action-btn" data-action="Atajada">Atajada</button>
+  <button class="action-btn" data-action="Seguridad">Seguridad</button>
+  <div></div>
+  <div></div>
+  <div class="tarjetas-panel">
+    <button class="tarjeta-btn amarilla">🟨</button>
+    <button class="tarjeta-btn roja">🟥</button>
+  </div>
+</div>
+
+
+
+
+  <!-- Cancha -->
+  <div class="cancha-container">
+   <!-- Equipo A -->
+<div class="lado-equipo equipo-a">
+  <div class="fila">
+    <!-- Delanteros A -->
+    <div class="player-card delantero">
+      <div class="card-header"><div class="card-rating">82</div><div class="card-position">FW</div></div>
+      <div class="card-image"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Messi_vs_Nigeria_2018.jpg" alt="Jugador" onerror="this.src='img/avatar-default.png';" /></div>
+      <div class="card-number">10</div>
+      <div class="card-name">MESSI</div>
+      <div class="card-stats">
+        <div>EFC <span>84</span></div>
+        <div>PKL <span>90</span></div>
+        <div>REG <span>78</span></div>
+        <div>VEL <span>95</span></div>
+        <div>SLT <span>88</span></div>
+        <div>FDR <span>92</span></div>
+      </div>
+    </div>
+    <div class="player-card delantero">
+      <div class="card-header"><div class="card-rating">79</div><div class="card-position">FW</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">11</div>
+      <div class="card-name">JUAN</div>
+      <div class="card-stats">
+        <div>EFC <span>70</span></div>
+        <div>PKL <span>80</span></div>
+        <div>REG <span>75</span></div>
+        <div>VEL <span>82</span></div>
+        <div>SLT <span>79</span></div>
+        <div>FDR <span>85</span></div>
+      </div>
+    </div>
+    <div class="player-card medio">
+      <div class="card-header"><div class="card-rating">76</div><div class="card-position">M</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">8</div>
+      <div class="card-name">RAMOS</div>
+      <div class="card-stats">
+        <div>REC <span>88</span></div>
+        <div>PKL <span>75</span></div>
+        <div>REG <span>70</span></div>
+        <div>VEL <span>68</span></div>
+        <div>FDR <span>85</span></div>
+        <div>SLT <span>78</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fila">
+    <!-- Medios A -->
+     
+  </div>
+
+  <div class="fila">
+    <!-- Defensa A -->
+    <div class="player-card portero">
+      <div class="card-header"><div class="card-rating">81</div><div class="card-position">GK</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">1</div>
+      <div class="card-name">VALDES</div>
+      <div class="card-stats">
+        <div>SEG <span>85</span></div>
+        <div>ATA <span>90</span></div>
+        <div>SAL <span>78</span></div>
+        <div>PRE <span>82</span></div>
+        <div>FDR <span>88</span></div>
+        <div>SLT <span>75</span></div>
+      </div>
+    </div>
+    <div class="player-card defensa">
+      <div class="card-header"><div class="card-rating">73</div><div class="card-position">D</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">5</div>
+      <div class="card-name">ROSA</div>
+      <div class="card-stats">
+        <div>REC <span>85</span></div>
+        <div>SAL <span>78</span></div>
+        <div>ATA <span>70</span></div>
+        <div>VEL <span>60</span></div>
+        <div>DIS <span>65</span></div>
+        <div>SLT <span>73</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fila">
+    <!-- Portero A -->
+    
+  </div>
+</div>
+
+<!-- Equipo B -->
+<div class="lado-equipo equipo-b">
+  <div class="fila">
+    <!-- Delanteros B -->
+    <div class="player-card delantero">
+      <div class="card-header"><div class="card-rating">80</div><div class="card-position">FW</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">9</div>
+      <div class="card-name">TORRES</div>
+      <div class="card-stats">
+        <div>EFC <span>88</span></div>
+        <div>PKL <span>82</span></div>
+        <div>REG <span>74</span></div>
+        <div>VEL <span>86</span></div>
+        <div>SLT <span>80</span></div>
+        <div>FDR <span>85</span></div>
+      </div>
+    </div>
+    <div class="player-card delantero">
+      <div class="card-header"><div class="card-rating">78</div><div class="card-position">FW</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">7</div>
+      <div class="card-name">NACHO</div>
+      <div class="card-stats">
+        <div>EFC <span>76</span></div>
+        <div>PKL <span>70</span></div>
+        <div>REG <span>68</span></div>
+        <div>VEL <span>79</span></div>
+        <div>SLT <span>70</span></div>
+        <div>FDR <span>74</span></div>
+      </div>
+    </div>
+    <div class="player-card medio">
+      <div class="card-header"><div class="card-rating">75</div><div class="card-position">M</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">12</div>
+      <div class="card-name">IVAN</div>
+      <div class="card-stats">
+        <div>REC <span>79</span></div>
+        <div>PKL <span>69</span></div>
+        <div>REG <span>73</span></div>
+        <div>VEL <span>71</span></div>
+        <div>FDR <span>70</span></div>
+        <div>SLT <span>74</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fila">
+    <!-- Medios B -->
+  </div>
+
+  <div class="fila">
+    <!-- Defensa B -->
+    <div class="player-card defensa">
+      <div class="card-header"><div class="card-rating">74</div><div class="card-position">D</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">3</div>
+      <div class="card-name">MARIO</div>
+      <div class="card-stats">
+        <div>REC <span>83</span></div>
+        <div>SAL <span>70</span></div>
+        <div>ATA <span>68</span></div>
+        <div>VEL <span>65</span></div>
+        <div>DIS <span>66</span></div>
+        <div>SLT <span>71</span></div>
+      </div>
+    </div>
+    <div class="player-card portero">
+      <div class="card-header"><div class="card-rating">79</div><div class="card-position">GK</div></div>
+      <div class="card-image"><img src="img/avatar-default.png" alt="Jugador" /></div>
+      <div class="card-number">1</div>
+      <div class="card-name">KIKO</div>
+      <div class="card-stats">
+        <div>SEG <span>82</span></div>
+        <div>ATA <span>85</span></div>
+        <div>SAL <span>80</span></div>
+        <div>PRE <span>78</span></div>
+        <div>FDR <span>79</span></div>
+        <div>SLT <span>74</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fila">
+    <!-- Portero B -->
+  </div>
+</div>
+
+  </div>
+
+  <!-- Footer marcador -->
+  <div class="marcador-footer">
+    <div class="nombre-equipo">Equipo A</div>
+<div class="marcador-control">
+  <button id="golA" class="score-btn" disabled>+</button>
+  <div class="marcador-central" id="score">0 - 0</div>
+  <button id="golB" class="score-btn" disabled>+</button>
+  
+</div>
+<div class="nombre-equipo">Equipo B</div>
+  </div>
+
+  <script>
+    const toggleLeft = document.getElementById('toggleLeft');
+const sidebarLeft = document.getElementById('sidebarLeft');
+const toggleRight = document.getElementById('toggleRight');
+const sidebarRight = document.getElementById('sidebarRight');
+
+toggleLeft.addEventListener('click', () => {
+  sidebarLeft.classList.toggle('open');
+  toggleLeft.innerHTML = sidebarLeft.classList.contains('open') ? '&#9664;' : '&#9654;';
+});
+
+toggleRight.addEventListener('click', () => {
+  sidebarRight.classList.toggle('open');
+  toggleRight.innerHTML = sidebarRight.classList.contains('open') ? '&#9654;' : '&#9664;';
+});
+
+  </script>
+ <script src="js/panel.js"></script>
+</body>
+</html>

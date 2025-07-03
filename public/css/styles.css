@@ -1,134 +1,134 @@
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
+* {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
 
-    body {
-      background-color: #121212;
-      color: #fff;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
+body {
+  background-color: #121212;
+  color: #fff;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-    .flex-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
+.flex-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
 
-    .card {
-      background-color: #1e1e1e;
-      border-radius: 16px;
-      padding: 1.5rem;
-      width: 350px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
+.card {
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 350px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
 
-    .card h2 {
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
-    }
+.card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
+.form-group {
+  margin-bottom: 1rem;
+}
 
-    label {
-      display: block;
-      margin-bottom: 0.4rem;
-      color: #ccc;
-    }
+label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #ccc;
+}
 
-    input[type="text"],
-    input[type="number"],
-    input[type="tel"],
-    input[type="email"],
-    input[type="password"],
-    input[type="date"],
-    input[type="time"],
-    select {
-      width: 100%;
-      padding: 0.6rem;
-      border-radius: 8px;
-      border: none;
-      background-color: #2c2c2c;
-      color: #fff;
-    }
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+select {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #2c2c2c;
+  color: #fff;
+}
 
-    button {
-      background-color: #3d5afe;
-      color: #fff;
-      padding: 0.6rem 1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 0.5rem;
-    }
+button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #3d5afe;
+  background: #3d5afe;
+  color: #fff;
+  border-radius: 4px;
+}
 
-    button:hover {
-      background-color: #2c41c4;
-    }
+button:hover {
+  background-color: #2c41c4;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #1e1e1e;
-      border-radius: 16px;
-      overflow: hidden;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  overflow: hidden;
+}
 
-    th, td {
-      text-align: left;
-      padding: 12px 16px;
-      color: #ddd;
-    }
+th, td {
+  text-align: left;
+  padding: 12px 16px;
+  color: #ddd;
+}
 
-    th {
-      background-color: #2c2c2c;
-      font-weight: normal;
-    }
+th {
+  background-color: #2c2c2c;
+  font-weight: normal;
+}
 
-    tr:not(:last-child) {
-      border-bottom: 1px solid #333;
-    }
+tr:not(:last-child) {
+  border-bottom: 1px solid #333;
+}
 
-    caption {
-      caption-side: top;
-      text-align: left;
-      padding: 0.75rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #fff;
-    }
+caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0.75rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+}
 
-    @media (max-width: 768px) {
-      .card {
-        width: 100%;
-      }
-    }
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+  }
+}
 
-    .icon-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      margin: 0 2px;
-      font-size: 20px;
-    }
-    .icon-button.edit { color: #4caf50; }
-    .icon-button.delete { color: #f44336; }
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin: 0 2px;
+  font-size: 20px;
+}
+.icon-button.edit { color: #4caf50; }
+.icon-button.delete { color: #f44336; }
 
-    th[data-sort="true"] {
+th[data-sort="true"] {
   position: relative;
   padding-right: 20px;
 }
 
 th[data-sort="true"]::after {
-  content: "⇅"; /* Indicador neutral */
+  content: "⇅";
   position: absolute;
   right: 5px;
   color: #999;
@@ -137,7 +137,7 @@ th[data-sort="true"]::after {
 }
 
 th[data-sort="true"]:hover::after {
-  color: #333;
+  color: #ccc;
 }
 
 th[data-sort="true"][data-order="asc"]::after {
@@ -150,11 +150,331 @@ th[data-sort="true"][data-order="desc"]::after {
   color: #999;
 }
 
-/* Calendario y hora estilo FIFA */
-
 input[type="date"]:focus,
 input[type="time"]:focus,
 select:focus {
-  border-color: #007BFF;
+  border-color: #3d5afe;
   outline: none;
 }
+
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+  font-size: 0.95em;
+}
+
+.events-table th,
+.events-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.events-table thead {
+  background-color: #2c2c2c;
+  font-weight: bold;
+  color: #e5e6eb;
+}
+
+.events-table tbody tr:nth-child(even) {
+  background-color: #1e1e1e;
+}
+
+.events-table tbody tr:first-child {
+  background-color: #2c2c2c;
+  font-weight: bold;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.form-section {
+  width: 30%;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
+.form-section h2 {
+  margin-bottom: 15px;
+}
+
+.form-section input,
+.form-section select{
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #2c2c2c;
+  background: #2c2c2c;
+  color: #fff;
+  border-radius: 4px;
+}
+.form-section button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #3d5afe;
+  background: #3d5afe;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.table-section {
+  width: 70%;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
+.table-section h2 {
+  margin-bottom: 15px;
+}
+
+thead th {
+  background-color: #2c2c2c;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px;
+}
+
+tbody td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #2c2c2c;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.pagination button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #3d5afe;
+  background: #3d5afe;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.pagination button:hover {
+  background: #304ffe;
+}
+
+/* Etiquetas tipo FIFA */
+.position-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  width: 38px;
+}
+
+.position-GK {
+  background-color: #e67e22;
+}
+
+.position-D {
+  background-color: #27ae60;
+}
+
+.position-M {
+  background-color: #f1c40f;
+  color: #333;
+}
+
+.position-FW {
+  background-color: #3498db;
+}
+
+/* === EQUIPO SCROLLEABLE CON CHECKBOX === */
+.team-checkbox-list {
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 200px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  border: 1px solid #444;
+}
+
+.team-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+}
+
+.team-checkbox-item input[type="checkbox"] {
+  transform: scale(1.5);
+  accent-color: #3d5afe;
+}
+
+#selectAllTeams {
+  margin-top: 8px;
+  background-color: #3d5afe;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s ease;
+}
+
+#selectAllTeams:hover {
+  background-color: #2c41c4;
+}
+
+.team-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.team-pagination button {
+  padding: 5px 10px;
+  background-color: #444;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.team-pagination button:hover {
+  background-color: #3d5afe;
+}
+.team-checkbox-item {
+  display: grid;
+  grid-template-columns: 30px auto;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background-color: #1f1f1f;
+  border-radius: 6px;
+}
+
+.team-checkbox-item input[type="checkbox"] {
+  transform: scale(1.5);
+  accent-color: #3d5afe;
+  margin: 0;
+  justify-self: start;
+}
+
+.team-checkbox-item label {
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+/* === POPUP MODAL === */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(18, 18, 18, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content.team-modal {
+  background-color: #121212;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  height: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.team-checkbox-item {
+  display: grid;
+  grid-template-columns: 30px auto;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background-color: #1f1f1f;
+  border-radius: 6px;
+}
+
+.team-checkbox-item input[type="checkbox"] {
+  transform: scale(1.5);
+  accent-color: #3d5afe;
+  margin: 0;
+  justify-self: start;
+}
+
+.team-checkbox-item label {
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions button {
+  background-color: #3d5afe;
+  border: none;
+  color: white;
+  margin-right: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.modal-actions button:hover {
+  background-color: #2c41c4;
+}
+
+

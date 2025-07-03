@@ -1,0 +1,256 @@
+/* === ESTRUCTURA GENERAL === */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: #1f1f1f;
+  overflow: hidden;
+}
+
+/* === CABECERA DEL ADMIN PANEL === */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1f1f1f;
+  padding: 10px 20px;
+  color: #e5e6eb;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+}
+
+.logo-area img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.app-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.admin-user {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* === BOTÓN DE LOGOUT === */
+#logoutBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.logout-icon {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
+  transition: transform 0.2s ease;
+  background: #e5e6eb;
+}
+
+#logoutBtn:hover .logout-icon {
+  transform: scale(1.15);
+}
+
+/* === MINI CARDS DESPLEGABLES SUPERIORES === */
+.cards-nav {
+  width: 100%;
+  background-color: #23abe4;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card-mini {
+  background-color: #1f1f1f;
+  color: #e5e6eb;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.card-mini:hover {
+  background-color: #23abe4;
+}
+
+/* === CONTENEDOR PRINCIPAL === */
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  height: calc(150vh - 60px);
+}
+
+/* === CARDS GRANDES INICIALES === */
+.card-deck {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  flex: 1;
+  padding: 20px;
+  gap: 20px;
+  overflow-y: auto;
+  background: #1f1f1f;
+}
+
+.admin-card {
+  background: #333;
+  color: #e5e6eb;
+  width: 260px;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.admin-card:hover {
+  transform: scale(1.05);
+}
+
+/* === CONTENEDOR DE CONTENIDO CARGADO === */
+.content-display {
+  flex: 1;
+  background-color: #e5e6eb;
+  height: 100%;
+}
+
+#contentFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* === BOTONES DE MENU TOGGLE === */
+.toggle-menu,
+.show-menu {
+  position: absolute;
+  justify-content: center;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #23abe4;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 10;
+  transition: opacity 0.2s ease;
+}
+
+.toggle-menu {
+  top: 2rem;
+}
+
+.show-menu {
+  top: 70px;
+}
+
+/* === MODAL DE LOGOUT === */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(35, 171, 228, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: #e5e6eb;
+  color: #333;
+  padding: 24px 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.btn-secondary {
+  background: #e5e6eb;
+  color: #1f1f1f;
+}
+
+.btn-secondary:hover {
+  background: #d1d3d9;
+}
+
+/* === ANIMACIONES === */
+@keyframes slideIn {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === CLASE GLOBAL OCULTAR === */
+.hidden {
+  display: none !important;
+}

@@ -1,18 +1,1 @@
-[
-  {
-    "id": 1,
-    "nombre": "AlexD",
-    "posicion": "Defensa",
-    "pie": "Izquierdo",
-    "numero": "1",
-    "created_at": "2025-06-18T15:28:15.566Z"
-  },
-  {
-    "id": 2,
-    "nombre": "x",
-    "posicion": "Portero",
-    "pie": "Izquierdo",
-    "numero": "1",
-    "created_at": "2025-06-18T17:36:37.636Z"
-  }
-]
+[]

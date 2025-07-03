@@ -3,62 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crear Jugador</title>
+  <title>Gestión de Jugadores</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+  <main class="container">
+    <!-- Formulario -->
+    <section class="form-section">
+      <h2>Registrar Jugador</h2>
+      <form id="playerForm">
+        <input type="text" id="playerName" placeholder="Nombre" required />
 
-  <div class="card">
-    <h2>Crear Jugador</h2>
-    <form id="playerForm">
-      <div class="form-group">
-        <label for="playerName">Nombre</label>
-        <input type="text" id="playerName" required />
-      </div>
-      <div class="form-group">
         <label for="position">Posición</label>
         <select id="position" required>
-          <option value="">Selecciona</option>
-          <option>Portero</option>
-          <option>Defensa</option>
-          <option>Mediocampista</option>
-          <option>Delantero</option>
+          <option value="">Selecciona posición</option>
+          <option value="GK">Portero</option>
+          <option value="D">Defensa</option>
+          <option value="M">Mediocampo</option>
+          <option value="FW">Delantero</option>
         </select>
-      </div>
-      <div class="form-group">
-        <label for="foot">Pie dominante</label>
-        <select id="foot" required>
-          <option value="">Selecciona</option>
-          <option>Derecho</option>
-          <option>Izquierdo</option>
-          <option>Ambidiestro</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="number">Número</label>
-        <input type="number" id="number" min="1" max="99" required />
-      </div>
-      <button type="submit">Agregar jugador</button>
-    </form>
-  </div>
 
-  <!-- Tabla dinámica -->
-  <div>
-    <table id="PlayerTable">
-  <thead>
-    <tr>
-      <th>Número</th>
-      <th data-sort="true">Nombre del Jugador</th>
-      <th>Posición</th>
-      <th>Pie</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-  </div>
-  <script src="js/registerPlayer.js"></script>
-  <script src="js/order.js"></script>
+        <label for="foot">Pie hábil</label>
+        <select id="foot" required>
+          <option value="">Selecciona pie</option>
+          <option value="Derecho">Derecho</option>
+          <option value="Izquierdo">Izquierdo</option>
+          <option value="Ambidiestro">Ambidiestro</option>
+        </select>
+
+        <input type="number" id="number" placeholder="Número" required />
+
+       <label for="teamSelect">Equipo</label>
+<select id="teamSelect" required>
+  <option value="">Seleccionar equipo</option>
+</select>
+
+
+        <button type="submit">Guardar</button>
+      </form>
+    </section>
+
+    <!-- Tabla de jugadores -->
+    <section class="table-section">
+      <h2>Jugadores registrados</h2>
+      <table id="PlayerTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)">#</th>
+            <th onclick="sortTable(1)">Nombre</th>
+            <th onclick="sortTable(2)">Posición</th>
+            <th onclick="sortTable(3)">Pie</th>
+            <th onclick="sortTable(4)">Equipo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="pagination" id="pagination"></div>
+    </section>
+  </main>
+
+  <script src="js/players.js"></script>
 </body>
 </html>

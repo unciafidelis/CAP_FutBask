@@ -8,8 +8,8 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-
-  <div class="card">
+<main class="container">
+  <section class="form-section">
     <h2>Crear Torneo</h2>
     <form id="tournamentForm">
       <div class="form-group">
@@ -34,15 +34,33 @@
       </div>
 
       <div class="form-group">
-        <label for="teams">Equipos</label>
-        <select id="teams" multiple size="8" required></select>
+        <button type="button" id="openTeamSelector">Seleccionar equipos</button>
+        <input type="hidden" id="selectedTeamIds" name="equipos" />
       </div>
 
       <button type="submit">Crear torneo</button>
     </form>
+  </section>
+
+  <!-- ✅ MUEVE EL MODAL FUERA DEL FORMULARIO -->
+  <div id="teamModal" class="modal hidden">
+    <div class="modal-content team-modal">
+      <h3>Selecciona los equipos</h3>
+      <div id="teamListContainer" class="team-list"></div>
+
+      <div class="pagination" id="teamPagination"></div>
+
+      <div class="modal-actions">
+        <button type="button" id="selectAllTeams">Seleccionar todos</button>
+        <button type="button" id="clearTeamSelection">Limpiar selección</button>
+        <button type="button" id="confirmTeams">Confirmar</button>
+        <button type="button" id="closeTeamModal">Cerrar</button>
+      </div>
+    </div>
   </div>
 
-   <div>
+  <section class="table-section">
+    <h2>Jugadores registrados</h2>
     <table id="TournamentTable">
       <thead>
         <tr>
@@ -53,9 +71,10 @@
       </thead>
       <tbody></tbody>
     </table>
-  </div>
+  </section>
+</main>
 
-  <script src="js/registerTournament.js"></script>
-  <script src="js/order.js"></script>
+<script src="js/tournaments.js"></script>
+<script src="js/order.js"></script>
 </body>
 </html>

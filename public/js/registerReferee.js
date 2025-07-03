@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             password: password
         };
 
-        const url = editId ? `/api/referees/${editId}` : '/api/register-referee';
+        const url = editId ? `/api/referees/${editId}` : '/api/referees';
         const method = editId ? 'PUT' : 'POST';
 
         try {

@@ -51,3 +51,62 @@ document.addEventListener("DOMContentLoaded", async () => {
     listB.appendChild(li);
   });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const eventsTableBody = document.getElementById('eventsTableBody');
+  let eventosRecientes = [];
+
+  async function cargarEventos() {
+    try {
+      const res = await fetch('/api/actions');
+      if (!res.ok) throw new Error('No se pudo obtener el log');
+      const data = await res.json();
+
+      // Ordenar por fecha descendente (más reciente primero)
+      const eventosOrdenados = data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      // Tomar los 5 más recientes
+      eventosRecientes = eventosOrdenados.slice(0, 5);
+      renderizarTabla(eventosRecientes);
+    } catch (error) {
+      console.error('Error al cargar acciones:', error);
+    }
+  }
+
+  function renderizarTabla(eventos) {
+    eventsTableBody.innerHTML = '';
+
+    eventos.forEach(ev => {
+      const tr = document.createElement('tr');
+
+      const equipo = document.createElement('td');
+      equipo.textContent = ev.equipo || '-';
+
+      const jugador = document.createElement('td');
+      jugador.textContent = ev.jugador || `#${ev.numero}`;
+
+      const accion = document.createElement('td');
+      accion.textContent = ev.accion || '-';
+
+      const minuto = document.createElement('td');
+      minuto.textContent = calcularMinuto(ev.timestamp);
+
+      tr.appendChild(equipo);
+      tr.appendChild(jugador);
+      tr.appendChild(accion);
+      tr.appendChild(minuto);
+      eventsTableBody.appendChild(tr);
+    });
+  }
+
+  function calcularMinuto(timestamp) {
+    const fecha = new Date(timestamp);
+    const ahora = new Date();
+    const diferencia = Math.floor((ahora - fecha) / 60000); // minutos
+    return `-${diferencia}ʼ`;
+  }
+
+  // Recarga automática cada 10 segundos
+  cargarEventos();
+  setInterval(cargarEventos, 10000);
+});

@@ -1,0 +1,437 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden;
+  background: #eaf4fc;
+}
+
+/* Toggle buttons */
+.toggle {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #333;
+  color: white;
+  padding: 8px;
+  cursor: pointer;
+  z-index: 1002;
+  font-size: 18px;
+}
+.toggle-left {
+  left: 0;
+  border-radius: 0 5px 5px 0;
+}
+.toggle-right {
+  right: 0;
+  border-radius: 5px 0 0 5px;
+}
+
+/* Sidebars */
+.sidebar {
+  position: fixed;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background: #1f1f1f;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  overflow-y: auto;
+  z-index: 1001;
+  transition: transform 0.3s ease-in-out;
+}
+.sidebar-left { left: 0; transform: translateX(-100%); }
+.sidebar-right { right: 0; transform: translateX(100%); }
+.sidebar.open { transform: translateX(0); }
+.sidebar h3, .subtitulo {
+  padding: 1rem;
+  margin: 0;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0 1rem;
+  margin: 0;
+}
+.sidebar ul li {
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Botonera]*/
+
+.button-column {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 60vh;
+}
+
+.action-btn {
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  height: 50px;
+}
+
+.action-btn:disabled,
+.action-btn.disabled-btn {
+  background-color: #ddd !important;
+  color: #888;
+  cursor: not-allowed;
+  border: 1px solid #bbb;
+  opacity: 0.6;
+}
+
+
+.action-btn:hover {
+  background-color: #d0eaff;
+  border-color: #3399ff;
+}
+
+
+/* Cancha */
+.cancha-container {
+  position: fixed;
+  top: 12%;
+  bottom: 20%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 60px;
+  box-sizing: border-box;
+}
+
+/* Equipo A y B */
+
+.fila {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Tarjetas jugador */
+.tarjeta.jugador {
+  width: 70px;
+  height: 90px;
+  background: #1f1f1f;
+  border: 2px solid #444;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+.portero { background: #cce5ff; }
+.defensa { background: #d4edda; }
+.medio { background: #fff3cd; }
+.delantero { background: #f8d7da; }
+
+/* Footer marcador */
+.marcador-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: #222;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 22px;
+}
+.marcador-central {
+  font-size: 36px;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .tarjeta.jugador {
+    width: 60px;
+    height: 80px;
+    font-size: 12px;
+  }
+  .marcador-footer {
+    font-size: 18px;
+  }
+  .marcador-central {
+    font-size: 28px;
+  }
+  .botonera-superior {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px;
+  }
+}
+
+.player-card.selected {
+  border: 2px solid #007bff;
+  background-color: #e6f2ff;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+.player-card {
+  width: 160px;
+  background: linear-gradient(145deg, #f0d9b5, #d6b375);
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #000;
+  padding: 10px 8px;
+  margin: 10px auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 0 6px;
+}
+
+.card-rating {
+  font-size: 20px;
+}
+
+.card-position {
+  background: #000;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.card-image {
+  margin: 8px auto;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-number {
+  position: relative;
+  margin-top: -25px; /* Superpone hacia arriba */
+  background: #1f1f1f;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid #fff;
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 0;
+  text-transform: uppercase;
+}
+
+.card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.card-stats div {
+  background: #fff;
+  padding: 4px 6px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-stats span {
+  font-weight: bold;
+}
+
+.lado-equipo {
+  width: 30%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, auto);
+  justify-content: center; /* Centra el grid horizontalmente */
+  align-content: center;   /* Centra el grid verticalmente dentro del contenedor */
+  justify-items: center;   /* Centra cada tarjeta en su celda horizontalmente */
+  align-items: center;     /* Centra cada tarjeta en su celda verticalmente */
+  height: 100%;            /* Ocupa el alto total de la cancha */
+  box-sizing: border-box;
+}
+
+
+/* Ajusta tamaño para ver 5 tarjetas de cada lado */
+.player-card {
+  width: 120px;
+  height: auto;
+  padding: 8px 6px;
+  margin: 4px auto;
+  font-size: 13px;
+  transform: scale(0.95);
+}
+.card-image {
+  width: 80px;
+  height: 80px;
+}
+.card-number {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+  line-height: 28px;
+}
+.card-name {
+  font-size: 13px;
+}
+.card-stats {
+  font-size: 11px;
+  gap: 4px;
+}
+.card-stats div {
+  padding: 2px 4px;
+}
+
+.cancha-container {
+  position: fixed;
+  top: 12%;
+  bottom: 20%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 5%; /* Espacio horizontal sin empalmar la botonera */
+  box-sizing: border-box;
+  gap: 20%; /* Separación entre lados */
+}
+
+.lado-equipo .player-card:nth-child(1) {
+  grid-column: 1 / span 2; /* Portero centrado */
+}
+
+.marcador-control {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.score-btn {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.score-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #ccc;
+  border-color: #999;
+}
+
+.score-btn:hover {
+  background-color: #d0eaff;
+  transform: scale(1.1);
+}
+
+.tarjetas-panel {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-content: center;
+}
+
+.tarjeta-btn {
+  font-size: 24px;
+  padding: 6px;
+  border: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.tarjeta-btn:hover {
+  transform: scale(1.1);
+}
+
+.tarjeta-btn.amarilla {
+  background-color: #ffeb3b;
+  color: #000;
+}
+
+.tarjeta-btn.roja {
+  background-color: #f44336;
+  color: white;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #1f1f1f;
+  padding: 20px 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content h2, .modal-content h3 {
+  margin-top: 0;
+}
+
+.modal-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.modal-content li {
+  padding: 5px 0;
+}
+
+
+
