@@ -111,26 +111,42 @@ module.exports = (db) => {
   });
 
   // === ELIMINAR EQUIPO ===
+// === ELIMINAR EQUIPO ===
 router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try {
-    const stmt = db.prepare('UPDATE players SET equipo_id = NULL WHERE equipo_id = ?');
-    stmt.run(id); // Libera jugadores del equipo
+    try {
+      // Obtener el nombre del archivo de imagen
+      const equipo = db.prepare('SELECT foto FROM teams WHERE id = ?').get(id);
+      if (!equipo) {
+        return res.status(404).json({ message: 'Equipo no encontrado' });
+      }
 
-    const deleteStmt = db.prepare('DELETE FROM teams WHERE id = ?');
-    const result = deleteStmt.run(id);
+      // Liberar jugadores (quitarles equipo_id)
+      db.prepare('UPDATE players SET equipo_id = NULL WHERE equipo_id = ?').run(id);
 
-    if (result.changes === 0) {
-      return res.status(404).json({ message: 'Equipo no encontrado' });
+      // Eliminar la imagen física si no es default
+      if (equipo.foto && !equipo.foto.includes('default')) {
+        const filename = path.basename(equipo.foto); // Ej. team_12345.jpg
+        const imagePath = path.join(imgDir, filename);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+
+      // Eliminar el equipo
+      const result = db.prepare('DELETE FROM teams WHERE id = ?').run(id);
+      if (result.changes === 0) {
+        return res.status(404).json({ message: 'No se pudo eliminar el equipo' });
+      }
+
+      res.json({ message: 'Equipo eliminado correctamente' });
+    } catch (err) {
+      console.error('❌ Error al eliminar equipo:', err.message);
+      res.status(500).json({ message: 'Error interno al eliminar el equipo' });
     }
+  });
 
-    res.json({ message: 'Equipo eliminado correctamente' });
-  } catch (err) {
-    console.error('❌ Error al eliminar equipo:', err.message);
-    res.status(500).json({ message: 'Error al eliminar equipo' });
-  }
-});
 
 
   return router;

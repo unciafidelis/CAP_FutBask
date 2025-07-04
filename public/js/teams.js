@@ -143,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         img.src = eq.foto || '/img/teamImg/default.jpg';
         img.alt = eq.nombre;
 
-
         const name = document.createElement('h4');
         name.textContent = eq.nombre;
 
