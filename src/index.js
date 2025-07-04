@@ -1,5 +1,3 @@
-// index.js
-
 // === DEPENDENCIAS ===
 const express = require('express');
 const session = require('express-session');
@@ -32,6 +30,9 @@ app.use(session({
 // === SEMILLA DE ÁRBITROS ===
 seedReferees(db);
 
+// === RUTA ESTÁTICA PARA CARGAR IMG DESDE src/img/teamImg ===
+app.use('/img/teamImg', express.static(path.join(__dirname, 'img/teamImg')));
+
 // === RUTAS ESTÁTICAS RESTRINGIDAS A EXTENSIONES SEGURAS ===
 app.use((req, res, next) => {
   const isStatic = /\.(css|js|png|jpg|jpeg|svg|ico)$/.test(req.url);
@@ -43,7 +44,6 @@ app.use((req, res, next) => {
 });
 
 // === RUTAS API ===
-// ✅ Se invocan correctamente pasando la base de datos
 app.use('/api/teams', teamsRouter(db));
 app.use('/api/players', playersRouter(db));
 app.use('/api/tournaments', tournamentsRouter(db));

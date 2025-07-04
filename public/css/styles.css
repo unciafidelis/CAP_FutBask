@@ -536,3 +536,43 @@ tbody td {
 #backToTeams:hover {
   background-color: #304ffe;
 }
+
+.badge.red { background: #e74c3c; color: white; border-radius: 20px; padding: 5px 10px; }
+.badge.orange { background: #e67e22; color: white; border-radius: 20px; padding: 5px 10px; }
+.badge.yellow { background: #f1c40f; color: black; border-radius: 20px; padding: 5px 10px; }
+.badge.green { background: #2ecc71; color: white; border-radius: 20px; padding: 5px 10px; }
+
+.club-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.team-modal-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+}
+
+.team-actions .icon-button {
+  margin-left: 5px;
+}
+
+.team-logo {
+  max-width: 50px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}

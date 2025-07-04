@@ -21,6 +21,24 @@ module.exports = (db) => {
     }
   });
 
+  // ✅ Obtener un jugador por ID (para edición)
+  router.get('/:id', (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const jugador = db.prepare(`SELECT * FROM players WHERE id = ?`).get(id);
+
+      if (!jugador) {
+        return res.status(404).json({ error: 'Jugador no encontrado' });
+      }
+
+      res.json(jugador);
+    } catch (err) {
+      console.error('❌ Error al obtener jugador por ID:', err.message);
+      res.status(500).json({ error: 'Error al obtener el jugador' });
+    }
+  });
+
   // Crear un nuevo jugador
   router.post('/', (req, res) => {
     const { nombre, posicion, pie, numero, equipo_id } = req.body;
