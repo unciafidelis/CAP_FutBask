@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <div class="form-section">
-      <h2>Agregar/Editar Equipo</h2>
+      <h2>Crear Equipo</h2>
       <form id="teamForm">
         <div class="form-group">
           <label for="teamName">Nombre del Equipo</label>
@@ -32,20 +32,24 @@
             <option value="">Selecciona un deporte primero</option>
           </select>
         </div>
-
+        <!-- Botón para abrir el modal -->
         <button type="submit">Guardar Equipo</button>
       </form>
+      <button id="viewTeamsBtn" style="margin-top:20px;">Ver Equipos Registrados</button>
     </div>
 
-    <div class="table-section">
+  <!-- Modal de Equipos -->
+  <div id="modalEquipos" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeEquiposModal" class="close">&times;</span>
       <h2>Equipos Registrados</h2>
-      <table id="TeamTable">
+       <div class="pagination" id="teamPagination"></div>
+      <table id="equiposModalTable">
         <thead>
           <tr>
             <th>Nombre</th>
-            <th>División</th>
             <th>Deporte</th>
-            <th>Registrado</th>
+            <th>División</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -53,6 +57,45 @@
       </table>
     </div>
   </div>
+
+  <!-- Modal de Jugadores -->
+  <div id="modalJugadores" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeJugadoresModal" class="close">&times;</span>
+      <h2>Jugadores del Equipo</h2>
+       <div class="pagination" id="teamPagination"></div>
+      <table id="jugadoresModalTable">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Posición</th>
+            <th>Número</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Modal Compartido para Equipos y Jugadores -->
+<div id="teamsModal" class="modal hidden">
+  <div class="modal-content team-modal">
+    <span id="closeTeamsModal" class="close" style="cursor:pointer;float:right;font-size:22px;">&times;</span>
+    
+    <!-- Vista de Equipos -->
+    <div id="teamsListContainer">
+      <h3>Equipos Registrados</h3>
+      <div id="teamsList"></div>
+    </div>
+  </div>
+    <!-- Vista de Jugadores -->
+    <div id="playersListContainer" class="modal hidden">
+       <div class="modal-content team-modal">
+      <h3 id="playersModalTitle">Jugadores del equipo</h3>
+      <div id="playersList"></div>
+      <button id="backToTeams" style="margin-top:10px;">← Volver a Equipos</button>
+    </div>
+  </div>
+</div>
 
   <script src="js/teams.js"></script>
 </body>

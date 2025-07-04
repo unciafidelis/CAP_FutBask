@@ -1,18 +1,19 @@
+<!-- HTML CORREGIDO PARA matches.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Programar Partido</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Partidos Programados</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <div class="card">
+  <main class="card">
     <h2>Programar Partido</h2>
     <form id="matchForm">
       <div class="form-group">
-        <label for="tournamentSelect">Selecciona Torneo</label>
-        <select id="tournamentSelect" required></select>
+        <label for="torneo">Torneo</label>
+        <select id="torneo" required></select>
       </div>
 
       <div class="form-group">
@@ -31,14 +32,42 @@
       </div>
 
       <div class="form-group">
-        <label for="hora">Hora</label>
-        <input type="time" id="hora" required>
+        <label for="horaHour">Hora</label>
+        <div style="display: flex; gap: 5px;">
+          <select id="horaHour" required></select>
+          <select id="horaMinute" required></select>
+          <select id="horaAmPm" required></select>
+        </div>
       </div>
 
       <button type="submit">Guardar Partido</button>
     </form>
+
+    <button id="openModal">Ver Partidos Registrados</button>
+  </main>
+
+  <!-- Modal para tabla -->
+  <div id="matchModal" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2>Partidos Registrados</h2>
+      <div id="matchPagination" class="pagination"></div>
+      <table id="matchesTable">
+        <thead>
+          <tr>
+            <th>Torneo</th>
+            <th>Equipo A</th>
+            <th>Equipo B</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 
-  <script src="js/scheduleMatch.js"></script>
+  <script src="js/matches.js"></script>
 </body>
 </html>

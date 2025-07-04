@@ -96,7 +96,7 @@ body {
 .admin-main {
   display: flex;
   flex-direction: column;
-  height: calc(150vh - 60px);
+  height: calc(150vh - 450px);
 }
 
 /* === CARDS GRANDES INICIALES === */

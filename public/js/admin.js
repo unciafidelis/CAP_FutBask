@@ -13,14 +13,12 @@ if (refereeName) {
 
 const pages = [
   { name: 'inMatch', title: 'En Partido' },
-  { name: 'checkPlayers', title: 'Verificar Jugadores' },
-  { name: 'matches', title: 'Partidos' },
   { name: 'player', title: 'Jugador' },
   { name: 'playerStats', title: 'Estadísticas Jugador' },
   { name: 'scheduleMatch', title: 'Programar Partido' },
-  { name: 'stats', title: 'Estadísticas' },
   { name: 'team', title: 'Equipo' },
-  { name: 'tournaments', title: 'Torneos' }
+  { name: 'tournaments', title: 'Torneos' },
+  { name: 'panel', title: 'Panel de partido' }
 ];
 
 const cardDeck = document.getElementById('cardDeck');

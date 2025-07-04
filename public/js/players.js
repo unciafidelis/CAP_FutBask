@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${j.nombre}</td>
         <td>${tag}</td>
         <td>${j.pie}</td>
-        <td>${j.equipo_nombre || 'Sin equipo'}</td>
+        <td>${j.equipo_nombre || '—'}</td>
         <td>
           <button class="icon-button edit" onclick="editJugador(${j.id})">
             <span class="material-icons">edit</span>
@@ -93,16 +93,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.editJugador = async function (id) {
-    const response = await fetch(`/api/players/${id}`);
-    const j = await response.json();
+    try {
+      const response = await fetch(`/api/players/${id}`);
+      if (!response.ok) throw new Error('Jugador no encontrado');
 
-    document.getElementById('playerName').value = j.nombre;
-    document.getElementById('position').value = j.posicion;
-    document.getElementById('foot').value = j.pie;
-    document.getElementById('number').value = j.numero;
-    teamSelect.value = j.equipo_id;
+      const j = await response.json();
 
-    currentEditId = id;
+      document.getElementById('playerName').value = j.nombre;
+      document.getElementById('position').value = j.posicion;
+      document.getElementById('foot').value = j.pie;
+      document.getElementById('number').value = j.numero;
+      teamSelect.value = j.equipo_id;
+
+      currentEditId = id;
+    } catch (err) {
+      alert('Error al cargar jugador para edición');
+      console.error(err);
+    }
   };
 
   window.deleteJugador = async function (id) {
