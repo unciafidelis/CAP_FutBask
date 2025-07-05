@@ -14,6 +14,7 @@ const tournamentsRouter = require('./routes/tournaments');
 const matchesRouter = require('./routes/matches');
 const actionsRouter = require('./routes/actions');
 const authRouter = require('./routes/auth');
+const statsRoutes = require('./routes/stats');
 
 const app = express();
 
@@ -30,9 +31,9 @@ app.use(session({
 // === SEMILLA DE ÁRBITROS ===
 seedReferees(db);
 
-// === RUTA ESTÁTICA PARA CARGAR IMG DESDE src/img/teamImg ===
+// === RUTA ESTÁTICA PARA CARGAR IMG DESDE src/img ===
 app.use('/img/teamImg', express.static(path.join(__dirname, 'img/teamImg')));
-
+app.use('/img/playerImg', express.static(path.join(__dirname, 'img', 'playerImg')));
 // === RUTAS ESTÁTICAS RESTRINGIDAS A EXTENSIONES SEGURAS ===
 app.use((req, res, next) => {
   const isStatic = /\.(css|js|png|jpg|jpeg|svg|ico)$/.test(req.url);
@@ -50,7 +51,7 @@ app.use('/api/tournaments', tournamentsRouter(db));
 app.use('/api/matches', matchesRouter(db));
 app.use('/api/actions', actionsRouter(db));
 app.use('/api', authRouter(db)); // login, logout, referee info
-
+app.use('/api/stats', statsRoutes);
 // === RUTAS HTML PROTEGIDAS ===
 app.get('/:file', (req, res) => {
   const publicFiles = ['login.html'];

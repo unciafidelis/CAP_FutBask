@@ -1,212 +1,332 @@
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: #f4f4f4;
+/* === RESET GENERAL === */
+* {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
 }
 
+body {
+  background-color: #121212;
+  color: #fff;
+  margin: 0;
+  padding: 2rem;
+}
+
+/* === CONTENEDOR GENERAL === */
 .container {
   display: flex;
-  height: 100vh;
+  flex-direction: row;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
+/* === SIDEBAR DE JUGADORES === */
 .sidebar {
-  width: 250px;
-  background: #2b2b2b;
-  color: #fff;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.sidebar h2 {
-  margin-top: 0;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  padding: 10px;
-  border-bottom: 1px solid #444;
-  cursor: pointer;
-}
-
-.sidebar li:hover, .sidebar li.active {
-  background: #444;
-}
-
-.panel {
   flex: 1;
-  padding: 30px;
-  background: #fff;
-}
-
-.stats div {
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #007bff;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
   min-width: 300px;
-}
-
-.modal label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.hidden {
-  display: none;
-}
-
-.player-item {
-  padding: 10px;
-  margin: 5px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.player-item:hover {
-  background: #f0f0f0;
-}
-
-.player-item.selected {
-  background-color: #2e8bff;
-  color: white;
-  font-weight: bold;
-}
-
-/* styles.css */
-
-.sidebar {
-  width: 320px;
-  background-color: #111;
-  color: white;
-  padding: 1rem;
-  overflow-y: auto;
-  border-right: 2px solid #222;
+  max-width: 350px;
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .sidebar h2 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   margin-bottom: 1rem;
-  color: #f5f5f5;
 }
 
-#playerList {
+/* === TARJETA DE JUGADOR === */
+.player-card {
+  background-color: #2c2c2c;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.player-card {
-  display: flex;
-  align-items: center;
-  background-color: #1f1f1f;
-  border-radius: 10px;
-  padding: 0.6rem;
-  transition: background 0.3s;
-  cursor: pointer;
-}
-
-.player-card:hover {
-  background-color: #2a2a2a;
+  gap: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
+  width: 100%;
+  border-radius: 12px;
   object-fit: cover;
-  margin-right: 10px;
 }
 
 .player-info {
-  flex: 1;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.rating {
-  display: flex;
-  gap: 4px;
-}
-
-.rating span {
-  background-color: #2e7d32;
-  color: white;
+.rating .ovr {
+  font-size: 1.4rem;
   font-weight: bold;
-  padding: 3px 6px;
-  border-radius: 5px;
-  font-size: 12px;
+  color: #3d5afe;
 }
 
-.ovr {
-  background-color: #4caf50;
-}
-
-.pot {
-  background-color: #2e7d32;
+.rating .pot {
+  font-size: 1.2rem;
+  color: #888;
 }
 
 .name {
+  font-size: 1rem;
   font-weight: bold;
-  font-size: 14px;
-  margin-top: 3px;
-}
-
-.position-badges {
-  margin-top: 3px;
-}
-
-.badge {
-  background-color: #f9a825;
-  color: black;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 3px;
-  margin-right: 4px;
-  display: inline-block;
 }
 
 .meta {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 
-.age {
-  font-size: 13px;
-  margin-bottom: 4px;
+.club {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
-.club {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
+/* === PANEL PRINCIPAL === */
+.panel {
+  flex: 2;
+  min-width: 500px;
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.panel h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+button#openManualStats {
+  background-color: #3d5afe;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background 0.2s ease-in-out;
+}
+
+button#openManualStats:hover {
+  background-color: #2c41c4;
+}
+
+/* === MODAL DE ESTADÍSTICAS MANUALES === */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(18, 18, 18, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 60px;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.modal-content select,
+.modal-content input {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #2c2c2c;
+  color: #fff;
+}
+
+.modal-content button {
+  padding: 10px 16px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #3d5afe;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.modal-content button:hover {
+  background-color: #2c41c4;
+}
+
+/* === DASHBOARD DE ESTADÍSTICAS === */
+.register-container {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.player-info {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.player-photo {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background-color: #2c2c2c;
+  padding: 1rem;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 300px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+/* === GRÁFICO DE RENDIMIENTO === */
+.chart-container {
+  background-color: #2c2c2c;
+  border-radius: 12px;
+  padding: 1rem;
+  flex: 1;
+  min-width: 300px;
+}
+
+.chart-container h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+/* === RECONOCIMIENTO AL JUGADOR DESTACADO === */
+.highlight {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: gold;
+  background-color: #1f1f1f;
+  border: 2px dashed #ffd700;
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+/* === BADGES DE POSICIÓN (tipo FIFA) === */
+.position-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.badge.GK { background-color: #e67e22; color: #fff; }
+.badge.DF { background-color: #27ae60; color: #fff; }
+.badge.MF { background-color: #f1c40f; color: #333; }
+.badge.FW { background-color: #3498db; color: #fff; }
+
+/* === ESTADÍSTICAS INDIVIDUALES (semicirculares) === */
+.stat-donut {
+  width: 120px;
+  height: 60px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.stat-donut svg {
+  transform: rotate(-90deg);
+}
+
+.stat-donut .stat-label {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 20px;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* === ETIQUETAS DE DESEMPEÑO === */
+.badge.red {
+  background: #e74c3c;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.badge.orange {
+  background: #e67e22;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.badge.yellow {
+  background: #f1c40f;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.badge.green {
+  background: #2ecc71;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+/* === RESPONSIVE AJUSTES === */
+@media (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .chart-container,
+  .card {
+    width: 100%;
+  }
 }

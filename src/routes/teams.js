@@ -122,7 +122,6 @@ module.exports = (db) => {
     }
   });
 
-  // === ELIMINAR EQUIPO ===
 // === ELIMINAR EQUIPO ===
 router.delete('/:id', (req, res) => {
     const { id } = req.params;

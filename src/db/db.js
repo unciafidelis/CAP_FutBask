@@ -45,7 +45,7 @@ db.prepare(`
 `).run();
 console.log('✅ Tabla "teams" lista.');
 
-// Jugadores
+// Jugadores (modificado para incluir foto)
 db.prepare(`
   CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,11 +54,14 @@ db.prepare(`
     pie TEXT NOT NULL,
     numero INTEGER NOT NULL,
     equipo_id INTEGER NOT NULL,
+    foto TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (equipo_id) REFERENCES teams(id) ON DELETE CASCADE
   )
 `).run();
+
 console.log('✅ Tabla "players" lista.');
+
 
 // Torneos
 db.prepare(`
@@ -104,6 +107,19 @@ db.prepare(`
   )
 `).run();
 console.log('✅ Tabla "actions" lista.');
+
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS estadisticas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    jugador_id INTEGER NOT NULL,
+    nombre TEXT NOT NULL,
+    valor INTEGER NOT NULL CHECK (valor BETWEEN 0 AND 100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (jugador_id) REFERENCES players(id) ON DELETE CASCADE
+  )
+`).run();
+console.log('✅ Tabla "estadisticas" lista.');
+
 
 // === EXPORTACIÓN DE INSTANCIA DB ===
 module.exports = db;

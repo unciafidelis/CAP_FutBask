@@ -1,5 +1,3 @@
-// public/js/matches.js
-
 document.addEventListener('DOMContentLoaded', () => {
   const matchForm = document.getElementById('matchForm');
   const torneoSelect = document.getElementById('torneo');
@@ -18,39 +16,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const itemsPerPage = 5;
   let matches = [];
+  let torneos = [];
+  let equiposDisponibles = [];
   let editingMatchId = null;
   let currentPage = 1;
 
-  // === Cargar datos iniciales ===
+  // === Inicializar ===
+  populateHoras();
   loadTorneos();
   loadEquipos();
   loadMatches();
-  populateHoras();
 
   function populateHoras() {
     for (let h = 1; h <= 12; h++) {
-      const opt = document.createElement('option');
-      opt.value = h;
-      opt.textContent = h.toString().padStart(2, '0');
-      horaHour.appendChild(opt);
+      horaHour.innerHTML += `<option value="${h}">${h.toString().padStart(2, '0')}</option>`;
     }
     for (let m = 0; m < 60; m += 5) {
-      const opt = document.createElement('option');
-      opt.value = m;
-      opt.textContent = m.toString().padStart(2, '0');
-      horaMinute.appendChild(opt);
+      horaMinute.innerHTML += `<option value="${m}">${m.toString().padStart(2, '0')}</option>`;
     }
     ['AM', 'PM'].forEach(p => {
-      const opt = document.createElement('option');
-      opt.value = p;
-      opt.textContent = p;
-      horaAmPm.appendChild(opt);
+      horaAmPm.innerHTML += `<option value="${p}">${p}</option>`;
     });
   }
 
   async function loadTorneos() {
     const res = await fetch('/api/tournaments');
-    const torneos = await res.json();
+    torneos = await res.json();
+    torneoSelect.innerHTML = '<option value="">Selecciona Torneo</option>';
     torneos.forEach(t => {
       const opt = document.createElement('option');
       opt.value = t.id;
@@ -61,46 +53,96 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadEquipos() {
     const res = await fetch('/api/teams');
-    const equipos = await res.json();
-    [equipoASelect, equipoBSelect].forEach(select => {
-      equipos.forEach(eq => {
-        const opt = document.createElement('option');
-        opt.value = eq.id;
-        opt.textContent = eq.nombre;
-        select.appendChild(opt.cloneNode(true));
-      });
-    });
+    equiposDisponibles = await res.json();
+    renderEquipos();
   }
 
-  matchForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = {
-      torneo_id: torneoSelect.value,
-      equipo_a_id: equipoASelect.value,
-      equipo_b_id: equipoBSelect.value,
-      fecha: fechaInput.value,
-      hora: `${horaHour.value}:${horaMinute.value} ${horaAmPm.value}`
-    };
+  function renderEquipos() {
+    equipoASelect.innerHTML = '<option value="">Selecciona Equipo A</option>';
+    equipoBSelect.innerHTML = '<option value="">Selecciona Equipo B</option>';
 
-    const url = editingMatchId ? `/api/matches/${editingMatchId}` : '/api/matches';
-    const method = editingMatchId ? 'PUT' : 'POST';
-
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+    equiposDisponibles.forEach(eq => {
+      const optionA = document.createElement('option');
+      optionA.value = eq.id;
+      optionA.textContent = eq.nombre;
+      equipoASelect.appendChild(optionA);
     });
 
-    if (res.ok) {
-      alert(editingMatchId ? 'Partido actualizado' : 'Partido creado');
-      matchForm.reset();
-      editingMatchId = null;
-      loadMatches();
-      matchModal.classList.add('hidden');
-    } else {
-      alert('Error al guardar');
-    }
+    updateEquipoBOptions(); // Para evitar que se repitan
+  }
+
+  equipoASelect.addEventListener('change', () => {
+    updateEquipoBOptions();
   });
+
+  function updateEquipoBOptions() {
+    const selectedA = equipoASelect.value;
+    equipoBSelect.innerHTML = '<option value="">Selecciona Equipo B</option>';
+    equiposDisponibles.forEach(eq => {
+      if (eq.id.toString() !== selectedA) {
+        const optionB = document.createElement('option');
+        optionB.value = eq.id;
+        optionB.textContent = eq.nombre;
+        equipoBSelect.appendChild(optionB);
+      }
+    });
+  }
+  let isSubmitting = false;
+    matchForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (isSubmitting) return;
+  isSubmitting = true;
+
+  console.log("🟡 Se envió el formulario");
+
+  const torneo_id = torneoSelect.value;
+  const equipoA = equipoASelect.value;
+  const equipoB = equipoBSelect.value;
+  const fecha = fechaInput.value;
+  const hora = `${horaHour.value}:${horaMinute.value} ${horaAmPm.value}`;
+
+  if (!torneo_id || !equipoA || !equipoB || !fecha || !hora) {
+    alert('Todos los campos son requeridos');
+    isSubmitting = false; // ✅ se libera aquí solo si hubo error
+    return;
+  }
+
+  const body = {
+    torneo_id,
+    equipoA,
+    equipoB,
+    fecha,
+    hora
+  };
+
+  try {
+    const res = await fetch('/api/matches', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Partido guardado exitosamente');
+
+      editingMatchId = null;
+      matchForm.reset();
+      equipoBSelect.innerHTML = '<option value="">Selecciona Equipo B</option>';
+      await loadMatches();
+    } else {
+      console.error('❌ Error:', result.error);
+      alert('Error al guardar partido: ' + (result.error || 'Desconocido'));
+    }
+  } catch (err) {
+    console.error('❌ Error de red o fetch:', err);
+    alert('Error al conectar con el servidor');
+  } finally {
+    isSubmitting = false; // ✅ se libera siempre al final del try/catch
+  }
+});
+
 
   async function loadMatches() {
     const res = await fetch('/api/matches');
@@ -111,17 +153,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderMatches() {
     matchesTableBody.innerHTML = '';
     matchPagination.innerHTML = '';
+    
 
-    const totalPages = Math.ceil(matches.length / itemsPerPage);
-    const start = (currentPage - 1) * itemsPerPage;
-    const currentMatches = matches.slice(start, start + itemsPerPage);
+    const validMatches = matches.filter(m => m.torneo_id && m.equipoA && m.equipoB && m.fecha && m.hora);
+const totalPages = Math.ceil(validMatches.length / itemsPerPage);
+const start = (currentPage - 1) * itemsPerPage;
+const currentMatches = validMatches.slice(start, start + itemsPerPage);
 
     currentMatches.forEach(match => {
+      const torneo = torneos.find(t => t.id === match.torneo_id);
+      const equipoA = equiposDisponibles.find(e => e.id === match.equipoA);
+      const equipoB = equiposDisponibles.find(e => e.id === match.equipoB);
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${match.torneo_nombre}</td>
-        <td>${match.equipo_a_nombre}</td>
-        <td>${match.equipo_b_nombre}</td>
+        <td>${torneo ? torneo.nombre : '—'}</td>
+        <td>${equipoA ? equipoA.nombre : '—'}</td>
+        <td>${equipoB ? equipoB.nombre : '—'}</td>
         <td>${match.fecha}</td>
         <td>${match.hora}</td>
         <td>
@@ -149,8 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!match) return;
 
     torneoSelect.value = match.torneo_id;
-    equipoASelect.value = match.equipo_a_id;
-    equipoBSelect.value = match.equipo_b_id;
+    equipoASelect.value = match.equipoA;
+    updateEquipoBOptions();
+    equipoBSelect.value = match.equipoB;
     fechaInput.value = match.fecha;
 
     const [hora, minuto] = match.hora.split(':');

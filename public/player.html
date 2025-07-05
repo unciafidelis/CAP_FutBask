@@ -9,10 +9,11 @@
 </head>
 <body>
   <main class="container">
-    <!-- Formulario -->
+
+    <!-- Formulario de registro -->
     <section class="form-section">
       <h2>Registrar Jugador</h2>
-      <form id="playerForm">
+      <form id="playerForm" enctype="multipart/form-data" class="form">
         <input type="text" id="playerName" placeholder="Nombre" required />
 
         <label for="position">Posición</label>
@@ -34,34 +35,33 @@
 
         <input type="number" id="number" placeholder="Número" required />
 
-       <label for="teamSelect">Equipo</label>
-<select id="teamSelect" required>
-  <option value="">Seleccionar equipo</option>
-</select>
+        <label for="teamSelect">Equipo</label>
+        <select id="teamSelect" required>
+          <option value="">Seleccionar equipo</option>
+        </select>
 
+        <label for="playerPhoto">Foto del jugador</label>
+        <input type="file" id="playerPhoto" accept="image/*" />
 
-        <button type="submit">Guardar</button>
+        <div class="form-buttons">
+          <button type="submit">Guardar</button>
+          <button type="button" id="openPlayersModal">Ver Jugadores Registrados</button>
+        </div>
       </form>
     </section>
 
-    <!-- Tabla de jugadores -->
-    <section class="table-section">
-      <h2>Jugadores registrados</h2>
-      <table id="PlayerTable">
-        <thead>
-          <tr>
-            <th onclick="sortTable(0)">#</th>
-            <th onclick="sortTable(1)">Nombre</th>
-            <th onclick="sortTable(2)">Posición</th>
-            <th onclick="sortTable(3)">Pie</th>
-            <th onclick="sortTable(4)">Equipo</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div class="pagination" id="pagination"></div>
-    </section>
+    <!-- Modal de jugadores -->
+    <div id="playerModal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Lista de Jugadores</h3>
+        <div class="pagination" id="pagination"></div>
+        <div id="playersContainer" class="modal-players-list">
+          <!-- Aquí se cargan dinámicamente las tarjetas de jugadores -->
+        </div>
+        <button id="closeModal" class="close-button">Cerrar</button>
+      </div>
+    </div>
+
   </main>
 
   <script src="js/players.js"></script>
