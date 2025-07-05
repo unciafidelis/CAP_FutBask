@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let editingId = null;
   let currentEquipoPage = 1;
   let currentJugadorPage = 1;
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
 
   const divisiones = {
     Futbol: [
@@ -82,7 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
       editingId = null;
       divisionSelect.innerHTML = '<option value="">Selecciona un deporte primero</option>';
       loadEquipos();
-    } else {
+      teamsModal.classList.add('hidden'); // Ocultar modal al guardar
+    }
+     else {
       const result = await response.json();
       alert('Error: ' + (result.message || 'No se pudo procesar'));
     }
@@ -188,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sportSelect.dispatchEvent(new Event('change'));
     divisionSelect.value = equipo.division;
     editingId = equipo.id;
+    teamsModal.classList.add('hidden');
   };
 
   window.deleteEquipo = async function (id) {
@@ -265,6 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const items = data.slice(start, end);
     return { page, totalPages, items };
   }
-
+  loadJugadores();
   loadEquipos();
 });

@@ -576,3 +576,18 @@ tbody td {
   object-fit: contain;
   border-radius: 4px;
 }
+
+/* Transición suave */
+.modal-content > div {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Clase para ocultar con transición */
+.hidden-fade {
+  opacity: 0;
+  transform: translateX(50px);
+  pointer-events: none;
+  position: absolute;
+}

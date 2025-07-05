@@ -33,11 +33,10 @@
           </select>
         </div>
 
-<div class="form-group">
-  <label for="teamPhoto">Foto del Equipo</label>
-  <input type="file" id="teamPhoto" accept="image/png, image/jpeg, image/webp">
-</div>
-
+        <div class="form-group">
+          <label for="teamPhoto">Foto del Equipo</label>
+          <input type="file" id="teamPhoto" accept="image/png, image/jpeg, image/webp">
+        </div>
 
         <button type="submit">Guardar Equipo</button>
       </form>
@@ -46,7 +45,7 @@
     </div>
   </div>
 
-  <!-- Modal de Equipos con paginación -->
+  <!-- Modal de Equipos con tabla -->
   <div id="modalEquipos" class="modal hidden">
     <div class="modal-content">
       <span id="closeEquiposModal" class="close">&times;</span>
@@ -66,7 +65,7 @@
     </div>
   </div>
 
-  <!-- Modal de Jugadores con paginación -->
+  <!-- Modal de Jugadores -->
   <div id="modalJugadores" class="modal hidden">
     <div class="modal-content">
       <span id="closeJugadoresModal" class="close">&times;</span>
@@ -85,7 +84,7 @@
     </div>
   </div>
 
-  <!-- Modal visual de equipos con estadísticas -->
+  <!-- Modal visual de Equipos y Jugadores -->
   <div id="teamsModal" class="modal hidden">
     <div class="modal-content team-modal">
       <span id="closeTeamsModal" class="close">&times;</span>
@@ -93,24 +92,8 @@
       <!-- Vista de Equipos -->
       <div id="teamsListContainer">
         <h3>Equipos Registrados</h3>
-        <div id="teamsList" class="team-list-scrollable">
-          <!-- Cada entrada se generará dinámicamente así:
-          <div class="team-modal-entry">
-            <div class="team-info">
-              <img src="uploads/equipo1.webp" class="club-photo" alt="Foto club">
-              <div>
-                <strong>Nombre del Equipo</strong><br>
-                <span>División - Deporte</span>
-              </div>
-            </div>
-            <span class="badge green">85%</span>
-            <div class="team-actions">
-              <button class="icon-button edit"><span class="material-icons">edit</span></button>
-              <button class="icon-button delete"><span class="material-icons">delete</span></button>
-            </div>
-          </div>
-          -->
-        </div>
+        <div id="teamsList" class="team-list-scrollable"></div>
+        <div class="pagination" id="teamVisualPagination"></div>
       </div>
 
       <!-- Vista de Jugadores -->
@@ -123,5 +106,6 @@
   </div>
 
   <script src="js/teams.js"></script>
+  <script src="js/modalFade.js"></script>
 </body>
 </html>

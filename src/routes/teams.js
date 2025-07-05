@@ -50,32 +50,44 @@ module.exports = (db) => {
 
   // === ACTUALIZAR EQUIPO ===
   router.put('/:id', upload.single('foto'), (req, res) => {
-    const { nombre, division, deporte } = req.body;
-    const { id } = req.params;
-    const foto = req.file ? `/img/teamImg/${req.file.filename}` : null;
+  const { nombre, division, deporte } = req.body;
+  const { id } = req.params;
 
-    try {
-      const query = foto
-        ? `UPDATE teams SET nombre = ?, division = ?, deporte = ?, foto = ? WHERE id = ?`
-        : `UPDATE teams SET nombre = ?, division = ?, deporte = ? WHERE id = ?`;
+  try {
+    // Obtener equipo actual para eliminar la imagen anterior si hay nueva
+    const equipoActual = db.prepare('SELECT foto FROM teams WHERE id = ?').get(id);
+    const nuevaFoto = req.file ? `/img/teamImg/${req.file.filename}` : null;
 
-      const values = foto
-        ? [nombre, division, deporte, foto, id]
-        : [nombre, division, deporte, id];
-
-      const stmt = db.prepare(query);
-      const result = stmt.run(...values);
-
-      if (result.changes === 0) {
-        return res.status(404).json({ message: 'Equipo no encontrado' });
+    // Si hay nueva foto y la anterior no es default, eliminar la anterior
+    if (nuevaFoto && equipoActual.foto && !equipoActual.foto.includes('default')) {
+      const anteriorNombre = path.basename(equipoActual.foto);
+      const anteriorPath = path.join(imgDir, anteriorNombre);
+      if (fs.existsSync(anteriorPath)) {
+        fs.unlinkSync(anteriorPath);
       }
-
-      res.json({ message: 'Equipo actualizado' });
-    } catch (err) {
-      console.error('❌ Error al actualizar equipo:', err.message);
-      res.status(500).json({ message: 'Error al actualizar equipo' });
     }
-  });
+
+    const query = nuevaFoto
+      ? `UPDATE teams SET nombre = ?, division = ?, deporte = ?, foto = ? WHERE id = ?`
+      : `UPDATE teams SET nombre = ?, division = ?, deporte = ? WHERE id = ?`;
+
+    const values = nuevaFoto
+      ? [nombre, division, deporte, nuevaFoto, id]
+      : [nombre, division, deporte, id];
+
+    const stmt = db.prepare(query);
+    const result = stmt.run(...values);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ message: 'Equipo no encontrado' });
+    }
+
+    res.json({ message: 'Equipo actualizado' });
+  } catch (err) {
+    console.error('❌ Error al actualizar equipo:', err.message);
+    res.status(500).json({ message: 'Error al actualizar equipo' });
+  }
+});
 
   // === OBTENER TODOS LOS EQUIPOS ===
   router.get('/', (req, res) => {

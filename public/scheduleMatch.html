@@ -1,4 +1,3 @@
-<!-- HTML CORREGIDO PARA matches.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,40 +12,43 @@
     <form id="matchForm">
       <div class="form-group">
         <label for="torneo">Torneo</label>
-        <select id="torneo" required></select>
+        <select id="torneo" name="torneo" required></select>
       </div>
 
       <div class="form-group">
         <label for="equipoA">Equipo A</label>
-        <select id="equipoA" required></select>
+        <select id="equipoA" name="equipoA" required></select>
       </div>
 
       <div class="form-group">
         <label for="equipoB">Equipo B</label>
-        <select id="equipoB" required></select>
+        <select id="equipoB" name="equipoB" required></select>
       </div>
 
       <div class="form-group">
         <label for="fecha">Fecha</label>
-        <input type="date" id="fecha" required>
+        <input type="date" id="fecha" name="fecha" required>
       </div>
 
       <div class="form-group">
         <label for="horaHour">Hora</label>
         <div style="display: flex; gap: 5px;">
-          <select id="horaHour" required></select>
-          <select id="horaMinute" required></select>
-          <select id="horaAmPm" required></select>
+          <select id="horaHour" name="horaHour" required></select>
+          <select id="horaMinute" name="horaMinute" required></select>
+          <select id="horaAmPm" name="horaAmPm" required>
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
         </div>
       </div>
 
       <button type="submit">Guardar Partido</button>
     </form>
 
-    <button id="openModal">Ver Partidos Registrados</button>
+    <button id="openModal" style="margin-top: 20px;">Ver Partidos Registrados</button>
   </main>
 
-  <!-- Modal para tabla -->
+  <!-- Modal para tabla de partidos -->
   <div id="matchModal" class="modal hidden">
     <div class="modal-content">
       <span id="closeModal" class="close">&times;</span>
