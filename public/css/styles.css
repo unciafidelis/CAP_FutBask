@@ -838,3 +838,93 @@ tbody td {
   object-fit: contain;
   border-radius: 4px;
 }
+
+.team-modal-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1e1e1e;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #3d5afe;
+  margin-bottom: 0.8rem;
+  gap: 1rem;
+  transition: background-color 0.2s;
+  min-height: 70px;
+}
+
+.team-modal-entry:hover {
+  background-color: #2a2a2a;
+}
+
+.team-position {
+  min-width: 40px;
+  text-align: center;
+  font-weight: bold;
+  color: #3d5afe;
+}
+
+.team-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.team-modal-entry h4 {
+  margin: 0;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.team-modal-entry p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #ccc;
+  flex: 1;
+}
+
+.performance-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #fff;
+  text-align: center;
+  min-width: 50px;
+}
+
+.performance-badge.red {
+  background-color: #e74c3c;
+}
+
+.performance-badge.orange {
+  background-color: #e67e22;
+}
+
+.performance-badge.yellow {
+  background-color: #f1c40f;
+  color: #333;
+}
+
+.performance-badge.green {
+  background-color: #2ecc71;
+}
+
+.team-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.team-actions button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background-color: #3d5afe;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.team-actions button:hover {
+  background-color: #5c6bc0;
+}

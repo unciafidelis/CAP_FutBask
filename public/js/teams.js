@@ -1,5 +1,3 @@
-// public/js/teams.js
-
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('teamForm');
   const nameInput = document.getElementById('teamName');
@@ -9,26 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const viewTeamsBtn = document.getElementById('viewTeamsBtn');
   const teamsModal = document.getElementById('teamsModal');
-  const playersModal = document.getElementById('playersModal');
   const closeTeamsModal = document.getElementById('closeTeamsModal');
-  const closePlayersModal = document.getElementById('closeJugadoresModal');
   const teamsListContainer = document.getElementById('teamsListContainer');
-  const playersListContainer = document.getElementById('playersListContainer');
-  const equiposTableBody = document.querySelector('#equiposModalTable tbody');
-  const jugadoresTableBody = document.querySelector('#jugadoresModalTable tbody');
-
   const teamsList = document.getElementById('teamsList');
-  const playersList = document.getElementById('playersList');
-  const backToTeamsBtn = document.getElementById('backToTeams');
-
   const equipoPagination = document.getElementById('teamPagination');
-  const jugadorPagination = document.getElementById('jugadorPagination');
 
   let equipos = [];
-  let jugadores = [];
   let editingId = null;
   let currentEquipoPage = 1;
-  let currentJugadorPage = 1;
   const itemsPerPage = 4;
 
   const divisiones = {
@@ -82,9 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
       editingId = null;
       divisionSelect.innerHTML = '<option value="">Selecciona un deporte primero</option>';
       loadEquipos();
-      teamsModal.classList.add('hidden'); // Ocultar modal al guardar
-    }
-     else {
+      teamsModal.classList.add('hidden');
+    } else {
       const result = await response.json();
       alert('Error: ' + (result.message || 'No se pudo procesar'));
     }
@@ -99,22 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderEquiposPaginados() {
     const { page, totalPages, items } = paginate(equipos, currentEquipoPage);
-    equiposTableBody.innerHTML = '';
     equipoPagination.innerHTML = '';
-
-    items.forEach(eq => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${eq.nombre}</td>
-        <td>${eq.deporte}</td>
-        <td>${eq.division}</td>
-        <td>
-          <button onclick="editEquipo(${eq.id})">Editar</button>
-          <button onclick="deleteEquipo(${eq.id})">Eliminar</button>
-        </td>
-      `;
-      equiposTableBody.appendChild(tr);
-    });
 
     for (let i = 1; i <= totalPages; i++) {
       const btn = document.createElement('button');
@@ -151,6 +121,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const pos = document.createElement('p');
         pos.textContent = `${eq.division} - ${eq.deporte}`;
 
+        const badge = document.createElement('span');
+        badge.className = 'performance-badge ' + getPerformanceClass(eq.promedio || 0);
+        badge.textContent = `${Math.round(eq.promedio || 0)}%`;
+
         const btns = document.createElement('div');
         btns.className = 'team-actions';
         btns.innerHTML = `
@@ -158,18 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <button onclick="deleteEquipo(${eq.id})">Eliminar</button>
         `;
 
-        const badge = document.createElement('span');
-        badge.className = 'performance-badge ' + getPerformanceClass(eq.promedio || 0);
-        badge.textContent = `${Math.round(eq.promedio || 0)}%`;
+       
 
         div.appendChild(position);
         div.appendChild(img);
         div.appendChild(name);
         div.appendChild(pos);
+         div.appendChild(badge);
         div.appendChild(btns);
-        div.appendChild(badge);
 
-        div.onclick = () => loadJugadores(eq.id, eq.nombre);
         teamsList.appendChild(div);
       });
   }
@@ -205,60 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  async function loadJugadores(equipoId, nombreEquipo) {
-    const response = await fetch(`/api/teams/${equipoId}/players`);
-    jugadores = await response.json();
-    currentJugadorPage = 1;
-    renderJugadoresPaginados(nombreEquipo);
-    playersListContainer.classList.remove('hidden');
-    teamsListContainer.classList.add('hidden');
-  }
-
-  function renderJugadoresPaginados(nombreEquipo) {
-    const { page, totalPages, items } = paginate(jugadores, currentJugadorPage);
-    jugadoresTableBody.innerHTML = '';
-    jugadorPagination.innerHTML = '';
-    document.getElementById('playersModalTitle').textContent = `Jugadores de ${nombreEquipo}`;
-
-    items.forEach(j => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${j.nombre}</td>
-        <td>${j.posicion}</td>
-        <td>${j.numero}</td>
-      `;
-      jugadoresTableBody.appendChild(row);
-    });
-
-    for (let i = 1; i <= totalPages; i++) {
-      const btn = document.createElement('button');
-      btn.textContent = i;
-      if (i === page) btn.classList.add('active');
-      btn.onclick = () => {
-        currentJugadorPage = i;
-        renderJugadoresPaginados(nombreEquipo);
-      };
-      jugadorPagination.appendChild(btn);
-    }
-  }
-
   viewTeamsBtn.addEventListener('click', () => {
     teamsModal.classList.remove('hidden');
   });
 
   closeTeamsModal.addEventListener('click', () => {
     teamsModal.classList.add('hidden');
-    playersListContainer.classList.add('hidden');
-    teamsListContainer.classList.remove('hidden');
-  });
-
-  closePlayersModal.addEventListener('click', () => {
-    playersModal.classList.add('hidden');
-  });
-
-  backToTeamsBtn.addEventListener('click', () => {
-    playersListContainer.classList.add('hidden');
-    teamsListContainer.classList.remove('hidden');
   });
 
   function paginate(data, page) {
@@ -268,6 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const items = data.slice(start, end);
     return { page, totalPages, items };
   }
-  loadJugadores();
+
   loadEquipos();
 });
