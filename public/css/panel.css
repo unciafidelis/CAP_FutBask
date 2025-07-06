@@ -5,7 +5,7 @@ body {
   background: #eaf4fc;
 }
 
-/* Toggle buttons */
+/* Botones flotantes */
 .toggle {
   position: fixed;
   top: 50%;
@@ -26,7 +26,7 @@ body {
   border-radius: 5px 0 0 5px;
 }
 
-/* Sidebars */
+/* Paneles laterales */
 .sidebar {
   position: fixed;
   top: 0;
@@ -41,25 +41,30 @@ body {
 .sidebar-left { left: 0; transform: translateX(-100%); }
 .sidebar-right { right: 0; transform: translateX(100%); }
 .sidebar.open { transform: translateX(0); }
+
 .sidebar h3, .subtitulo {
   padding: 1rem;
   margin: 0;
+  color: #fff;
+  font-weight: bold;
 }
+
 .sidebar ul {
   list-style: none;
   padding: 0 1rem;
   margin: 0;
 }
+
 .sidebar ul li {
   padding: 5px 0;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #444;
+  color: #eee;
+  font-size: 14px;
 }
-
-/* Botonera]*/
 
 .button-column {
   position: absolute;
-  top: 38%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -70,7 +75,7 @@ body {
   padding: 12px 16px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-height: 60vh;
+  max-height: 100vh;
 }
 
 .action-btn {
@@ -96,14 +101,12 @@ body {
   opacity: 0.6;
 }
 
-
 .action-btn:hover {
   background-color: #d0eaff;
   border-color: #3399ff;
 }
 
-
-/* Cancha */
+/* Contenedor general de la cancha */
 .cancha-container {
   position: fixed;
   top: 12%;
@@ -111,37 +114,130 @@ body {
   left: 0;
   right: 0;
   display: flex;
-  justify-content: space-between;
-  padding: 10px 60px;
-  box-sizing: border-box;
-}
-
-/* Equipo A y B */
-
-.fila {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* Tarjetas jugador */
-.tarjeta.jugador {
-  width: 70px;
-  height: 90px;
-  background: #1f1f1f;
-  border: 2px solid #444;
-  border-radius: 8px;
-  display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: center;
+  padding: 0 5%;
+  box-sizing: border-box;
+  gap: 20%;
+}
+
+/* Grids por equipo */
+.lado-equipo {
+  width: 30%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, auto);
+  justify-items: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* Centrar la primera tarjeta (portero) */
+.lado-equipo .player-card:nth-child(1) {
+  grid-column: 1 / span 2;
+}
+
+/* Tarjeta de jugador */
+.player-card {
+  width: 120px;
+  background: linear-gradient(145deg, #f0d9b5, #d6b375);
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #000;
+  padding: 8px 6px;
+  margin: 4px auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: relative;
+  transform: scale(0.95);
+  font-size: 13px;
+}
+
+/* Cabecera de la tarjeta */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 0 6px;
+}
+
+/* Puntuación general */
+.card-rating {
+  font-size: 20px;
+}
+
+/* Posición (GK, D, M, FW) */
+.card-position {
+  background: #000;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* Imagen del jugador */
+.card-image {
+  margin: 8px auto;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Número del jugador */
+.card-number {
+  position: relative;
+  margin-top: -25px;
+  background: #1f1f1f;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid #fff;
+}
+
+/* Nombre del jugador */
+.card-name {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 5px 0;
+  text-transform: uppercase;
+}
+
+/* Estadísticas */
+.card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.card-stats div {
+  background: #fff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-stats span {
   font-weight: bold;
 }
-.portero { background: #cce5ff; }
-.defensa { background: #d4edda; }
-.medio { background: #fff3cd; }
-.delantero { background: #f8d7da; }
 
-/* Footer marcador */
+/* Marcador inferior */
 .marcador-footer {
   position: fixed;
   bottom: 0;
@@ -155,189 +251,6 @@ body {
   align-items: center;
   font-size: 22px;
 }
-.marcador-central {
-  font-size: 36px;
-}
-
-/* Responsivo */
-@media (max-width: 1024px) {
-  .tarjeta.jugador {
-    width: 60px;
-    height: 80px;
-    font-size: 12px;
-  }
-  .marcador-footer {
-    font-size: 18px;
-  }
-  .marcador-central {
-    font-size: 28px;
-  }
-  .botonera-superior {
-    flex-wrap: wrap;
-    height: auto;
-    padding: 10px;
-  }
-}
-
-.player-card.selected {
-  border: 2px solid #007bff;
-  background-color: #e6f2ff;
-  transform: scale(1.05);
-  transition: all 0.2s ease;
-}
-
-.player-card {
-  width: 160px;
-  background: linear-gradient(145deg, #f0d9b5, #d6b375);
-  border-radius: 12px;
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  color: #000;
-  padding: 10px 8px;
-  margin: 10px auto;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  position: relative;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  font-size: 14px;
-  padding: 0 6px;
-}
-
-.card-rating {
-  font-size: 20px;
-}
-
-.card-position {
-  background: #000;
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-
-.card-image {
-  margin: 8px auto;
-  width: 100px;
-  height: 100px;
-  overflow: hidden;
-  border-radius: 50%;
-  border: 2px solid #fff;
-}
-
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.card-number {
-  position: relative;
-  margin-top: -25px; /* Superpone hacia arriba */
-  background: #1f1f1f;
-  color: #fff;
-  width: 36px;
-  height: 36px;
-  line-height: 36px;
-  border-radius: 50%;
-  font-size: 16px;
-  font-weight: bold;
-  margin-left: auto;
-  margin-right: auto;
-  z-index: 5;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  border: 2px solid #fff;
-}
-
-.card-name {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 5px 0;
-  text-transform: uppercase;
-}
-
-.card-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  font-size: 13px;
-}
-
-.card-stats div {
-  background: #fff;
-  padding: 4px 6px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.card-stats span {
-  font-weight: bold;
-}
-
-.lado-equipo {
-  width: 30%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(3, auto);
-  justify-content: center; /* Centra el grid horizontalmente */
-  align-content: center;   /* Centra el grid verticalmente dentro del contenedor */
-  justify-items: center;   /* Centra cada tarjeta en su celda horizontalmente */
-  align-items: center;     /* Centra cada tarjeta en su celda verticalmente */
-  height: 100%;            /* Ocupa el alto total de la cancha */
-  box-sizing: border-box;
-}
-
-
-/* Ajusta tamaño para ver 5 tarjetas de cada lado */
-.player-card {
-  width: 120px;
-  height: auto;
-  padding: 8px 6px;
-  margin: 4px auto;
-  font-size: 13px;
-  transform: scale(0.95);
-}
-.card-image {
-  width: 80px;
-  height: 80px;
-}
-.card-number {
-  width: 28px;
-  height: 28px;
-  font-size: 13px;
-  line-height: 28px;
-}
-.card-name {
-  font-size: 13px;
-}
-.card-stats {
-  font-size: 11px;
-  gap: 4px;
-}
-.card-stats div {
-  padding: 2px 4px;
-}
-
-.cancha-container {
-  position: fixed;
-  top: 12%;
-  bottom: 20%;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0 5%; /* Espacio horizontal sin empalmar la botonera */
-  box-sizing: border-box;
-  gap: 20%; /* Separación entre lados */
-}
-
-.lado-equipo .player-card:nth-child(1) {
-  grid-column: 1 / span 2; /* Portero centrado */
-}
 
 .marcador-control {
   display: flex;
@@ -345,6 +258,11 @@ body {
   gap: 20px;
 }
 
+.marcador-central {
+  font-size: 36px;
+}
+
+/* Botones del marcador */
 .score-btn {
   font-size: 24px;
   width: 40px;
@@ -369,6 +287,7 @@ body {
   transform: scale(1.1);
 }
 
+/* Botones de tarjetas */
 .tarjetas-panel {
   display: flex;
   gap: 30px;
@@ -399,6 +318,7 @@ body {
   color: white;
 }
 
+/* Modal (overlay oscuro y contenido) */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -418,6 +338,7 @@ body {
   max-width: 500px;
   max-height: 80vh;
   overflow-y: auto;
+  color: white;
 }
 
 .modal-content h2, .modal-content h3 {
@@ -433,5 +354,86 @@ body {
   padding: 5px 0;
 }
 
+/* Estilos para dispositivos pequeños */
+@media (max-width: 1024px) {
+  .tarjeta.jugador {
+    width: 60px;
+    height: 80px;
+    font-size: 12px;
+  }
+  .marcador-footer {
+    font-size: 18px;
+  }
+  .marcador-central {
+    font-size: 28px;
+  }
+  .botonera-superior {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px;
+  }
+}
 
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
 
+  .button-column {
+    background-color: #2c2c2c;
+  }
+
+  .modal-content {
+    background-color: #2a2a2a;
+    color: #fff;
+  }
+
+  .sidebar {
+    background-color: #1c1c1c;
+  }
+
+  .action-btn {
+    background-color: #333;
+    color: #eee;
+    border-color: #444;
+  }
+
+  .action-btn:hover {
+    background-color: #555;
+    border-color: #3d5afe;
+  }
+
+  .marcador-footer {
+    background-color: #111;
+  }
+
+  .score-btn {
+    background-color: #333;
+    color: #fff;
+  }
+
+  .score-btn:disabled {
+    background-color: #444;
+    color: #999;
+  }
+}
+
+@media (pointer: coarse) {
+  .score-btn, .tarjeta-btn {
+    font-size: 20px;
+    padding: 12px;
+  }
+
+  .player-card {
+    transform: scale(1.05);
+  }
+
+  .button-column {
+    gap: 16px;
+  }
+
+  .marcador-footer {
+    font-size: 20px;
+  }
+}

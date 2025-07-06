@@ -3,10 +3,6 @@ let scoreA = 0;
 let scoreB = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-
-  // ================================
-  // ELEMENTOS DOM
-  // ================================
   const tarjetas = document.querySelectorAll('.player-card');
   const botones = document.querySelectorAll('.action-btn');
   const marcador = document.getElementById('score');
@@ -24,9 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const tarjetasPorJugador = {};
 
-  // ================================
-  // FUNCIONES UTILITARIAS
-  // ================================
   function actualizarMarcador() {
     marcador.textContent = `${scoreA} - ${scoreB}`;
   }
@@ -36,13 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const permitidos = accionesPorPosicion[clave] || [];
 
     botones.forEach(btn => {
-      if (permitidos.includes(btn.dataset.action)) {
-        btn.disabled = false;
-        btn.classList.remove('disabled-btn');
-      } else {
-        btn.disabled = true;
-        btn.classList.add('disabled-btn');
-      }
+      btn.disabled = !permitidos.includes(btn.dataset.action);
+      btn.classList.toggle('disabled-btn', btn.disabled);
     });
   }
 
@@ -64,24 +52,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function guardarEnLocalStorage(accion) {
+    const acciones = JSON.parse(localStorage.getItem('acciones') || '[]');
+    acciones.push(accion);
+    localStorage.setItem('acciones', JSON.stringify(acciones));
+  }
+
   async function registrarAccion(payload) {
+    guardarEnLocalStorage(payload);
     try {
       const response = await fetch('/api/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
-      const result = await response.json();
       if (!response.ok) {
-        console.error('❌ Error al registrar acción:', result.message || 'Desconocido');
+        throw new Error('No se pudo sincronizar');
       }
     } catch (err) {
-      console.error('❌ Error de red al registrar acción:', err);
+      console.warn('🔌 Acción almacenada localmente. Sin conexión:', payload);
     }
   }
 
-  // ================================
+  async function sincronizarAccionesPendientes() {
+    const pendientes = JSON.parse(localStorage.getItem('acciones') || '[]');
+    if (pendientes.length === 0) return;
+
+    for (const payload of pendientes) {
+      try {
+        const res = await fetch('/api/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error();
+      } catch {
+        return;
+      }
+    }
+
+    console.log('✅ Acciones sincronizadas');
+    localStorage.removeItem('acciones');
+  }
+
+  sincronizarAccionesPendientes();
+
+    // ================================
   // SELECCIÓN DE JUGADOR
   // ================================
   tarjetas.forEach(card => {
@@ -110,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ================================
-  // ACCIONES DESDE BOTONERA CENTRAL
+  // ACCIONES DE JUGADORES
   // ================================
   botones.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -118,9 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const accion = btn.textContent;
 
-      console.log(`🔧 Acción: ${accion} → Jugador: ${jugadorSeleccionado.nombre} (#${jugadorSeleccionado.numero})`);
-
-      registrarAccion({
+      const payload = {
         jugador: jugadorSeleccionado.nombre,
         numero: jugadorSeleccionado.numero,
         posicion: jugadorSeleccionado.posicion,
@@ -128,7 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
         accion,
         tipo: 'accion',
         timestamp: new Date().toISOString()
-      });
+      };
+
+      registrarAccion(payload);
     });
   });
 
@@ -139,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scoreA++;
     actualizarMarcador();
 
-    const isAutogol = jugadorSeleccionado && jugadorSeleccionado.equipo === 'Equipo B';
+    const isAutogol = jugadorSeleccionado?.equipo === 'Equipo B';
     const payload = {
       jugador: jugadorSeleccionado?.nombre || 'Desconocido',
       numero: jugadorSeleccionado?.numero || 'N/A',
@@ -157,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scoreB++;
     actualizarMarcador();
 
-    const isAutogol = jugadorSeleccionado && jugadorSeleccionado.equipo === 'Equipo A';
+    const isAutogol = jugadorSeleccionado?.equipo === 'Equipo A';
     const payload = {
       jugador: jugadorSeleccionado?.nombre || 'Desconocido',
       numero: jugadorSeleccionado?.numero || 'N/A',
@@ -167,8 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tipo: isAutogol ? 'autogol' : 'gol',
       timestamp: new Date().toISOString()
     };
-
-    console.log(payload)
 
     registrarAccion(payload);
   });
@@ -183,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const nombre = jugadorSeleccionado.nombre;
 
     tarjetasPorJugador[numero] = tarjetasPorJugador[numero] || { amarillas: 0, roja: false };
-
     if (tarjetasPorJugador[numero].roja) return;
 
     tarjetasPorJugador[numero].amarillas++;
@@ -200,9 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (tarjetasPorJugador[numero].amarillas === 2) {
       tarjetasPorJugador[numero].roja = true;
-      console.log(`🟥 Expulsión por doble amarilla para ${nombre}`);
       marcarExpulsado(jugadorSeleccionado.dom);
-
       registrarAccion({
         jugador: nombre,
         numero,
@@ -222,10 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const nombre = jugadorSeleccionado.nombre;
 
     tarjetasPorJugador[numero] = tarjetasPorJugador[numero] || { amarillas: 0, roja: false };
-
     if (tarjetasPorJugador[numero].roja) return;
 
     tarjetasPorJugador[numero].roja = true;
+
+    marcarExpulsado(jugadorSeleccionado.dom);
 
     registrarAccion({
       jugador: nombre,
@@ -236,26 +248,24 @@ document.addEventListener('DOMContentLoaded', () => {
       tipo: 'expulsion',
       timestamp: new Date().toISOString()
     });
-
-    marcarExpulsado(jugadorSeleccionado.dom);
   });
 
   // ================================
-  // COLORES DE POSICIÓN
+  // COLORES POR POSICIÓN
   // ================================
   document.querySelectorAll('.card-position').forEach(pos => {
     const tipo = pos.textContent.trim();
     switch (tipo) {
       case 'GK':
-        pos.style.backgroundColor = 'orange'; break;
+        pos.style.backgroundColor = '#e67e22'; break;
       case 'D':
-        pos.style.backgroundColor = 'yellow'; pos.style.color = '#000'; break;
+        pos.style.backgroundColor = '#27ae60'; break;
       case 'M':
-        pos.style.backgroundColor = 'green'; break;
+        pos.style.backgroundColor = '#f1c40f'; pos.style.color = '#333'; break;
       case 'FW':
-        pos.style.backgroundColor = 'dodgerblue'; break;
+        pos.style.backgroundColor = '#3498db'; break;
       default:
-        pos.style.backgroundColor = '#000'; break;
+        pos.style.backgroundColor = '#444'; break;
     }
   });
 
