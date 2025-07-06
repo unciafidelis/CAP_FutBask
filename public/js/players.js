@@ -36,43 +36,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   formPlayer.addEventListener('submit', async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    const jugador = {
-      nombre: document.getElementById('playerName').value,
-      posicion: document.getElementById('position').value,
-      pie: document.getElementById('foot').value,
-      numero: parseInt(document.getElementById('number').value),
-      equipo_id: parseInt(teamSelect.value),
-      foto:document.getElementById('playerPhoto')
-    };
+  const formData = new FormData();
+  formData.append('nombre', document.getElementById('playerName').value);
+  formData.append('posicion', document.getElementById('position').value);
+  formData.append('pie', document.getElementById('foot').value);
+  formData.append('numero', document.getElementById('number').value);
+  formData.append('equipo_id', teamSelect.value);
 
-    const fotoInput = document.getElementById('playerPhoto');
-    const imageFile = fotoInput.files[0];
-    if (imageFile) {
-      formPlayer.append('foto', imageFile);
-    }
+  const fotoInput = document.getElementById('playerPhoto');
+  const imageFile = fotoInput.files[0];
+  if (imageFile) {
+    formData.append('foto', imageFile);
+  }
 
-    const url = currentEditId ? `/api/players/${currentEditId}` : '/api/players';
-    const method = currentEditId ? 'PUT' : 'POST';
+  const url = currentEditId ? `/api/players/${currentEditId}` : '/api/players';
+  const method = currentEditId ? 'PUT' : 'POST';
 
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(jugador)
-    });
-
-    if (response.ok) {
-      alert(currentEditId ? 'Jugador actualizado' : 'Jugador agregado');
-      formPlayer.reset();
-      currentEditId = null;
-      jugadores = await fetchJugadores();
-      renderModalJugadores(currentPage);
-    } else {
-      const result = await response.json();
-      alert('Error: ' + (result.message || 'No se pudo procesar'));
-    }
+  const response = await fetch(url, {
+    method,
+    body: formData
   });
+
+  if (response.ok) {
+    alert(currentEditId ? 'Jugador actualizado' : 'Jugador agregado');
+    formPlayer.reset();
+    currentEditId = null;
+    jugadores = await fetchJugadores();
+    renderModalJugadores(currentPage);
+  } else {
+    const result = await response.json();
+    alert('Error: ' + (result.error || 'No se pudo procesar'));
+  }
+});
+
 
   async function loadEquipos() {
   try {
@@ -133,21 +131,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tagClass = positionColors[jugador.posicion] || '';
 
-    const card = document.createElement('div');
-    card.className = 'jugador-card';
+const card = document.createElement('div');
+card.className = 'jugador-card';
 
-    card.innerHTML = `
-      <div class="foto-nombre">
-        <img src="${fotoJugador}" alt="${jugador.nombre}" class="foto-jugador"/>
-        <div class="info-jugador">
-          <h4>${jugador.nombre}</h4>
-          <span class="position-tag ${tagClass}">${jugador.posicion}</span>
-          <p>Pie: ${jugador.pie}</p>
-          <p>Número: ${jugador.numero}</p>
+card.innerHTML = `
+  <img src="${fotoJugador}" alt="${jugador.nombre}" class="foto-jugador" />
+  <div class="info-nombre">${jugador.nombre}</div>
+  <div class="info-posicion ${tagClass}">${jugador.posicion}</div>
+  <div class="info-pie">${jugador.pie}</div>
+  <div class="info-numero">${jugador.numero}</div>
+  <img src="${fotoEquipo}" alt="Equipo" class="foto-equipo-mini" />
+   <div class="player-actions">
+          <button class="icon-button edit" onclick="editJugador(${jugador.id})">
+            <span class="material-icons">edit</span>
+          </button>
+          <button class="icon-button delete" onclick="deleteJugador(${jugador.id})">
+            <span class="material-icons">delete</span>
+          </button>
         </div>
-        <img src="${fotoEquipo}" alt="Equipo" class="foto-equipo-mini"/>
-      </div>
-    `;
+`;
+
 
     playersContainer.appendChild(card);
   });
