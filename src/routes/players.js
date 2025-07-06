@@ -6,20 +6,24 @@ const fs = require('fs');
 
 module.exports = (db) => {
   const router = express.Router();
+  // ✅ Definimos correctamente el directorio de imágenes
+    const imgDir = path.join(__dirname, '../img/playerImg');
+  
+    // ✅ Creamos el directorio si no existe
+    if (!fs.existsSync(imgDir)) {
+      fs.mkdirSync(imgDir, { recursive: true });
+    }
 
+    
   // === Configuración de Multer para fotos de jugador ===
   const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      const dir = path.join(__dirname, '..', 'img', 'playerImg');
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      cb(null, dir);
-    },
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
-      const name = Date.now() + '-' + Math.round(Math.random() * 1E9) + ext;
-      cb(null, name);
-    }
-  });
+      destination: (req, file, cb) => cb(null, imgDir),
+      filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const name = `player_${Date.now()}${ext}`;
+        cb(null, name);
+      }
+    });
 
   const upload = multer({ storage });
 
@@ -64,7 +68,7 @@ module.exports = (db) => {
   // === Crear jugador con imagen ===
   router.post('/', upload.single('foto'), (req, res) => {
     const { nombre, posicion, pie, numero, equipo_id } = req.body;
-    const foto = req.file ? req.file.filename : null;
+    const foto = req.file ? `/img/playerImg/${req.file.filename}` : null;
 
     if (!nombre || !posicion || !pie || !numero || !equipo_id) {
       return res.status(400).json({ error: 'Faltan datos requeridos' });

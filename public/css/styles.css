@@ -616,13 +616,6 @@ tbody td {
   overflow-y: auto;
 }
 
-.modal-players-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
 .hidden {
   display: none;
 }

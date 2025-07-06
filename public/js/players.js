@@ -19,13 +19,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const jugadoresPorPagina = 5;
 
   loadEquipos();
-  renderModalJugadores() // Para tenerlos listos desde el inicio
+  loadJugadores() // Para tenerlos listos desde el inicio
 
   // Eventos modal
-  openModalBtn.addEventListener('click', () => {
-    playerModal.classList.remove('hidden');
-    renderModalJugadores(currentPage);
-  });
+  openModalBtn?.addEventListener('click', async () => {
+  const modal = document.getElementById('playerModal');
+  const container = document.getElementById('playersContainer');
+
+  container.innerHTML = ''; // Limpia contenido anterior
+  await loadJugadores();    // Carga los jugadores
+  modal.classList.remove('hidden');
+});
 
   closeModalBtn.addEventListener('click', () => {
     playerModal.classList.add('hidden');
@@ -39,19 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
       posicion: document.getElementById('position').value,
       pie: document.getElementById('foot').value,
       numero: parseInt(document.getElementById('number').value),
-      equipo_id: parseInt(teamSelect.value)
+      equipo_id: parseInt(teamSelect.value),
+      foto:document.getElementById('playerPhoto')
     };
 
     const fotoInput = document.getElementById('playerPhoto');
-    if (fotoInput.files.length > 0) {
-      const formData = new FormData();
-      formData.append('foto', fotoInput.files[0]);
-      const uploadRes = await fetch('/api/players', {
-        method: 'POST',
-        body: formData
-      });
-      const uploadJson = await uploadRes.json();
-      jugador.foto = uploadJson.filename;
+    const imageFile = fotoInput.files[0];
+    if (imageFile) {
+      formPlayer.append('foto', imageFile);
     }
 
     const url = currentEditId ? `/api/players/${currentEditId}` : '/api/players';
@@ -126,11 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
   currentJugadores.forEach(jugador => {
     const fotoJugador = jugador.foto
       ? `${jugador.foto}`
-      : '/img/avatar.png';
+      : '/img/playerImg/avatar.png';
 
     const fotoEquipo = jugador.foto_equipo
       ? `${jugador.foto_equipo}`
-      : '/img/avatar.png';
+      : '/img/teamImg/avatar.png';
 
     const tagClass = positionColors[jugador.posicion] || '';
 
@@ -176,8 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const tagClass = positionColors[j.posicion] || '';
       const tag = `<span class="position-tag ${tagClass}">${j.posicion}</span>`;
       const fotoJugador = j.foto ? `${j.foto}` : '/img/playerImg/avatar.png';
+      console.log(fotoJugador)
       const fotoEquipo = j.foto_equipo ? `${j.foto_equipo}` : '/img/playerImg/avatar.png';
-
+      
       const div = document.createElement('div');
       div.classList.add('modal-player-card');
       div.innerHTML = `
