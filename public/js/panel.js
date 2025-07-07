@@ -1,19 +1,17 @@
 // panel.js
 
-// ————————————————
-// Variables globales
-// ————————————————
+// ————————————— Variables globales —————————————
 let partidoActivo = null;
 let equipoActualSeleccion = null; // "A" o "B"
 
 const positionColors = {
   GK: 'position-GK',
-  D: 'position-D',
-  M: 'position-M',
+  D:  'position-D',
+  M:  'position-M',
   FW: 'position-FW'
 };
 
-// Referencias DOM
+// ————————————— Referencias DOM —————————————
 const partidoSelect        = document.getElementById("partidoSelect");
 const modalSeleccion       = document.getElementById("modalSeleccion");
 const playerModal          = document.getElementById("playerModal");
@@ -33,22 +31,14 @@ const btnCambioB           = document.getElementById('btnRealizarCambioB');
 let jugadorCanchaSeleccionado = null;
 let jugadorBancaSeleccionado  = null;
 
-// ————————————————
-// Mostrar modal principal al cargar
-// ————————————————
+// ————————— Mostrar modal principal al cargar ————————
 window.addEventListener("load", () => {
   modalSeleccion.style.display = "flex";
 });
 
-// ————————————————
-// Control Modal Principal
-// ————————————————
-btnAbrirModal.addEventListener("click", () => {
-  modalSeleccion.style.display = "flex";
-});
-window.cerrarModal = () => {
-  modalSeleccion.style.display = "none";
-};
+// ————————— Control Modal Principal ——————————
+btnAbrirModal.addEventListener("click", () => modalSeleccion.style.display = "flex");
+window.cerrarModal = () => modalSeleccion.style.display = "none";
 window.guardarSeleccion = () => {
   const selectedId = partidoSelect.value;
   if (!selectedId) {
@@ -60,9 +50,7 @@ window.guardarSeleccion = () => {
   cerrarModal();
 };
 
-// ————————————————
-// Cargar datos de un partido
-// ————————————————
+// ————————— Cargar datos de un partido —————————
 function cargarDatosPartido(partidoId) {
   fetch(`/api/matches/${partidoId}`)
     .then(res => res.json())
@@ -70,8 +58,7 @@ function cargarDatosPartido(partidoId) {
       partidoActivo = partido;
       localStorage.setItem("equipoA_id", partido.equipoA_id);
       localStorage.setItem("equipoB_id", partido.equipoB_id);
-
-      // Actualizar nombres y logos
+      // Actualizar nombres
       [
         ["nombreEquipoA", partido.equipoA],
         ["nombreEquipoB", partido.equipoB],
@@ -80,7 +67,7 @@ function cargarDatosPartido(partidoId) {
         ["nombreModalEquipoA", partido.equipoA],
         ["nombreModalEquipoB", partido.equipoB],
       ].forEach(([id, text]) => document.getElementById(id).textContent = text);
-
+      // Actualizar logos
       document.getElementById("logoFooterA").src  = partido.logoA || "placeholderA.png";
       document.getElementById("logoFooterB").src  = partido.logoB || "placeholderB.png";
       document.getElementById("logoEquipoA").src = partido.logoA || "placeholderA.png";
@@ -91,9 +78,8 @@ function cargarDatosPartido(partidoId) {
       alert("No se pudo cargar la información del partido.");
     });
 }
-// ————————————————
-// Carga inicial de partidos en el select
-// ————————————————
+
+// ————————— Carga inicial de partidos en el select —————————
 document.addEventListener("DOMContentLoaded", () => {
   fetch("/api/matches")
     .then(res => res.json())
@@ -124,9 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ————————————————
-// Preview al cambiar de partido en el select
-// ————————————————
+// ———————— Preview al cambiar de partido en el select ————————
 partidoSelect.addEventListener("change", () => {
   const id = partidoSelect.value;
   if (!id) return;
@@ -135,16 +119,13 @@ partidoSelect.addEventListener("change", () => {
     .then(p => {
       document.getElementById("nombreModalEquipoA").textContent = p.equipoA;
       document.getElementById("nombreModalEquipoB").textContent = p.equipoB;
-      // **Aquí también fotoA/fotoB**
       document.getElementById("logoEquipoA").src = p.fotoA || "placeholderA.png";
       document.getElementById("logoEquipoB").src = p.fotoB || "placeholderB.png";
     })
     .catch(err => console.error("❌ Error preview partido:", err));
 });
 
-// ————————————————
-// Modal de selección de jugadores
-// ————————————————
+// ————————— Modal de selección de jugadores —————————
 function abrirModalJugadores(equipoId, equipoLado) {
   equipoActualSeleccion = equipoLado;
   playerModal.classList.remove("hidden");
@@ -154,25 +135,24 @@ function abrirModalJugadores(equipoId, equipoLado) {
     .then(jugadores => {
       jugadores.forEach(j => {
         const card = document.createElement('div');
-        card.className = 'player-card';
+        card.className  = 'player-card';
         card.dataset.id = j.id;
-        card.innerHTML = `
+        card.innerHTML  = `
           <img src="${j.foto||'/img/playerImg/avatar.png'}" class="foto-jugador" />
           <div class="info-nombre">${j.nombre}</div>
           <div class="info-posicion ${positionColors[j.posicion]||''}">${j.posicion}</div>
           <div class="info-pie">${j.pie}</div>
-          <div class="info-numero">#${j.numero}</div>
+          <div class="info-numero">${j.numero}</div>
           <div class="posiciones-select">
             <label><input type="radio" name="pos-${j.id}" value="GK">GK</label>
             <label><input type="radio" name="pos-${j.id}" value="D">D</label>
             <label><input type="radio" name="pos-${j.id}" value="M">M</label>
-            <label><input type="radio" name="pos-${j.id}" value="F">F</label>
+            <label><input type="radio" name="pos-${j.id}" value="FW">FW</label>
           </div>
           <button class="btn-cancha-toggle">Enviar a cancha</button>
         `;
-        card.querySelector(".btn-cancha-toggle").addEventListener("click", () => {
-          card.classList.toggle("en-cancha");
-        });
+        card.querySelector(".btn-cancha-toggle")
+            .addEventListener("click", () => card.classList.toggle("en-cancha"));
         playersContainer.appendChild(card);
       });
     });
@@ -182,35 +162,29 @@ closeModalBtn.addEventListener("click", () => {
   equipoActualSeleccion = null;
 });
 
-// ————————————————
-// Guardar alineación desde el modal de jugadores
-// ————————————————
+// —————— Guardar alineación desde el modal de jugadores ——————
 guardarAlineacionBtn.addEventListener("click", () => {
   const cards = playersContainer.querySelectorAll('.player-card');
   const jugadores = [];
   cards.forEach(card => {
-    const id     = parseInt(card.dataset.id, 10);
-    const nombre = card.querySelector('.info-nombre').textContent;
-    const numero = card.querySelector('.info-numero').textContent.replace('#','');
-    const foto   = card.querySelector('img').src;
-    const pie    = card.querySelector('.info-pie').textContent;
+    const id       = +card.dataset.id;
+    const nombre   = card.querySelector('.info-nombre').textContent;
+    const numero   = card.querySelector('.info-numero').textContent.replace('#','');
+    const foto     = card.querySelector('img').src;
+    const pie      = card.querySelector('.info-pie').textContent;
     const defaultPos = card.querySelector('.info-posicion').textContent.trim();
-    const posSel = card.querySelector('input[type="radio"]:checked')?.value;
-    // **Incluye TODOS** los jugadores; los sin radio van a banca
-    const enCancha = card.classList.contains('en-cancha');
-    const posicion = posSel || defaultPos;
+    const posSel     = card.querySelector('input[type="radio"]:checked')?.value;
+    const enCancha   = card.classList.contains('en-cancha');
+    const posicion   = posSel || defaultPos;
     jugadores.push({ id, nombre, numero, foto, pie, posicion, enCancha });
   });
-
   actualizarVistaJugadores(equipoActualSeleccion, jugadores);
   playerModal.classList.add("hidden");
   modalSeleccion.style.display = "flex";
   equipoActualSeleccion = null;
 });
 
-// ————————————————
-// Actualiza sidebar y cancha tras guardar alineación
-// ————————————————
+// ————— Actualiza sidebar y cancha tras guardar alineación —————
 function actualizarVistaJugadores(equipoLado, jugadores) {
   const cancha = jugadores.filter(j => j.enCancha);
   const banca  = jugadores.filter(j => !j.enCancha);
@@ -218,9 +192,7 @@ function actualizarVistaJugadores(equipoLado, jugadores) {
   renderJugadoresEnCancha(equipoLado, cancha);
 }
 
-// ————————————————
-// Renderizado sidebar (cancha / banca)
-// ————————————————
+// ————— Renderizado sidebar (cancha / banca) —————
 function renderSidebarJugadores(equipoLado, jugadoresCancha, jugadoresBanca) {
   const enCancha = document.getElementById(`enCancha${equipoLado}`);
   const enBanca  = document.getElementById(`enBanca${equipoLado}`);
@@ -235,8 +207,9 @@ function renderSidebarJugadores(equipoLado, jugadoresCancha, jugadoresBanca) {
     li.dataset.posicion = j.posicion;
     li.innerHTML = `
       <img src="${j.foto}" />
-      <span>#${j.numero}</span>
+      <span>${j.numero}</span>
       <span>${j.nombre}</span>
+      <div class="card-position-li position-${j.posicion}">${j.posicion}</div>
     `;
     li.addEventListener('click', () => seleccionarParaCambio(li));
     return li;
@@ -246,14 +219,17 @@ function renderSidebarJugadores(equipoLado, jugadoresCancha, jugadoresBanca) {
   jugadoresBanca .forEach(j => enBanca .appendChild(crearLi(j, 'banca')));
 }
 
-// ————————————————
-// Selección de jugador para cambio
-// ————————————————
+// ————— Selección de jugador para cambio —————
 function seleccionarParaCambio(el) {
-  if (el.dataset.tipo === 'cancha') {
-    if (jugadorCanchaSeleccionado) jugadorCanchaSeleccionado.classList.remove('selected');
-    el.classList.add('selected');
-    jugadorCanchaSeleccionado = el;
+  const tipo = el.dataset.tipo;
+  if (tipo === 'cancha') {
+    if (!jugadorCanchaSeleccionado) {
+      el.classList.add('selected');
+      jugadorCanchaSeleccionado = el;
+    } else if (!jugadorBancaSeleccionado) {
+      el.classList.add('selected');
+      jugadorBancaSeleccionado = el;
+    }
   } else {
     if (jugadorBancaSeleccionado) jugadorBancaSeleccionado.classList.remove('selected');
     el.classList.add('selected');
@@ -261,88 +237,105 @@ function seleccionarParaCambio(el) {
   }
 }
 
-// ————————————————
-// Botones de cambio en sidebar
-// ————————————————
+// ————— Botones de cambio en sidebar —————
 if (btnCambioA) btnCambioA.addEventListener('click', () => realizarCambio('A'));
 if (btnCambioB) btnCambioB.addEventListener('click', () => realizarCambio('B'));
 
+// ————— Función de cambio (bench↔field o swap posiciones cancha) —————
 function realizarCambio(equipoLado) {
   if (!jugadorCanchaSeleccionado || !jugadorBancaSeleccionado) {
-    alert("Selecciona un jugador de cancha y uno de banca.");
+    alert("Selecciona dos jugadores válidos (campo o banco).");
     return;
   }
   const enC = document.getElementById(`enCancha${equipoLado}`);
   const enB = document.getElementById(`enBanca${equipoLado}`);
-  enC.appendChild(jugadorBancaSeleccionado);
-  enB.appendChild(jugadorCanchaSeleccionado);
 
-  // Reconstruir y volver a renderizar cancha
+  // intercambio de posiciones si ambos en cancha
+  if (jugadorBancaSeleccionado.dataset.tipo === 'cancha') {
+    const pos1 = jugadorCanchaSeleccionado.dataset.posicion;
+    const pos2 = jugadorBancaSeleccionado.dataset.posicion;
+    jugadorCanchaSeleccionado.dataset.posicion = pos2;
+    jugadorBancaSeleccionado.dataset.posicion  = pos1;
+  } else {
+    const posCancha = jugadorCanchaSeleccionado.dataset.posicion;
+    jugadorBancaSeleccionado.dataset.posicion = posCancha;
+    enC.appendChild(jugadorBancaSeleccionado);
+    enB.appendChild(jugadorCanchaSeleccionado);
+    jugadorBancaSeleccionado.dataset.tipo = 'cancha';
+    jugadorCanchaSeleccionado.dataset.tipo = 'banca';
+  }
+
+  // reconstruir lista y refrescar
   const updated = [];
   document.querySelectorAll(`#enCancha${equipoLado} .sidebar-jugador`).forEach(li => {
     updated.push({
-      id:       parseInt(li.dataset.id,10),
-      nombre:   li.children[2].textContent,
-      numero:   li.children[1].textContent.replace('#',''),
-      foto:     li.children[0].src,
+      id: +li.dataset.id,
+      nombre: li.children[2].textContent,
+      numero: li.children[1].textContent.replace('#',''),
+      foto: li.children[0].src,
       posicion: li.dataset.posicion,
       enCancha: true
     });
   });
   document.querySelectorAll(`#enBanca${equipoLado} .sidebar-jugador`).forEach(li => {
     updated.push({
-      id:       parseInt(li.dataset.id,10),
-      nombre:   li.children[2].textContent,
-      numero:   li.children[1].textContent.replace('#',''),
-      foto:     li.children[0].src,
+      id: +li.dataset.id,
+      nombre: li.children[2].textContent,
+      numero: li.children[1].textContent.replace('#',''),
+      foto: li.children[0].src,
       posicion: li.dataset.posicion,
       enCancha: false
     });
   });
   actualizarVistaJugadores(equipoLado, updated);
 
-  // Reset selección
+  // limpiar selección
   jugadorCanchaSeleccionado.classList.remove('selected');
-  jugadorBancaSeleccionado .classList.remove('selected');
+  jugadorBancaSeleccionado.classList.remove('selected');
   jugadorCanchaSeleccionado = null;
   jugadorBancaSeleccionado  = null;
 }
 
-// ————————————————
-// Renderizado de la cancha (cards)
-// ————————————————
+// ————— Renderizado de la cancha (cards) —————
 function renderJugadoresEnCancha(equipoLado, jugadores) {
   const filaArriba = document.getElementById(`filaArriba${equipoLado}`);
   const filaAbajo  = document.getElementById(`filaAbajo${equipoLado}`);
   filaArriba.innerHTML = '';
-  filaAbajo .innerHTML = '';
+  filaAbajo.innerHTML  = '';
 
   jugadores.forEach(j => {
     const card = document.createElement("div");
-    card.className = "player-card";
+    card.className = `player-card position-${j.posicion}`;
+    card.dataset.posicion = j.posicion;
+    card.dataset.id       = j.id;
+
     card.innerHTML = `
-      <img src="${j.foto}" alt="${j.nombre}" />
-      <span>${j.posicion}</span>
-      <div class="card-header">
-        <span>#${j.numero}</span>
-        <span>${j.nombre}</span>
+    <div class="card-position position-${j.posicion}">${j.posicion}</div>
+      <div class="card-image">
+        <img src="${j.foto}" alt="${j.nombre}" />
       </div>
+      <div class="card-number">${j.numero}</div>
+      <div class="card-name">${j.nombre}</div>
     `;
-    const abajo = (equipoLado==='B' && (j.posicion==='GK'||j.posicion==='D'))
-                || (equipoLado==='A' && (j.posicion==='M'||j.posicion==='F'));
+    const abajo = 
+      (equipoLado==='B' && (j.posicion==='GK'||j.posicion==='D')) ||
+      (equipoLado==='A' && (j.posicion==='M'||j.posicion==='FW'));
     if (abajo) filaAbajo.appendChild(card);
     else       filaArriba.appendChild(card);
   });
 }
 
-// ————————————————
-// Cronómetro estilo FIFA
-// ————————————————
-let tiempo = 0, intervalo = null;
+// ————— Cronómetro estilo FIFA con minutos y segundos —————
+let segundosTranscurridos = 0, minutos = 0, intervalo = null;
+function formatearTiempo(mins, secs) {
+  return `${mins}:${String(secs).padStart(2,'0')}'`;
+}
 document.getElementById("btnIniciarTiempo").addEventListener("click", () => {
   if (!intervalo) intervalo = setInterval(() => {
-    tiempo++;
-    document.getElementById("minutero").textContent = `${tiempo}'`;
+    segundosTranscurridos++;
+    if (segundosTranscurridos === 60) { minutos++; segundosTranscurridos = 0; }
+    document.getElementById("minutero").textContent =
+      formatearTiempo(minutos, segundosTranscurridos);
   }, 1000);
 });
 document.getElementById("btnPausarTiempo").addEventListener("click", () => {
@@ -350,12 +343,27 @@ document.getElementById("btnPausarTiempo").addEventListener("click", () => {
 });
 document.getElementById("btnReiniciarTiempo").addEventListener("click", () => {
   clearInterval(intervalo); intervalo = null;
-  tiempo = 0; document.getElementById("minutero").textContent = `0'`;
+  segundosTranscurridos = minutos = 0;
+  document.getElementById("minutero").textContent = formatearTiempo(0,0);
 });
 
-// ————————————————
-// Toggle sidebars
-// ————————————————
+// ———— Evento Finalizar Partido ————
+document.getElementById("btnFinalizar").addEventListener("click", () => {
+  if (!partidoActivo) return alert("No hay partido activo.");
+  if (!confirm("¿Finalizar partido? Se guardarán estadísticas.")) return;
+  const [gA,gB] = document.getElementById("score").textContent.split(" - ").map(n=>+n);
+  const stats   = obtenerTodasLasEstadisticasRegistradas();
+  fetch(`/api/stats/match/${partidoActivo.id}/complete`, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ marcador:{A:gA,B:gB}, stats })
+  })
+  .then(r => r.ok ? r.json() : Promise.reject("Error"))
+  .then(()=> alert("Partido finalizado y stats guardadas"))
+  .catch(()=> alert("Error al finalizar."));
+});
+function obtenerTodasLasEstadisticasRegistradas(){ return { players:[], teams:[] }; }
+
+// ————— Toggle sidebars —————
 toggleLeft.addEventListener('click', () => {
   sidebarLeft.classList.toggle('open');
   toggleLeft.innerHTML = sidebarLeft.classList.contains('open') ? '&#9664;' : '&#9654;';
@@ -365,19 +373,14 @@ toggleRight.addEventListener('click', () => {
   toggleRight.innerHTML = sidebarRight.classList.contains('open') ? '&#9654;' : '&#9664;';
 });
 
-// ————————————————
-// Botón de configuración flotante
-// ————————————————
-btnConfigMain.addEventListener("click", () => {
-  configOptions.classList.toggle("show");
-});
+// ————— Botón de configuración flotante —————
+btnConfigMain.addEventListener("click", () => configOptions.classList.toggle("show"));
 
-// ————————————————
-// Abrir modal de jugadores desde el modal principal
-// ————————————————
+// ————— Abrir modal de jugadores desde el modal principal —————
 document.getElementById("equipoModalA").addEventListener("click", () => {
   if (partidoActivo?.equipoA_id) abrirModalJugadores(partidoActivo.equipoA_id, 'A');
 });
 document.getElementById("equipoModalB").addEventListener("click", () => {
   if (partidoActivo?.equipoB_id) abrirModalJugadores(partidoActivo.equipoB_id, 'B');
 });
+

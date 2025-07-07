@@ -141,6 +141,24 @@ body {
   cursor: pointer;
 }
 
+/* Colores por posición */
+.position-GK {
+  background-color: #e67e22;
+}
+
+.position-D {
+  background-color: #27ae60;
+}
+
+.position-M {
+  background-color: #f1c40f;
+  color: #333;
+}
+
+.position-FW {
+  background-color: #3498db;
+}
+
 /* 🔁 Efecto hover */
 .player-card:hover {
   transform: scale(1);
@@ -172,24 +190,6 @@ body {
 
 .card-rating {
   font-size: 20px;
-}
-
-/* Colores por posición */
-.position-GK {
-  background-color: #e67e22;
-}
-
-.position-D {
-  background-color: #27ae60;
-}
-
-.position-M {
-  background-color: #f1c40f;
-  color: #333;
-}
-
-.position-FW {
-  background-color: #3498db;
 }
 
 .card-image {
@@ -566,6 +566,10 @@ body {
   color: white;
 }
 
+.sidebar-jugador{
+  margin: 3rem;
+}
+
 .sidebar-jugador img {
   width: 28px;
   height: 28px;
@@ -578,3 +582,78 @@ body {
   border: 2px solid #3d5afe;
 }
 
+.card-position {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 2px 4px;
+  border-radius: 4px;
+  max-width: 32px;   /* para dos caracteres */
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-position-li {
+  right: 0%;
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 2px 4px;
+  border-radius: 4px;
+  max-width: 32px;   /* para dos caracteres */
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-number {
+  position: relative;
+  margin-top: -25px; /* Superpone hacia arriba */
+  margin-top: -25px;
+  background: #1f1f1f;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Nombre del jugador */
+.card-name {
+  font-size: 16px;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 5px 0;
+  text-transform: uppercase;
+}
+
+/* Estadísticas */
+.card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 13px;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.card-stats div {
+  background: #fff;
+  padding: 4px 6px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+}
