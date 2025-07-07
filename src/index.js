@@ -15,6 +15,8 @@ const matchesRouter = require('./routes/matches');
 const actionsRouter = require('./routes/actions');
 const authRouter = require('./routes/auth');
 const statsRoutes = require('./routes/stats');
+const matchRouter = require('./routes/match');
+const eventRouter = require('./routes/events');
 
 const app = express();
 
@@ -34,6 +36,7 @@ seedReferees(db);
 // === RUTA ESTÁTICA PARA CARGAR IMG DESDE src/img ===
 app.use('/img/teamImg', express.static(path.join(__dirname, 'img/teamImg')));
 app.use('/img/playerImg', express.static(path.join(__dirname, 'img/playerImg')));
+
 // === RUTAS ESTÁTICAS RESTRINGIDAS A EXTENSIONES SEGURAS ===
 app.use((req, res, next) => {
   const isStatic = /\.(css|js|png|jpg|jpeg|svg|ico)$/.test(req.url);
@@ -48,10 +51,13 @@ app.use((req, res, next) => {
 app.use('/api/teams', teamsRouter(db));
 app.use('/api/players', playersRouter(db));
 app.use('/api/tournaments', tournamentsRouter(db));
-app.use('/api/matches', matchesRouter(db));
+app.use('/api/matches', matchesRouter(db)); // ✅ CORREGIDO: antes no estaba
 app.use('/api/actions', actionsRouter(db));
 app.use('/api', authRouter(db)); // login, logout, referee info
 app.use('/api/stats', statsRoutes);
+app.use('/api/match', matchRouter); // se mantiene para el estado en tiempo real
+app.use('/api/events', eventRouter);
+
 // === RUTAS HTML PROTEGIDAS ===
 app.get('/:file', (req, res) => {
   const publicFiles = ['login.html'];

@@ -1,3 +1,4 @@
+/* =================== GLOBAL =================== */
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
@@ -5,7 +6,7 @@ body {
   background: #eaf4fc;
 }
 
-/* Botones flotantes */
+/* =================== TOGGLES =================== */
 .toggle {
   position: fixed;
   top: 50%;
@@ -26,7 +27,7 @@ body {
   border-radius: 5px 0 0 5px;
 }
 
-/* Paneles laterales */
+/* =================== SIDEBARS =================== */
 .sidebar {
   position: fixed;
   top: 0;
@@ -62,9 +63,10 @@ body {
   font-size: 14px;
 }
 
+/* =================== BOTONERA CENTRAL =================== */
 .button-column {
   position: absolute;
-  top: 45%;
+  top: 42%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -92,21 +94,12 @@ body {
   height: 50px;
 }
 
-.action-btn:disabled,
-.action-btn.disabled-btn {
-  background-color: #ddd !important;
-  color: #888;
-  cursor: not-allowed;
-  border: 1px solid #bbb;
-  opacity: 0.6;
-}
-
 .action-btn:hover {
   background-color: #d0eaff;
   border-color: #3399ff;
 }
 
-/* Contenedor general de la cancha */
+/* =================== CANCHA =================== */
 .cancha-container {
   position: fixed;
   top: 12%;
@@ -121,7 +114,6 @@ body {
   gap: 20%;
 }
 
-/* Grids por equipo */
 .lado-equipo {
   width: 30%;
   display: grid;
@@ -132,18 +124,12 @@ body {
   height: 100%;
 }
 
-/* Centrar la primera tarjeta (portero) */
-.lado-equipo .player-card:nth-child(1) {
-  grid-column: 1 / span 2;
-}
-
-/* Tarjeta de jugador */
+/* =================== TARJETAS DE JUGADOR =================== */
 .player-card {
   width: 120px;
   background: linear-gradient(145deg, #f0d9b5, #d6b375);
   border-radius: 12px;
   text-align: center;
-  font-family: 'Arial', sans-serif;
   color: #000;
   padding: 8px 6px;
   margin: 4px auto;
@@ -151,9 +137,31 @@ body {
   position: relative;
   transform: scale(0.95);
   font-size: 13px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
 }
 
-/* Cabecera de la tarjeta */
+/* 🔁 Efecto hover */
+.player-card:hover {
+  transform: scale(1);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* ✅ Cuando el jugador está en cancha */
+.player-card.en-cancha {
+  background: linear-gradient(145deg, #999999, #777777);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Imagen del jugador */
+.player-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -162,20 +170,28 @@ body {
   padding: 0 6px;
 }
 
-/* Puntuación general */
 .card-rating {
   font-size: 20px;
 }
 
-/* Posición (GK, D, M, FW) */
-.card-position {
-  background: #000;
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 6px;
+/* Colores por posición */
+.position-GK {
+  background-color: #e67e22;
 }
 
-/* Imagen del jugador */
+.position-D {
+  background-color: #27ae60;
+}
+
+.position-M {
+  background-color: #f1c40f;
+  color: #333;
+}
+
+.position-FW {
+  background-color: #3498db;
+}
+
 .card-image {
   margin: 8px auto;
   width: 80px;
@@ -185,14 +201,9 @@ body {
   border: 2px solid #fff;
 }
 .card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100%; height: 100%; object-fit: cover;
 }
-
-/* Número del jugador */
 .card-number {
-  position: relative;
   margin-top: -25px;
   background: #1f1f1f;
   color: #fff;
@@ -208,23 +219,18 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   border: 2px solid #fff;
 }
-
-/* Nombre del jugador */
 .card-name {
   font-size: 13px;
   font-weight: bold;
   margin: 5px 0;
   text-transform: uppercase;
 }
-
-/* Estadísticas */
 .card-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
   font-size: 11px;
 }
-
 .card-stats div {
   background: #fff;
   padding: 2px 4px;
@@ -233,92 +239,136 @@ body {
   justify-content: space-between;
 }
 
-.card-stats span {
-  font-weight: bold;
-}
-
-/* Marcador inferior */
-.marcador-footer {
+/* =================== MARCADOR FIFA =================== */
+.marcador-fifa {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20%;
-  background: #222;
-  color: white;
+  height: 16%;
+  background: #111;
+  color: #fff;
   display: flex;
   justify-content: space-around;
   align-items: center;
   font-size: 22px;
 }
-
-.marcador-control {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
 .marcador-central {
   font-size: 36px;
+  text-align: center;
 }
-
-/* Botones del marcador */
-.score-btn {
-  font-size: 24px;
+.minutero {
+  text-align: center;
+  color: #00e5ff;
+  font-weight: bold;
+  font-size: 16px;
+}
+.equipo-fifa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-mini {
   width: 40px;
   height: 40px;
+  object-fit: cover;
   border-radius: 50%;
-  background: #fff;
-  border: 2px solid #ccc;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, transform 0.2s;
 }
 
-.score-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: #ccc;
-  border-color: #999;
-}
-
-.score-btn:hover {
-  background-color: #d0eaff;
-  transform: scale(1.1);
-}
-
-/* Botones de tarjetas */
-.tarjetas-panel {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  align-content: center;
-}
-
-.tarjeta-btn {
-  font-size: 24px;
-  padding: 6px;
-  border: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.tarjeta-btn:hover {
-  transform: scale(1.1);
-}
-
-.tarjeta-btn.amarilla {
-  background-color: #ffeb3b;
-  color: #000;
-}
-
-.tarjeta-btn.roja {
-  background-color: #f44336;
+/* =================== MODAL CONFIGURACIÓN =================== */
+.modal-content.modal-config {
+  max-width: 1000px;
+  background-color: #222;
+  border-radius: 12px;
+  padding: 24px;
   color: white;
 }
+.alineacion-config {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 24px;
+}
+.alineacion-equipo {
+  width: 48%;
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 8px;
+}
+.jugadores-lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #444;
+  color: white;
+}
+.jugadores-lista img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
-/* Modal (overlay oscuro y contenido) */
+/* FAB de Configuración */
+.config-fab {
+  position: fixed;
+  top: 10px;
+  right: 40px;
+  z-index: 1003;
+}
+
+.config-fab .floating-config-btn {
+  background: #3d5afe;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.config-options {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  top: 70px;
+  right: 0;
+  background: rgba(0,0,0,0.8);
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  z-index: 1002;
+}
+
+.config-options.show {
+  display: flex;
+}
+
+.config-options button {
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.config-options button:hover {
+  background: #3d5afe;
+}
+
+.config-options .material-icons {
+  font-size: 24px;
+}
+
+/* Modal mejorado y centrado */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -330,110 +380,201 @@ body {
   z-index: 9999;
 }
 
-.modal-content {
+.modal-content.modal-config {
   background: #1f1f1f;
-  padding: 20px 30px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
   color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  max-width: 960px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
 }
 
-.modal-content h2, .modal-content h3 {
-  margin-top: 0;
+/* Estilos para logos y nombres en el modal */
+.modal-config .equipo-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
-.modal-content ul {
+.modal-config .alineacion-equipo {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+}
+
+.modal-config .alineacion-equipo h3 {
+  font-size: 1.1rem;
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content.modal-config {
+  max-width: 1000px;
+  background-color: #222;
+  border-radius: 12px;
+  padding: 24px;
+  color: white;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-players-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.jugador-card {
+  width: 160px;
+  width: 120px;
+  background: linear-gradient(145deg, #f0d9b5, #d6b375);
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #000;
+  padding: 10px 8px;
+  margin: 10px auto;
+  padding: 8px 6px;
+  margin: 4px auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: relative;
+  transform: scale(0.95);
+  font-size: 13px;
+}
+.jugador-card.seleccionado {
+  border-color: #3d5afe;
+}
+.jugador-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.info-nombre, .info-posicion, .info-pie, .info-numero {
+  font-size: 12px;
+  margin-top: 4px;
+}
+.info-posicion {
+  font-weight: bold;
+}
+.jugadores-lista {
   list-style: none;
   padding: 0;
 }
-
-.modal-content li {
-  padding: 5px 0;
+.jugadores-lista li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #444;
+  padding: 6px 0;
+}
+.jugadores-lista img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-/* Estilos para dispositivos pequeños */
-@media (max-width: 1024px) {
-  .tarjeta.jugador {
-    width: 60px;
-    height: 80px;
-    font-size: 12px;
-  }
-  .marcador-footer {
-    font-size: 18px;
-  }
-  .marcador-central {
-    font-size: 28px;
-  }
-  .botonera-superior {
-    flex-wrap: wrap;
-    height: auto;
-    padding: 10px;
-  }
+.jugador-card {
+  background: #333;
+  border-radius: 8px;
+  padding: 12px;
+  width: 180px;
+  margin: 10px;
+  text-align: center;
+  color: white;
+  position: relative;
+  border: 2px solid transparent;
+}
+.jugador-card.en-cancha {
+  border-color: #3d5afe;
+}
+.posiciones-select {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-cancha-toggle {
+  margin-top: 10px;
+  background: #3d5afe;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-
-  .button-column {
-    background-color: #2c2c2c;
-  }
-
-  .modal-content {
-    background-color: #2a2a2a;
-    color: #fff;
-  }
-
-  .sidebar {
-    background-color: #1c1c1c;
-  }
-
-  .action-btn {
-    background-color: #333;
-    color: #eee;
-    border-color: #444;
-  }
-
-  .action-btn:hover {
-    background-color: #555;
-    border-color: #3d5afe;
-  }
-
-  .marcador-footer {
-    background-color: #111;
-  }
-
-  .score-btn {
-    background-color: #333;
-    color: #fff;
-  }
-
-  .score-btn:disabled {
-    background-color: #444;
-    color: #999;
-  }
+/* Corrección modal de jugadores */
+#playerModal.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@media (pointer: coarse) {
-  .score-btn, .tarjeta-btn {
-    font-size: 20px;
-    padding: 12px;
-  }
-
-  .player-card {
-    transform: scale(1.05);
-  }
-
-  .button-column {
-    gap: 16px;
-  }
-
-  .marcador-footer {
-    font-size: 20px;
-  }
+#playerModal .modal-content {
+  background-color: #222;
+  padding: 24px;
+  border-radius: 12px;
+  color: white;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
+
+.hidden {
+  display: none !important;
+}
+
+.sidebar-jugador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-bottom: 1px solid #555;
+  cursor: pointer;
+  color: white;
+}
+
+.sidebar-jugador img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sidebar-jugador.seleccionado {
+  background-color: #444;
+  border: 2px solid #3d5afe;
+}
+

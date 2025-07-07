@@ -1,272 +1,383 @@
-let jugadorSeleccionado = null;
-let scoreA = 0;
-let scoreB = 0;
+// panel.js
 
-document.addEventListener('DOMContentLoaded', () => {
-  const tarjetas = document.querySelectorAll('.player-card');
-  const botones = document.querySelectorAll('.action-btn');
-  const marcador = document.getElementById('score');
-  const botonGolA = document.getElementById('golA');
-  const botonGolB = document.getElementById('golB');
-  const botonAmarilla = document.querySelector('.tarjeta-btn.amarilla');
-  const botonRoja = document.querySelector('.tarjeta-btn.roja');
+// ————————————————
+// Variables globales
+// ————————————————
+let partidoActivo = null;
+let equipoActualSeleccion = null; // "A" o "B"
 
-  const accionesPorPosicion = {
-    GK: ['Atajada', 'Salida', 'Seguridad', 'FDR', 'SLT', 'PDP'],
-    D:  ['Recuperación', 'Salida', 'ATA', 'VEL', 'FDR', 'SLT'],
-    M:  ['Recuperación', 'Clave', 'Regates', 'VEL', 'FDR', 'SLT'],
-    FW: ['Efectividad', 'Clave', 'Regates', 'VEL', 'FDR', 'SLT']
+const positionColors = {
+  GK: 'position-GK',
+  D: 'position-D',
+  M: 'position-M',
+  FW: 'position-FW'
+};
+
+// Referencias DOM
+const partidoSelect        = document.getElementById("partidoSelect");
+const modalSeleccion       = document.getElementById("modalSeleccion");
+const playerModal          = document.getElementById("playerModal");
+const playersContainer     = document.getElementById("playersContainer");
+const closeModalBtn        = document.getElementById("closeModal");
+const guardarAlineacionBtn = document.getElementById("guardarAlineacion");
+const btnAbrirModal        = document.getElementById("btnAbrirModal");
+const btnConfigMain        = document.getElementById("btnConfigMain");
+const configOptions        = document.getElementById("configOptions");
+const toggleLeft           = document.getElementById('toggleLeft');
+const sidebarLeft          = document.getElementById('sidebarLeft');
+const toggleRight          = document.getElementById('toggleRight');
+const sidebarRight         = document.getElementById('sidebarRight');
+const btnCambioA           = document.getElementById('btnRealizarCambioA');
+const btnCambioB           = document.getElementById('btnRealizarCambioB');
+
+let jugadorCanchaSeleccionado = null;
+let jugadorBancaSeleccionado  = null;
+
+// ————————————————
+// Mostrar modal principal al cargar
+// ————————————————
+window.addEventListener("load", () => {
+  modalSeleccion.style.display = "flex";
+});
+
+// ————————————————
+// Control Modal Principal
+// ————————————————
+btnAbrirModal.addEventListener("click", () => {
+  modalSeleccion.style.display = "flex";
+});
+window.cerrarModal = () => {
+  modalSeleccion.style.display = "none";
+};
+window.guardarSeleccion = () => {
+  const selectedId = partidoSelect.value;
+  if (!selectedId) {
+    alert("Selecciona un partido válido.");
+    return;
+  }
+  localStorage.setItem("partidoActivo", selectedId);
+  cargarDatosPartido(selectedId);
+  cerrarModal();
+};
+
+// ————————————————
+// Cargar datos de un partido
+// ————————————————
+function cargarDatosPartido(partidoId) {
+  fetch(`/api/matches/${partidoId}`)
+    .then(res => res.json())
+    .then(partido => {
+      partidoActivo = partido;
+      localStorage.setItem("equipoA_id", partido.equipoA_id);
+      localStorage.setItem("equipoB_id", partido.equipoB_id);
+
+      // Actualizar nombres y logos
+      [
+        ["nombreEquipoA", partido.equipoA],
+        ["nombreEquipoB", partido.equipoB],
+        ["nombreFooterA", partido.equipoA],
+        ["nombreFooterB", partido.equipoB],
+        ["nombreModalEquipoA", partido.equipoA],
+        ["nombreModalEquipoB", partido.equipoB],
+      ].forEach(([id, text]) => document.getElementById(id).textContent = text);
+
+      document.getElementById("logoFooterA").src  = partido.logoA || "placeholderA.png";
+      document.getElementById("logoFooterB").src  = partido.logoB || "placeholderB.png";
+      document.getElementById("logoEquipoA").src = partido.logoA || "placeholderA.png";
+      document.getElementById("logoEquipoB").src = partido.logoB || "placeholderB.png";
+    })
+    .catch(err => {
+      console.error("❌ Error al cargar datos del partido:", err);
+      alert("No se pudo cargar la información del partido.");
+    });
+}
+// ————————————————
+// Carga inicial de partidos en el select
+// ————————————————
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("/api/matches")
+    .then(res => res.json())
+    .then(partidos => {
+      partidoSelect.innerHTML = '';
+      if (partidos.length === 0) {
+        partidoSelect.innerHTML = `<option value="">No hay partidos disponibles</option>`;
+        modalSeleccion.style.display = "flex";
+        return;
+      }
+      partidos.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value       = p.id;
+        opt.textContent = `${p.nombreEquipoA} vs ${p.nombreEquipoB} (${p.fecha} ${p.hora})`;
+        partidoSelect.appendChild(opt);
+      });
+      const pid = localStorage.getItem("partidoActivo");
+      if (pid && partidos.some(p => p.id == pid)) {
+        partidoSelect.value = pid;
+        cargarDatosPartido(pid);
+      } else {
+        setTimeout(() => modalSeleccion.style.display = "flex", 300);
+      }
+    })
+    .catch(err => {
+      console.error("❌ Error al cargar partidos:", err);
+      partidoSelect.innerHTML = `<option value="">Error al obtener partidos</option>`;
+    });
+});
+
+// ————————————————
+// Preview al cambiar de partido en el select
+// ————————————————
+partidoSelect.addEventListener("change", () => {
+  const id = partidoSelect.value;
+  if (!id) return;
+  fetch(`/api/matches/${id}`)
+    .then(res => res.json())
+    .then(p => {
+      document.getElementById("nombreModalEquipoA").textContent = p.equipoA;
+      document.getElementById("nombreModalEquipoB").textContent = p.equipoB;
+      // **Aquí también fotoA/fotoB**
+      document.getElementById("logoEquipoA").src = p.fotoA || "placeholderA.png";
+      document.getElementById("logoEquipoB").src = p.fotoB || "placeholderB.png";
+    })
+    .catch(err => console.error("❌ Error preview partido:", err));
+});
+
+// ————————————————
+// Modal de selección de jugadores
+// ————————————————
+function abrirModalJugadores(equipoId, equipoLado) {
+  equipoActualSeleccion = equipoLado;
+  playerModal.classList.remove("hidden");
+  playersContainer.innerHTML = '';
+  fetch(`/api/teams/${equipoId}/players`)
+    .then(res => res.json())
+    .then(jugadores => {
+      jugadores.forEach(j => {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        card.dataset.id = j.id;
+        card.innerHTML = `
+          <img src="${j.foto||'/img/playerImg/avatar.png'}" class="foto-jugador" />
+          <div class="info-nombre">${j.nombre}</div>
+          <div class="info-posicion ${positionColors[j.posicion]||''}">${j.posicion}</div>
+          <div class="info-pie">${j.pie}</div>
+          <div class="info-numero">#${j.numero}</div>
+          <div class="posiciones-select">
+            <label><input type="radio" name="pos-${j.id}" value="GK">GK</label>
+            <label><input type="radio" name="pos-${j.id}" value="D">D</label>
+            <label><input type="radio" name="pos-${j.id}" value="M">M</label>
+            <label><input type="radio" name="pos-${j.id}" value="F">F</label>
+          </div>
+          <button class="btn-cancha-toggle">Enviar a cancha</button>
+        `;
+        card.querySelector(".btn-cancha-toggle").addEventListener("click", () => {
+          card.classList.toggle("en-cancha");
+        });
+        playersContainer.appendChild(card);
+      });
+    });
+}
+closeModalBtn.addEventListener("click", () => {
+  playerModal.classList.add("hidden");
+  equipoActualSeleccion = null;
+});
+
+// ————————————————
+// Guardar alineación desde el modal de jugadores
+// ————————————————
+guardarAlineacionBtn.addEventListener("click", () => {
+  const cards = playersContainer.querySelectorAll('.player-card');
+  const jugadores = [];
+  cards.forEach(card => {
+    const id     = parseInt(card.dataset.id, 10);
+    const nombre = card.querySelector('.info-nombre').textContent;
+    const numero = card.querySelector('.info-numero').textContent.replace('#','');
+    const foto   = card.querySelector('img').src;
+    const pie    = card.querySelector('.info-pie').textContent;
+    const defaultPos = card.querySelector('.info-posicion').textContent.trim();
+    const posSel = card.querySelector('input[type="radio"]:checked')?.value;
+    // **Incluye TODOS** los jugadores; los sin radio van a banca
+    const enCancha = card.classList.contains('en-cancha');
+    const posicion = posSel || defaultPos;
+    jugadores.push({ id, nombre, numero, foto, pie, posicion, enCancha });
+  });
+
+  actualizarVistaJugadores(equipoActualSeleccion, jugadores);
+  playerModal.classList.add("hidden");
+  modalSeleccion.style.display = "flex";
+  equipoActualSeleccion = null;
+});
+
+// ————————————————
+// Actualiza sidebar y cancha tras guardar alineación
+// ————————————————
+function actualizarVistaJugadores(equipoLado, jugadores) {
+  const cancha = jugadores.filter(j => j.enCancha);
+  const banca  = jugadores.filter(j => !j.enCancha);
+  renderSidebarJugadores(equipoLado, cancha, banca);
+  renderJugadoresEnCancha(equipoLado, cancha);
+}
+
+// ————————————————
+// Renderizado sidebar (cancha / banca)
+// ————————————————
+function renderSidebarJugadores(equipoLado, jugadoresCancha, jugadoresBanca) {
+  const enCancha = document.getElementById(`enCancha${equipoLado}`);
+  const enBanca  = document.getElementById(`enBanca${equipoLado}`);
+  enCancha.innerHTML = '';
+  enBanca.innerHTML  = '';
+
+  const crearLi = (j, tipo) => {
+    const li = document.createElement('li');
+    li.className        = 'sidebar-jugador';
+    li.dataset.id       = j.id;
+    li.dataset.tipo     = tipo;
+    li.dataset.posicion = j.posicion;
+    li.innerHTML = `
+      <img src="${j.foto}" />
+      <span>#${j.numero}</span>
+      <span>${j.nombre}</span>
+    `;
+    li.addEventListener('click', () => seleccionarParaCambio(li));
+    return li;
   };
 
-  const tarjetasPorJugador = {};
+  jugadoresCancha.forEach(j => enCancha.appendChild(crearLi(j, 'cancha')));
+  jugadoresBanca .forEach(j => enBanca .appendChild(crearLi(j, 'banca')));
+}
 
-  function actualizarMarcador() {
-    marcador.textContent = `${scoreA} - ${scoreB}`;
+// ————————————————
+// Selección de jugador para cambio
+// ————————————————
+function seleccionarParaCambio(el) {
+  if (el.dataset.tipo === 'cancha') {
+    if (jugadorCanchaSeleccionado) jugadorCanchaSeleccionado.classList.remove('selected');
+    el.classList.add('selected');
+    jugadorCanchaSeleccionado = el;
+  } else {
+    if (jugadorBancaSeleccionado) jugadorBancaSeleccionado.classList.remove('selected');
+    el.classList.add('selected');
+    jugadorBancaSeleccionado = el;
   }
+}
 
-  function habilitarBotonesSegunPosicion(pos) {
-    const clave = ['GK', 'D', 'M', 'FW'].includes(pos) ? pos : null;
-    const permitidos = accionesPorPosicion[clave] || [];
+// ————————————————
+// Botones de cambio en sidebar
+// ————————————————
+if (btnCambioA) btnCambioA.addEventListener('click', () => realizarCambio('A'));
+if (btnCambioB) btnCambioB.addEventListener('click', () => realizarCambio('B'));
 
-    botones.forEach(btn => {
-      btn.disabled = !permitidos.includes(btn.dataset.action);
-      btn.classList.toggle('disabled-btn', btn.disabled);
-    });
+function realizarCambio(equipoLado) {
+  if (!jugadorCanchaSeleccionado || !jugadorBancaSeleccionado) {
+    alert("Selecciona un jugador de cancha y uno de banca.");
+    return;
   }
+  const enC = document.getElementById(`enCancha${equipoLado}`);
+  const enB = document.getElementById(`enBanca${equipoLado}`);
+  enC.appendChild(jugadorBancaSeleccionado);
+  enB.appendChild(jugadorCanchaSeleccionado);
 
-  function marcarExpulsado(card) {
-    card.classList.add('expulsado');
-    card.classList.remove('selected');
-    card.style.pointerEvents = 'none';
-    card.style.opacity = '0.5';
-    card.style.filter = 'grayscale(1)';
-    card.style.border = '2px solid red';
-    jugadorSeleccionado = null;
-
-    botonGolA.disabled = true;
-    botonGolB.disabled = true;
-
-    botones.forEach(btn => {
-      btn.disabled = true;
-      btn.classList.add('disabled-btn');
-    });
-  }
-
-  function guardarEnLocalStorage(accion) {
-    const acciones = JSON.parse(localStorage.getItem('acciones') || '[]');
-    acciones.push(accion);
-    localStorage.setItem('acciones', JSON.stringify(acciones));
-  }
-
-  async function registrarAccion(payload) {
-    guardarEnLocalStorage(payload);
-    try {
-      const response = await fetch('/api/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!response.ok) {
-        throw new Error('No se pudo sincronizar');
-      }
-    } catch (err) {
-      console.warn('🔌 Acción almacenada localmente. Sin conexión:', payload);
-    }
-  }
-
-  async function sincronizarAccionesPendientes() {
-    const pendientes = JSON.parse(localStorage.getItem('acciones') || '[]');
-    if (pendientes.length === 0) return;
-
-    for (const payload of pendientes) {
-      try {
-        const res = await fetch('/api/actions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error();
-      } catch {
-        return;
-      }
-    }
-
-    console.log('✅ Acciones sincronizadas');
-    localStorage.removeItem('acciones');
-  }
-
-  sincronizarAccionesPendientes();
-
-    // ================================
-  // SELECCIÓN DE JUGADOR
-  // ================================
-  tarjetas.forEach(card => {
-    card.addEventListener('click', () => {
-      if (card.classList.contains('expulsado')) {
-        console.log('🚫 Este jugador ya fue expulsado.');
-        return;
-      }
-
-      tarjetas.forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-
-      const numero = card.querySelector('.card-number')?.textContent || '??';
-      const nombre = card.querySelector('.card-name')?.textContent || 'Sin nombre';
-      const posicion = card.querySelector('.card-position')?.textContent || '??';
-      const equipo = card.closest('.lado-equipo')?.classList.contains('equipo-a') ? 'Equipo A' : 'Equipo B';
-
-      jugadorSeleccionado = { nombre, numero, posicion, equipo, dom: card };
-
-      console.log(`✅ Jugador seleccionado: ${nombre} (#${numero}) → Posición: ${posicion}`);
-
-      habilitarBotonesSegunPosicion(posicion);
-      botonGolA.disabled = false;
-      botonGolB.disabled = false;
+  // Reconstruir y volver a renderizar cancha
+  const updated = [];
+  document.querySelectorAll(`#enCancha${equipoLado} .sidebar-jugador`).forEach(li => {
+    updated.push({
+      id:       parseInt(li.dataset.id,10),
+      nombre:   li.children[2].textContent,
+      numero:   li.children[1].textContent.replace('#',''),
+      foto:     li.children[0].src,
+      posicion: li.dataset.posicion,
+      enCancha: true
     });
   });
-
-  // ================================
-  // ACCIONES DE JUGADORES
-  // ================================
-  botones.forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (!jugadorSeleccionado || btn.disabled) return;
-
-      const accion = btn.textContent;
-
-      const payload = {
-        jugador: jugadorSeleccionado.nombre,
-        numero: jugadorSeleccionado.numero,
-        posicion: jugadorSeleccionado.posicion,
-        equipo: jugadorSeleccionado.equipo,
-        accion,
-        tipo: 'accion',
-        timestamp: new Date().toISOString()
-      };
-
-      registrarAccion(payload);
+  document.querySelectorAll(`#enBanca${equipoLado} .sidebar-jugador`).forEach(li => {
+    updated.push({
+      id:       parseInt(li.dataset.id,10),
+      nombre:   li.children[2].textContent,
+      numero:   li.children[1].textContent.replace('#',''),
+      foto:     li.children[0].src,
+      posicion: li.dataset.posicion,
+      enCancha: false
     });
   });
+  actualizarVistaJugadores(equipoLado, updated);
 
-  // ================================
-  // GOLES
-  // ================================
-  botonGolA.addEventListener('click', () => {
-    scoreA++;
-    actualizarMarcador();
+  // Reset selección
+  jugadorCanchaSeleccionado.classList.remove('selected');
+  jugadorBancaSeleccionado .classList.remove('selected');
+  jugadorCanchaSeleccionado = null;
+  jugadorBancaSeleccionado  = null;
+}
 
-    const isAutogol = jugadorSeleccionado?.equipo === 'Equipo B';
-    const payload = {
-      jugador: jugadorSeleccionado?.nombre || 'Desconocido',
-      numero: jugadorSeleccionado?.numero || 'N/A',
-      posicion: jugadorSeleccionado?.posicion || 'N/A',
-      equipo: jugadorSeleccionado?.equipo || 'Equipo A',
-      accion: isAutogol ? 'Autogol (Equipo B)' : 'Gol (Equipo A)',
-      tipo: isAutogol ? 'autogol' : 'gol',
-      timestamp: new Date().toISOString()
-    };
+// ————————————————
+// Renderizado de la cancha (cards)
+// ————————————————
+function renderJugadoresEnCancha(equipoLado, jugadores) {
+  const filaArriba = document.getElementById(`filaArriba${equipoLado}`);
+  const filaAbajo  = document.getElementById(`filaAbajo${equipoLado}`);
+  filaArriba.innerHTML = '';
+  filaAbajo .innerHTML = '';
 
-    registrarAccion(payload);
+  jugadores.forEach(j => {
+    const card = document.createElement("div");
+    card.className = "player-card";
+    card.innerHTML = `
+      <img src="${j.foto}" alt="${j.nombre}" />
+      <span>${j.posicion}</span>
+      <div class="card-header">
+        <span>#${j.numero}</span>
+        <span>${j.nombre}</span>
+      </div>
+    `;
+    const abajo = (equipoLado==='B' && (j.posicion==='GK'||j.posicion==='D'))
+                || (equipoLado==='A' && (j.posicion==='M'||j.posicion==='F'));
+    if (abajo) filaAbajo.appendChild(card);
+    else       filaArriba.appendChild(card);
   });
+}
 
-  botonGolB.addEventListener('click', () => {
-    scoreB++;
-    actualizarMarcador();
+// ————————————————
+// Cronómetro estilo FIFA
+// ————————————————
+let tiempo = 0, intervalo = null;
+document.getElementById("btnIniciarTiempo").addEventListener("click", () => {
+  if (!intervalo) intervalo = setInterval(() => {
+    tiempo++;
+    document.getElementById("minutero").textContent = `${tiempo}'`;
+  }, 1000);
+});
+document.getElementById("btnPausarTiempo").addEventListener("click", () => {
+  clearInterval(intervalo); intervalo = null;
+});
+document.getElementById("btnReiniciarTiempo").addEventListener("click", () => {
+  clearInterval(intervalo); intervalo = null;
+  tiempo = 0; document.getElementById("minutero").textContent = `0'`;
+});
 
-    const isAutogol = jugadorSeleccionado?.equipo === 'Equipo A';
-    const payload = {
-      jugador: jugadorSeleccionado?.nombre || 'Desconocido',
-      numero: jugadorSeleccionado?.numero || 'N/A',
-      posicion: jugadorSeleccionado?.posicion || 'N/A',
-      equipo: jugadorSeleccionado?.equipo || 'Equipo B',
-      accion: isAutogol ? 'Autogol (Equipo A)' : 'Gol (Equipo B)',
-      tipo: isAutogol ? 'autogol' : 'gol',
-      timestamp: new Date().toISOString()
-    };
+// ————————————————
+// Toggle sidebars
+// ————————————————
+toggleLeft.addEventListener('click', () => {
+  sidebarLeft.classList.toggle('open');
+  toggleLeft.innerHTML = sidebarLeft.classList.contains('open') ? '&#9664;' : '&#9654;';
+});
+toggleRight.addEventListener('click', () => {
+  sidebarRight.classList.toggle('open');
+  toggleRight.innerHTML = sidebarRight.classList.contains('open') ? '&#9654;' : '&#9664;';
+});
 
-    registrarAccion(payload);
-  });
+// ————————————————
+// Botón de configuración flotante
+// ————————————————
+btnConfigMain.addEventListener("click", () => {
+  configOptions.classList.toggle("show");
+});
 
-  // ================================
-  // TARJETAS
-  // ================================
-  botonAmarilla.addEventListener('click', () => {
-    if (!jugadorSeleccionado) return;
-
-    const numero = jugadorSeleccionado.numero;
-    const nombre = jugadorSeleccionado.nombre;
-
-    tarjetasPorJugador[numero] = tarjetasPorJugador[numero] || { amarillas: 0, roja: false };
-    if (tarjetasPorJugador[numero].roja) return;
-
-    tarjetasPorJugador[numero].amarillas++;
-
-    registrarAccion({
-      jugador: nombre,
-      numero,
-      posicion: jugadorSeleccionado.posicion,
-      equipo: jugadorSeleccionado.equipo,
-      accion: 'Tarjeta amarilla',
-      tipo: 'tarjeta',
-      timestamp: new Date().toISOString()
-    });
-
-    if (tarjetasPorJugador[numero].amarillas === 2) {
-      tarjetasPorJugador[numero].roja = true;
-      marcarExpulsado(jugadorSeleccionado.dom);
-      registrarAccion({
-        jugador: nombre,
-        numero,
-        posicion: jugadorSeleccionado.posicion,
-        equipo: jugadorSeleccionado.equipo,
-        accion: 'Expulsión por doble amarilla',
-        tipo: 'expulsion',
-        timestamp: new Date().toISOString()
-      });
-    }
-  });
-
-  botonRoja.addEventListener('click', () => {
-    if (!jugadorSeleccionado) return;
-
-    const numero = jugadorSeleccionado.numero;
-    const nombre = jugadorSeleccionado.nombre;
-
-    tarjetasPorJugador[numero] = tarjetasPorJugador[numero] || { amarillas: 0, roja: false };
-    if (tarjetasPorJugador[numero].roja) return;
-
-    tarjetasPorJugador[numero].roja = true;
-
-    marcarExpulsado(jugadorSeleccionado.dom);
-
-    registrarAccion({
-      jugador: nombre,
-      numero,
-      posicion: jugadorSeleccionado.posicion,
-      equipo: jugadorSeleccionado.equipo,
-      accion: 'Tarjeta roja directa',
-      tipo: 'expulsion',
-      timestamp: new Date().toISOString()
-    });
-  });
-
-  // ================================
-  // COLORES POR POSICIÓN
-  // ================================
-  document.querySelectorAll('.card-position').forEach(pos => {
-    const tipo = pos.textContent.trim();
-    switch (tipo) {
-      case 'GK':
-        pos.style.backgroundColor = '#e67e22'; break;
-      case 'D':
-        pos.style.backgroundColor = '#27ae60'; break;
-      case 'M':
-        pos.style.backgroundColor = '#f1c40f'; pos.style.color = '#333'; break;
-      case 'FW':
-        pos.style.backgroundColor = '#3498db'; break;
-      default:
-        pos.style.backgroundColor = '#444'; break;
-    }
-  });
-
+// ————————————————
+// Abrir modal de jugadores desde el modal principal
+// ————————————————
+document.getElementById("equipoModalA").addEventListener("click", () => {
+  if (partidoActivo?.equipoA_id) abrirModalJugadores(partidoActivo.equipoA_id, 'A');
+});
+document.getElementById("equipoModalB").addEventListener("click", () => {
+  if (partidoActivo?.equipoB_id) abrirModalJugadores(partidoActivo.equipoB_id, 'B');
 });

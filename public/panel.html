@@ -9,29 +9,29 @@
 </head>
 <body>
 
-  <!-- Botones flotantes -->
+  <!-- Paneles laterales -->
   <div class="toggle toggle-left" id="toggleLeft">&#9654;</div>
   <div class="toggle toggle-right" id="toggleRight">&#9664;</div>
 
-  <!-- Panel Equipo A -->
   <div class="sidebar sidebar-left" id="sidebarLeft">
     <h3 id="nombreEquipoA">Equipo A</h3>
     <div class="subtitulo">En cancha</div>
     <ul id="enCanchaA"><li>Sin jugadores</li></ul>
     <div class="subtitulo">En banca</div>
     <ul id="enBancaA"><li>Sin jugadores</li></ul>
+    <button id="btnRealizarCambioA">Realizar Cambio</button>
   </div>
 
-  <!-- Panel Equipo B -->
   <div class="sidebar sidebar-right" id="sidebarRight">
     <h3 id="nombreEquipoB">Equipo B</h3>
     <div class="subtitulo">En cancha</div>
     <ul id="enCanchaB"><li>Sin jugadores</li></ul>
     <div class="subtitulo">En banca</div>
     <ul id="enBancaB"><li>Sin jugadores</li></ul>
+    <button id="btnRealizarCambioB">Realizar Cambio</button>
   </div>
 
-  <!-- Botonera superior -->
+  <!-- Botonera central -->
   <div class="button-column">
     <button class="action-btn" data-action="Efectividad">Efectividad</button>
     <button class="action-btn" data-action="ATA">Ataque</button>
@@ -47,45 +47,88 @@
     </div>
   </div>
 
-  <!-- Cancha -->
-  <div class="cancha-container">
-    <div class="lado-equipo equipo-a" id="equipoAContainer">
-      <!-- Aquí se renderizan las filas y tarjetas del equipo A -->
-    </div>
-
-    <div class="lado-equipo equipo-b" id="equipoBContainer">
-      <!-- Aquí se renderizan las filas y tarjetas del equipo B -->
+  <!-- Botón flotante de configuración -->
+  <div class="config-fab">
+    <button id="btnConfigMain" class="floating-config-btn"><span class="material-icons">settings</span></button>
+    <div class="config-options" id="configOptions">
+      <button id="btnIniciarTiempo" title="Iniciar"><span class="material-icons">play_arrow</span></button>
+      <button id="btnPausarTiempo" title="Pausar"><span class="material-icons">pause</span></button>
+      <button id="btnReiniciarTiempo" title="Reiniciar"><span class="material-icons">replay</span></button>
+      <button id="btnFinalizar" title="Finalizar"><span class="material-icons">flag</span></button>
+      <button id="btnTiempoExtra" title="Agregar tiempo"><span class="material-icons">add_alarm</span></button>
+      <button id="btnAbrirModal" title="Configuración"><span class="material-icons">tune</span></button>
     </div>
   </div>
 
-  <!-- Footer marcador -->
-  <div class="marcador-footer">
-    <div class="nombre-equipo" id="nombreFooterA">Equipo A</div>
-    <div class="marcador-control">
-      <button id="golA" class="score-btn" disabled>+</button>
-      <div class="marcador-central" id="score">0 - 0</div>
-      <button id="golB" class="score-btn" disabled>+</button>
-    </div>
-    <div class="nombre-equipo" id="nombreFooterB">Equipo B</div>
+ <!-- Cancha -->
+<div class="cancha-container">
+  <div class="lado-equipo equipo-a" id="equipoAContainer">
+    <div class="fila-arriba" id="filaArribaA"></div>
+    <div class="fila-abajo" id="filaAbajoA"></div>
   </div>
 
-  <!-- JS -->
-  <script>
-    const toggleLeft = document.getElementById('toggleLeft');
-    const sidebarLeft = document.getElementById('sidebarLeft');
-    const toggleRight = document.getElementById('toggleRight');
-    const sidebarRight = document.getElementById('sidebarRight');
+  <div class="lado-equipo equipo-b" id="equipoBContainer">
+    <div class="fila-arriba" id="filaArribaB"></div>
+    <div class="fila-abajo" id="filaAbajoB"></div>
+  </div>
+</div>
 
-    toggleLeft.addEventListener('click', () => {
-      sidebarLeft.classList.toggle('open');
-      toggleLeft.innerHTML = sidebarLeft.classList.contains('open') ? '&#9664;' : '&#9654;';
-    });
 
-    toggleRight.addEventListener('click', () => {
-      sidebarRight.classList.toggle('open');
-      toggleRight.innerHTML = sidebarRight.classList.contains('open') ? '&#9654;' : '&#9664;';
-    });
-  </script>
+  <!-- Marcador tipo FIFA -->
+  <div class="marcador-fifa">
+    <div class="equipo-fifa">
+      <img id="logoFooterA" src="placeholderA.png" class="logo-mini" />
+      <span id="nombreFooterA">Equipo A</span>
+    </div>
+    <div class="marcador-centro">
+      <div id="score" class="marcador-central">0 - 0</div>
+      <div id="minutero" class="minutero">00'</div>
+    </div>
+    <div class="equipo-fifa">
+      <span id="nombreFooterB">Equipo B</span>
+      <img id="logoFooterB" src="placeholderB.png" class="logo-mini" />
+    </div>
+  </div>
+
+  <!-- Modal de configuración del partido -->
+  <div class="modal-overlay" id="modalSeleccion" style="display: flex;">
+    <div class="modal-content modal-config">
+      <h2>Configuración de Partido</h2>
+      <label for="partidoSelect"><strong>Selecciona un partido:</strong></label>
+      <select id="partidoSelect" style="width: 100%; margin: 10px 0;"></select>
+
+      <div class="alineacion-config">
+        <div class="alineacion-equipo" id="equipoModalA">
+          <img id="logoEquipoA" src="placeholderA.png" class="equipo-logo" />
+          <h3 id="nombreModalEquipoA">Equipo A</h3>
+          <ul id="listaJugadoresA" class="jugadores-lista"></ul>
+        </div>
+        <div class="alineacion-equipo" id="equipoModalB">
+          <img id="logoEquipoB" src="placeholderB.png" class="equipo-logo" />
+          <h3 id="nombreModalEquipoB">Equipo B</h3>
+          <ul id="listaJugadoresB" class="jugadores-lista"></ul>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button onclick="guardarSeleccion()">Guardar selección</button>
+        <button onclick="cerrarModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para selección de jugadores -->
+  <div id="playerModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Lista de Jugadores</h3>
+    <div id="playersContainer" class="modal-players-list"></div>
+    <button id="guardarAlineacion">Guardar Alineación</button>
+    <button id="closeModal" class="close-button">Cerrar</button>
+  </div>
+</div>
+
+  <!-- Archivos JS -->
   <script src="js/panel.js"></script>
+  <script src="js/realtime.js"></script>
 </body>
 </html>

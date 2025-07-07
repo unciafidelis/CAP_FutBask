@@ -120,6 +120,22 @@ db.prepare(`
 `).run();
 console.log('✅ Tabla "estadisticas" lista.');
 
+db.prepare(`
+CREATE TABLE IF NOT EXISTS eventos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  partido_id INTEGER,
+  equipo_id INTEGER,
+  jugador_id INTEGER,
+  tipo TEXT,
+  accion TEXT,
+  tarjeta TEXT,
+  minuto INTEGER,
+  timestamp INTEGER
+);
+`).run();
+console.log('✅ Tabla "eventos" lista.');
+
+
 
 // === EXPORTACIÓN DE INSTANCIA DB ===
 module.exports = db;

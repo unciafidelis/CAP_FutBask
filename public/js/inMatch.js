@@ -1,79 +1,88 @@
-document.addEventListener('DOMContentLoaded', ()=>{
-  // Manejo de tabs
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById(btn.dataset.tab).classList.add('active');
-    });
-  });
+const urlParams = new URLSearchParams(window.location.search);
+const partidoId = urlParams.get("id");
 
-  // Puedes reemplazar los siguientes datos con llamados a tu API
-  const summaryData = {
-    remates: [15,12],
-    rematesAlArco: [8,4],
-    posesion: ['48%','52%']
-  };
-  const teamA = { nombre:'Real Madrid' };
-  const teamB = { nombre:'Manchester City' };
-  const lineupA = [{num:1,name:'Courtois'}, {num:5,name:'Nacho'}];
-  const lineupB = [{num:31,name:'Ederson'}, {num:2,name:'Walker'}];
+const scoreDisplay = document.getElementById("scoreDisplay");
+const matchStatus = document.getElementById("matchStatus");
+const actionsContainer = document.getElementById("actionsComments");
+const lineupA = document.getElementById("lineupA");
+const lineupB = document.getElementById("lineupB");
 
-  // Render encabezado
-  document.getElementById('teamAName').textContent = teamA.nombre;
-  document.getElementById('teamBName').textContent = teamB.nombre;
+async function cargarPartido() {
+  try {
+    const res = await fetch(`/api/match/${partidoId}`);
+    const data = await res.json();
 
-  // Render estadísticas
-  const grid = document.querySelector('.stats-grid');
-  Object.keys(summaryData).forEach(key=>{
-    const label = key.replace(/([A-Z])/g,' $1').trim();
-    const a = summaryData[key][0], b = summaryData[key][1];
-    const row = document.createElement('fragment');
-    grid.innerHTML += `<div class="stat-name">${label}</div><div class="stat-value teamA">${a}</div><div class="stat-value teamB">${b}</div>`;
-  });
+    document.getElementById("teamAName").textContent = data.equipoA.nombre;
+    document.getElementById("teamBName").textContent = data.equipoB.nombre;
 
-  // Alineaciones
-  const renderLineup = (containerId, team, lineup) => {
-    const ct = document.getElementById(containerId);
-    ct.innerHTML = `<h2>${team.nombre}</h2>`;
-    lineup.forEach(p => {
-      const d = document.createElement('div');
-      d.textContent = `#${p.num} – ${p.name}`;
-      ct.appendChild(d);
-    });
-  };
-  renderLineup('lineupA', teamA, lineupA);
-  renderLineup('lineupB', teamB, lineupB);
-});
+    scoreDisplay.textContent = `${data.golesA} - ${data.golesB}`;
+    matchStatus.textContent = data.estado === "finalizado" ? "Final" : "En vivo";
 
-fetch('/api/actions')
-  .then(res => {
-    if (!res.ok) throw new Error('No se pudo obtener el log de acciones');
-    return res.json();
-  })
-  .then(actions => {
-    const container = document.getElementById('actionsComments');
-    container.innerHTML = ''; // Limpia comentarios previos
+    renderAlineaciones(data.jugadoresA, lineupA);
+    renderAlineaciones(data.jugadoresB, lineupB);
 
-    const latest = actions.slice(-5).reverse(); // Últimos 5 eventos
+  } catch (err) {
+    console.error("Error al cargar datos del partido:", err);
+  }
+}
 
-    latest.forEach(action => {
-      const comment = document.createElement('div');
-      const isTeamA = action.equipo && action.equipo.toLowerCase().includes('a');
-      comment.classList.add('comment-bubble');
-      comment.classList.add(isTeamA ? 'comment-left' : 'comment-right');
+function renderAlineaciones(jugadores, contenedor) {
+  contenedor.innerHTML = jugadores.map(j => `
+    <div class="player-lineup">
+      <img src="${j.foto || 'img/avatar-default.png'}" />
+      <div>
+        <strong>#${j.numero}</strong> ${j.nombre}<br/>
+        <small>${j.posicion}</small>
+      </div>
+    </div>
+  `).join("");
+}
 
-      const time = new Date(action.timestamp).toLocaleTimeString([], { minute: '2-digit', second: '2-digit' });
+async function cargarEventos() {
+  try {
+    const res = await fetch(`/api/events/${partidoId}`);
+    const eventos = await res.json();
 
-      comment.innerHTML = `
-        <div class="meta">
-          <span>${action.equipo}</span>
-          <span>${time}</span>
+    actionsContainer.innerHTML = eventos.map(ev => renderBurbujaEvento(ev)).join("");
+  } catch (err) {
+    console.error("Error al cargar eventos:", err);
+  }
+}
+
+function renderBurbujaEvento(ev) {
+  return `
+    <div class="chat-bubble ${ev.tipo}">
+      <img src="${ev.foto || 'img/avatar-default.png'}" />
+      <div class="bubble-content">
+        <div class="bubble-header">
+          <strong>${ev.nombre}</strong> (${ev.posicion})
         </div>
-        <div><strong>${action.jugador} (#${action.numero})</strong> — ${action.accion}</div>
-      `;
+        <div class="bubble-action">
+          ${renderAccionTexto(ev)}
+        </div>
+        <div class="bubble-time">
+          ${ev.minuto}' min
+        </div>
+      </div>
+    </div>
+  `;
+}
 
-      container.appendChild(comment);
-    });
-  })
-  .catch(err => console.error('❌ Error cargando acciones:', err));
+function renderAccionTexto(ev) {
+  if (ev.tipo === "gol") return "⚽ Gol";
+  if (ev.tipo === "tarjeta") return ev.tarjeta === "roja" ? "🟥 Tarjeta Roja" : "🟨 Tarjeta Amarilla";
+  if (ev.tipo === "accion") return `🕹️ ${ev.accion}`;
+  return "Evento";
+}
+
+// Carga inicial
+cargarPartido();
+cargarEventos();
+
+// Refrescar cada 20s si está en vivo
+setInterval(() => {
+  if (matchStatus.textContent === "En vivo") {
+    cargarPartido();
+    cargarEventos();
+  }
+}, 20000);
