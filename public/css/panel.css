@@ -657,3 +657,31 @@ body {
   display: flex;
   justify-content: space-between;
 }
+
+/* ===== ESTADO INICIAL: DESHABILITADOS ===== */
+.action-btn {
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* ===== CUANDO ESTÁN HABILITADOS ===== */
+.action-btn.enabled {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===== PUNTERO AL PASAR POR ENCIMA ===== */
+.action-btn.enabled:hover {
+  cursor: pointer;
+}
+
+/* Ocultar siempre las stats */
+.player-card .card-stats {
+  display: none;
+}
+
+/* Solo la carta con la clase .selected las muestra */
+.player-card.selected .card-stats {
+  display: grid;
+}
