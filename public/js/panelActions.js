@@ -3,18 +3,19 @@
 // ————————————————
 // Función de registro de logs
 // ————————————————
-function registerLog(action, details) {
+function registerLog(eventType, details) {
+  if (!partidoActivo?.id) return;  // No hay partido seleccionado
+
   const entry = {
-    partidoId: partidoActivo?.id || null,
     timestamp: new Date().toISOString(),
-    action,
-    details: {
-      ...details,
-      time: document.getElementById('minutero')?.textContent || null
-    }
+    clock:     document.getElementById('minutero')?.textContent || null,
+    eventType,
+    details
   };
+
   console.log('LogMatchEntry:', entry);
-  fetch('/db/logMatch.json', {
+
+  fetch(`/api/logMatch/matches/${partidoActivo.id}/events`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(entry)
@@ -70,7 +71,6 @@ function initCardStats(card) {
   statsDiv.style.display = 'none';
   card.appendChild(statsDiv);
   renderGlobalStat(card);
-  registerLog('init_stats', { playerId: card.dataset.id, position: pos });
 }
 
 // ————————————————
@@ -79,7 +79,6 @@ function initCardStats(card) {
 function updateCardStat(card, key, value) {
   const cell = card.querySelector(`.card-stats div[data-stat="${key}"]`);
   if (cell) cell.children[1].textContent = Math.round(Math.min(value, 100));
-  registerLog('update_stat', { playerId: card.dataset.id, statKey: key, statValue: Math.round(Math.min(value,100)) });
 }
 
 // ————————————————
@@ -123,7 +122,6 @@ function renderGlobalStat(card) {
   }
   const globalVal = calculateGlobalStatValue(card);
   badge.textContent = globalVal;
-  registerLog('update_global', { playerId: card.dataset.id, global: globalVal });
 }
 
 // ————————————————
@@ -154,8 +152,6 @@ document.addEventListener('click', e => {
     btn.disabled = !ok;
     btn.classList.toggle('enabled', ok);
   });
-
-  registerLog('select_player', { playerId: pid, position: pos });
 });
 
 // ————————————————
@@ -337,3 +333,19 @@ document.getElementById('btnGoalB').addEventListener('click', () => handleGoal('
 document.addEventListener('DOMContentLoaded', () => {
   updateScoreDisplay();
 });
+
+// ———— Evento Finalizar Partido ————
+document.getElementById("btnFinalizar").addEventListener("click", () => {
+  if (!partidoActivo) return alert("No hay partido activo.");
+  if (!confirm("¿Finalizar partido? Se guardarán estadísticas.")) return;
+  const [gA,gB] = document.getElementById("score").textContent.split(" - ").map(n=>+n);
+  const stats   = obtenerTodasLasEstadisticasRegistradas();
+  fetch(`/api/stats/match/${partidoActivo.id}/complete`, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ marcador:{A:gA,B:gB}, stats })
+  })
+  .then(r => r.ok ? r.json() : Promise.reject("Error"))
+  .then(()=> alert("Partido finalizado y stats guardadas"))
+  .catch(()=> alert("Error al finalizar."));
+});
+function obtenerTodasLasEstadisticasRegistradas(){ return { players:[], teams:[] }; }

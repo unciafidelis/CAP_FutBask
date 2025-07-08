@@ -36,6 +36,8 @@ seedReferees(db);
 // === RUTA ESTÁTICA PARA CARGAR IMG DESDE src/img ===
 app.use('/img/teamImg', express.static(path.join(__dirname, 'img/teamImg')));
 app.use('/img/playerImg', express.static(path.join(__dirname, 'img/playerImg')));
+app.use(express.static(path.join(__dirname, '../public')));
+
 
 // === RUTAS ESTÁTICAS RESTRINGIDAS A EXTENSIONES SEGURAS ===
 app.use((req, res, next) => {

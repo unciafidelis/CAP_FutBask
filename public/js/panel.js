@@ -60,12 +60,12 @@ function cargarDatosPartido(partidoId) {
       localStorage.setItem("equipoB_id", partido.equipoB_id);
       // Actualizar nombres
       [
-        ["nombreEquipoA", partido.equipoA],
-        ["nombreEquipoB", partido.equipoB],
-        ["nombreFooterA", partido.equipoA],
-        ["nombreFooterB", partido.equipoB],
-        ["nombreModalEquipoA", partido.equipoA],
-        ["nombreModalEquipoB", partido.equipoB],
+        ["nombreEquipoA", partido.nombreEquipoA],
+        ["nombreEquipoB", partido.nombreEquipoB],
+        ["nombreFooterA", partido.nombreEquipoA],
+        ["nombreFooterB", partido.nombreEquipoB],
+        ["nombreModalEquipoA", partido.nombreEquipoA],
+        ["nombreModalEquipoB", partido.nombreEquipoB],
       ].forEach(([id, text]) => document.getElementById(id).textContent = text);
       // Actualizar logos
       document.getElementById("logoFooterA").src  = partido.logoA || "placeholderA.png";
@@ -147,7 +147,7 @@ function abrirModalJugadores(equipoId, equipoLado) {
             <label><input type="radio" name="pos-${j.id}" value="GK">GK</label>
             <label><input type="radio" name="pos-${j.id}" value="D">D</label>
             <label><input type="radio" name="pos-${j.id}" value="M">M</label>
-            <label><input type="radio" name="pos-${j.id}" value="F">F</label>
+            <label><input type="radio" name="pos-${j.id}" value="FW">FW</label>
           </div>
           <button class="btn-cancha-toggle">Enviar a cancha</button>
         `;
@@ -341,22 +341,6 @@ document.getElementById("btnReiniciarTiempo").addEventListener("click", () => {
   segundosTranscurridos = minutos = 0;
   document.getElementById("minutero").textContent = formatearTiempo(0,0);
 });
-
-// ———— Evento Finalizar Partido ————
-document.getElementById("btnFinalizar").addEventListener("click", () => {
-  if (!partidoActivo) return alert("No hay partido activo.");
-  if (!confirm("¿Finalizar partido? Se guardarán estadísticas.")) return;
-  const [gA,gB] = document.getElementById("score").textContent.split(" - ").map(n=>+n);
-  const stats   = obtenerTodasLasEstadisticasRegistradas();
-  fetch(`/api/stats/match/${partidoActivo.id}/complete`, {
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ marcador:{A:gA,B:gB}, stats })
-  })
-  .then(r => r.ok ? r.json() : Promise.reject("Error"))
-  .then(()=> alert("Partido finalizado y stats guardadas"))
-  .catch(()=> alert("Error al finalizar."));
-});
-function obtenerTodasLasEstadisticasRegistradas(){ return { players:[], teams:[] }; }
 
 // ————— Toggle sidebars —————
 toggleLeft.addEventListener('click', () => {
