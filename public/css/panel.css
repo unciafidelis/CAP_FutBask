@@ -141,6 +141,24 @@ body {
   cursor: pointer;
 }
 
+.card-global {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+
 /* Colores por posición */
 .position-GK {
   background-color: #e67e22;
@@ -685,3 +703,4 @@ body {
 .player-card.selected .card-stats {
   display: grid;
 }
+
