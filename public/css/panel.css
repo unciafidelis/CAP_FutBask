@@ -704,3 +704,29 @@ body {
   display: grid;
 }
 
+/* panelScore.css */
+/* Ajustes para los botones de gol y el marcador FIFA */
+.marcador-centro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.goal-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.goal-btn:hover {
+  transform: scale(1.2);
+}
+
+.marcador-central {
+  font-size: 24px;
+  font-weight: bold;
+  min-width: 60px;
+  text-align: center;
+}

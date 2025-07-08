@@ -73,21 +73,25 @@
 </div>
 
 
-  <!-- Marcador tipo FIFA -->
-  <div class="marcador-fifa">
-    <div class="equipo-fifa">
-      <img id="logoFooterA" src="placeholderA.png" class="logo-mini" />
-      <span id="nombreFooterA">Equipo A</span>
-    </div>
-    <div class="marcador-centro">
-      <div id="score" class="marcador-central">0 - 0</div>
-      <div id="minutero" class="minutero">00'</div>
-    </div>
-    <div class="equipo-fifa">
-      <span id="nombreFooterB">Equipo B</span>
-      <img id="logoFooterB" src="placeholderB.png" class="logo-mini" />
-    </div>
+  <!-- Integración del marcador FIFA con botones de gol/autogol -->
+<!-- Marcador tipo FIFA -->
+<div class="marcador-fifa">
+  <div class="equipo-fifa">
+    <img id="logoFooterA" src="placeholderA.png" class="logo-mini" />
+    <span id="nombreFooterA">Equipo A</span>
   </div>
+  <div class="marcador-centro">
+    <button id="btnGoalA" class="goal-btn">⚽</button>
+    <div id="score" class="marcador-central">0 - 0</div>
+    <button id="btnGoalB" class="goal-btn">⚽</button>
+    <div id="minutero" class="minutero">00'</div>
+  </div>
+  <div class="equipo-fifa">
+    <span id="nombreFooterB">Equipo B</span>
+    <img id="logoFooterB" src="placeholderB.png" class="logo-mini" />
+  </div>
+</div>
+
 
   <!-- Modal de configuración del partido -->
   <div class="modal-overlay" id="modalSeleccion" style="display: flex;">
@@ -128,7 +132,6 @@
 
   <!-- Archivos JS -->
   <script src="js/panel.js"></script>
-  <script src="js/realtime.js"></script>
   <script src="js/panelActions.js"></script>
 </body>
 </html>
