@@ -1,6 +1,27 @@
 // panelActions.js
 
 // ————————————————
+// Función de registro de logs
+// ————————————————
+function registerLog(action, details) {
+  const entry = {
+    partidoId: partidoActivo?.id || null,
+    timestamp: new Date().toISOString(),
+    action,
+    details: {
+      ...details,
+      time: document.getElementById('minutero')?.textContent || null
+    }
+  };
+  console.log('LogMatchEntry:', entry);
+  fetch('/db/logMatch.json', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(entry)
+  }).catch(err => console.error('Error registrando logMatch:', err));
+}
+
+// ————————————————
 // 1) Acciones permitidas por posición
 // ————————————————
 const allowedActions = {
@@ -49,6 +70,7 @@ function initCardStats(card) {
   statsDiv.style.display = 'none';
   card.appendChild(statsDiv);
   renderGlobalStat(card);
+  registerLog('init_stats', { playerId: card.dataset.id, position: pos });
 }
 
 // ————————————————
@@ -57,6 +79,7 @@ function initCardStats(card) {
 function updateCardStat(card, key, value) {
   const cell = card.querySelector(`.card-stats div[data-stat="${key}"]`);
   if (cell) cell.children[1].textContent = Math.round(Math.min(value, 100));
+  registerLog('update_stat', { playerId: card.dataset.id, statKey: key, statValue: Math.round(Math.min(value,100)) });
 }
 
 // ————————————————
@@ -98,7 +121,9 @@ function renderGlobalStat(card) {
     badge.className = 'card-global';
     card.appendChild(badge);
   }
-  badge.textContent = calculateGlobalStatValue(card);
+  const globalVal = calculateGlobalStatValue(card);
+  badge.textContent = globalVal;
+  registerLog('update_global', { playerId: card.dataset.id, global: globalVal });
 }
 
 // ————————————————
@@ -129,6 +154,8 @@ document.addEventListener('click', e => {
     btn.disabled = !ok;
     btn.classList.toggle('enabled', ok);
   });
+
+  registerLog('select_player', { playerId: pid, position: pos });
 });
 
 // ————————————————
@@ -199,7 +226,7 @@ function processAction(st, action, pos) {
       }
       if (action === 'ATA') {
         st.shots = (st.shots||0)+1;
-        return { key:'ATA', value: cap(st.shots) };
+        return { key:'ATA', value:cap(st.shots) };
       }
       if (action === 'Regates') {
         st.rgt = (st.rgt||0)+10;
@@ -229,6 +256,7 @@ document.querySelectorAll('.action-btn').forEach(btn => {
     if (res) {
       updateCardStat(selectedCard, res.key, res.value);
       refreshCardStats(selectedCard);
+      registerLog('player_action', { playerId: pid, action, statKey: res.key, statValue: res.value });
     }
   });
 });
@@ -244,6 +272,7 @@ document.querySelector('.tarjeta-btn.amarilla').addEventListener('click', () => 
     const c = statsState[pid].cards;
     c.yellow++;
     if (c.yellow >= 2) selectedCard.classList.add('blocked');
+    registerLog('yellow_card', { playerId: pid, count: c.yellow });
   }
 });
 document.querySelector('.tarjeta-btn.roja').addEventListener('click', () => {
@@ -253,66 +282,8 @@ document.querySelector('.tarjeta-btn.roja').addEventListener('click', () => {
   if (confirm('Dar tarjeta roja?')) {
     statsState[pid].cards = { yellow:0, red:1 };
     selectedCard.classList.add('blocked');
+    registerLog('red_card', { playerId: pid });
   }
-});
-
-// ————— Cronómetro estilo FIFA con minutos y segundos —————
-let segundosTranscurridos = 0, minutos = 0, intervalo = null;
-function formatearTiempo(mins, secs) {
-  return `${mins}:${String(secs).padStart(2,'0')}'`;
-}
-document.getElementById("btnIniciarTiempo").addEventListener("click", () => {
-  if (!intervalo) intervalo = setInterval(() => {
-    segundosTranscurridos++;
-    if (segundosTranscurridos === 60) { minutos++; segundosTranscurridos = 0; }
-    document.getElementById("minutero").textContent =
-      formatearTiempo(minutos, segundosTranscurridos);
-  }, 1000);
-});
-document.getElementById("btnPausarTiempo").addEventListener("click", () => {
-  clearInterval(intervalo); intervalo = null;
-});
-document.getElementById("btnReiniciarTiempo").addEventListener("click", () => {
-  clearInterval(intervalo); intervalo = null;
-  segundosTranscurridos = minutos = 0;
-  document.getElementById("minutero").textContent = formatearTiempo(0,0);
-});
-
-// ———— Evento Finalizar Partido ————
-document.getElementById("btnFinalizar").addEventListener("click", () => {
-  if (!partidoActivo) return alert("No hay partido activo.");
-  if (!confirm("¿Finalizar partido? Se guardarán estadísticas.")) return;
-  const [gA,gB] = document.getElementById("score").textContent.split(" - ").map(n=>+n);
-  const stats   = obtenerTodasLasEstadisticasRegistradas();
-  fetch(`/api/stats/match/${partidoActivo.id}/complete`, {
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ marcador:{A:gA,B:gB}, stats })
-  })
-  .then(r => r.ok ? r.json() : Promise.reject("Error"))
-  .then(()=> alert("Partido finalizado y stats guardadas"))
-  .catch(()=> alert("Error al finalizar."));
-});
-function obtenerTodasLasEstadisticasRegistradas(){ return { players:[], teams:[] }; }
-
-// ————— Toggle sidebars —————
-toggleLeft.addEventListener('click', () => {
-  sidebarLeft.classList.toggle('open');
-  toggleLeft.innerHTML = sidebarLeft.classList.contains('open') ? '&#9664;' : '&#9654;';
-});
-toggleRight.addEventListener('click', () => {
-  sidebarRight.classList.toggle('open');
-  toggleRight.innerHTML = sidebarRight.classList.contains('open') ? '&#9654;' : '&#9664;';
-});
-
-// ————— Botón de configuración flotante —————
-btnConfigMain.addEventListener("click", () => configOptions.classList.toggle("show"));
-
-// ————— Abrir modal de jugadores desde el modal principal —————
-document.getElementById("equipoModalA").addEventListener("click", () => {
-  if (partidoActivo?.equipoA_id) abrirModalJugadores(partidoActivo.equipoA_id, 'A');
-});
-document.getElementById("equipoModalB").addEventListener("click", () => {
-  if (partidoActivo?.equipoB_id) abrirModalJugadores(partidoActivo.equipoB_id, 'B');
 });
 
 
@@ -324,7 +295,7 @@ document.getElementById("equipoModalB").addEventListener("click", () => {
 const scoreState = {
   A: 0,
   B: 0,
-  events: []  // { team, playerId, autogoal, timestamp }
+  events: []
 };
 
 // ————————————————
@@ -343,32 +314,22 @@ function handleGoal(side) {
   if (!selectedCard) {
     return alert('Selecciona un jugador antes de marcar un gol.');
   }
-  const playerId = selectedCard.dataset.id;
-  const playerTeam = selectedCard.dataset.team; // 'A' o 'B'
-  const isAuto = playerTeam !== side;
-  // Incrementa el marcador
+  const playerId   = selectedCard.dataset.id;
+  const playerTeam = selectedCard.dataset.team;
+  const isAuto     = playerTeam !== side;
   scoreState[side]++;
-  // Guarda el evento
-  scoreState.events.push({
-    team: side,
-    playerId: playerId,
-    autogoal: isAuto,
-    timestamp: new Date().toISOString()
-  });
-  // Refresca UI
+  const event = { team: side, playerId, autogoal: isAuto, timestamp: new Date().toISOString() };
+  scoreState.events.push(event);
   updateScoreDisplay();
-  console.log('Evento de gol registrado:', scoreState.events.slice(-1)[0]);
+  console.log('Evento de gol registrado:', event);
+  registerLog('goal', { team: side, playerId, autogoal: isAuto });
 }
 
 // ————————————————
 // Vincula botones de gol para equipo A y B
 // ————————————————
-document.getElementById('btnGoalA').addEventListener('click', () => {
-  handleGoal('A');
-});
-document.getElementById('btnGoalB').addEventListener('click', () => {
-  handleGoal('B');
-});
+document.getElementById('btnGoalA').addEventListener('click', () => handleGoal('A'));
+document.getElementById('btnGoalB').addEventListener('click', () => handleGoal('B'));
 
 // ————————————————
 // Inicializar marcador al cargar

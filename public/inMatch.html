@@ -6,54 +6,73 @@
   <title>Match Centre</title>
   <link rel="stylesheet" href="css/inMatch.css">
 </head>
-<body>
+<body id="matchCentre" data-match-id="">
 
-<header class="match-header">
-  <div class="team-logo">
-    <img src="img/real_madrid.png" alt="Real Madrid">
-    <span id="teamAName">Real Madrid</span>
-  </div>
-  <div class="match-score">
-    <span id="scoreDisplay">3 - 1</span>
-    <span id="matchStatus">Final</span>
-  </div>
-  <div class="team-logo">
-    <span id="teamBName">Manchester City</span>
-    <img src="img/man_city.png" alt="Manchester City">
-  </div>
-</header>
-
-<nav class="tabs">
-  <button class="tab active" data-tab="summary">Resumen</button>
-  <button class="tab" data-tab="lineup">Alineaciones</button>
-  <button class="tab" data-tab="stats">Estadísticas</button>
-</nav>
-
-<!-- RESUMEN -->
-<section id="summary" class="tab-content active">
-  <div class="summary-section">
-    <h2>Últimas acciones del partido</h2>
-    <div id="actionsComments" class="actions-comments-container">
-      <!-- Comentarios generados dinámicamente -->
+  <!-- Modal de selección de partido -->
+  <div id="selectMatchModal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>Selecciona un partido</h2>
+      <select id="matchSelector">
+        <option value="">Cargando partidos...</option>
+      </select>
+      <button id="btnSelectMatch" disabled>Ver partido</button>
     </div>
   </div>
-</section>
 
+  <!-- Header con marcador -->
+  <header class="match-header">
+    <div class="team-logo">
+      <img id="teamALogo" src="" alt="Equipo A">
+      <span id="teamAName"></span>
+    </div>
+    <div class="match-score">
+      <span id="scoreDisplay">0 - 0</span>
+      <span id="matchTime">00'</span>
+      <span id="matchStatus"></span>
+    </div>
+    <div class="team-logo">
+      <span id="teamBName"></span>
+      <img id="teamBLogo" src="" alt="Equipo B">
+    </div>
+  </header>
 
-<!-- ALINEACIONES -->
-<section id="lineup" class="tab-content">
-  <div class="lineup-section">
-    <div id="lineupA" class="lineup-card"></div>
-    <div id="lineupB" class="lineup-card"></div>
-  </div>
-</section>
+  <!-- Pestañas -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="summary">Resumen</button>
+    <button class="tab" data-tab="lineup">Alineaciones</button>
+    <button class="tab" data-tab="stats">Estadísticas</button>
+  </nav>
 
-<!-- ESTADÍSTICAS -->
-<section id="stats" class="tab-content">
-  <div class="stats-message">Próximamente...</div>
-</section>
+  <!-- Contenidos -->
+  <section id="summary" class="tab-content active">
+    <h2>Últimas acciones del partido</h2>
+    <div id="actionsComments" class="actions-comments-container"></div>
+  </section>
 
-<script src="js/inMatch.js"></script>
+  <section id="lineup" class="tab-content">
+    <h2>Alineaciones</h2>
+    <div class="lineup-section">
+      <div id="lineupA" class="lineup-card"></div>
+      <div id="lineupB" class="lineup-card"></div>
+    </div>
+  </section>
 
+  <section id="stats" class="tab-content">
+    <h2>Estadísticas de Jugadores</h2>
+    <div class="stats-section">
+      <div id="statsA" class="stats-team"></div>
+      <div id="statsB" class="stats-team"></div>
+    </div>
+  </section>
+
+  <!-- Botón Cambiar Partido -->
+  <button id="btnChangeMatch" class="change-match-btn" title="Cambiar partido">
+    <svg viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 4V1L8 5l4 4V6a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/>
+    </svg>
+    Cambiar partido
+  </button>
+
+  <script src="js/inMatch.js"></script>
 </body>
 </html>

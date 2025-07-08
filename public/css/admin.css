@@ -63,7 +63,7 @@ body {
 /* === MINI CARDS DESPLEGABLES SUPERIORES === */
 .cards-nav {
   width: 100%;
-  background-color: #23abe4;
+  background-color: #333;
   display: flex;
   justify-content: center;
   gap: 12px;
@@ -89,7 +89,7 @@ body {
 }
 
 .card-mini:hover {
-  background-color: #23abe4;
+  background-color: #333;
 }
 
 /* === CONTENEDOR PRINCIPAL === */
@@ -151,7 +151,7 @@ body {
   justify-content: center;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #23abe4;
+  background-color: #333;
   color: #fff;
   border: none;
   padding: 4px 10px;
@@ -168,6 +168,7 @@ body {
 
 .show-menu {
   top: 70px;
+  opacity: 0.05;
 }
 
 /* === MODAL DE LOGOUT === */

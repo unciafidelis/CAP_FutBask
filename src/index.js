@@ -17,7 +17,7 @@ const authRouter = require('./routes/auth');
 const statsRoutes = require('./routes/stats');
 const matchRouter = require('./routes/match');
 const eventRouter = require('./routes/events');
-
+const logMatchRouter = require('./routes/logMatch');
 const app = express();
 
 // === MIDDLEWARE ===
@@ -57,6 +57,7 @@ app.use('/api', authRouter(db)); // login, logout, referee info
 app.use('/api/stats', statsRoutes);
 app.use('/api/match', matchRouter); // se mantiene para el estado en tiempo real
 app.use('/api/events', eventRouter);
+app.use('/api/logMatch', logMatchRouter(db));
 
 // === RUTAS HTML PROTEGIDAS ===
 app.get('/:file', (req, res) => {

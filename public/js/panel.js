@@ -8,7 +8,7 @@ const positionColors = {
   GK: 'position-GK',
   D:  'position-D',
   M:  'position-M',
-  FW:'position-FW'
+  FW: 'position-FW'
 };
 
 // ————————————— Referencias DOM —————————————
@@ -37,12 +37,8 @@ window.addEventListener("load", () => {
 });
 
 // ————————— Control Modal Principal ——————————
-btnAbrirModal.addEventListener("click", () => {
-  modalSeleccion.style.display = "flex";
-});
-window.cerrarModal = () => {
-  modalSeleccion.style.display = "none";
-};
+btnAbrirModal.addEventListener("click", () => modalSeleccion.style.display = "flex");
+window.cerrarModal = () => modalSeleccion.style.display = "none";
 window.guardarSeleccion = () => {
   const selectedId = partidoSelect.value;
   if (!selectedId) {
@@ -57,36 +53,25 @@ window.guardarSeleccion = () => {
 // ————————— Cargar datos de un partido —————————
 function cargarDatosPartido(partidoId) {
   fetch(`/api/matches/${partidoId}`)
-    .then(res => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
-    })
-    .then(p => {
-      partidoActivo = p;
-      // Guardar IDs de equipos
-      localStorage.setItem("equipoA_id", p.equipoA_id);
-      localStorage.setItem("equipoB_id", p.equipoB_id);
-
-      // Actualizar nombres en todos los elementos correspondientes
+    .then(res => res.json())
+    .then(partido => {
+      partidoActivo = partido;
+      localStorage.setItem("equipoA_id", partido.equipoA_id);
+      localStorage.setItem("equipoB_id", partido.equipoB_id);
+      // Actualizar nombres
       [
-        ["nombreEquipoA",      p.nombreEquipoA],
-        ["nombreModalEquipoA", p.nombreEquipoA],
-        ["nombreFooterA",      p.nombreEquipoA],
-        ["nombreEquipoB",      p.nombreEquipoB],
-        ["nombreModalEquipoB", p.nombreEquipoB],
-        ["nombreFooterB",      p.nombreEquipoB]
-      ].forEach(([id, text]) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = text;
-      });
-
-      // Actualizar logos en todos los elementos correspondientes
-      const logoA = p.logoA || "placeholderA.png";
-      const logoB = p.logoB || "placeholderB.png";
-      document.getElementById("logoEquipoA").src  = logoA;
-      document.getElementById("logoFooterA").src = logoA;
-      document.getElementById("logoEquipoB").src  = logoB;
-      document.getElementById("logoFooterB").src = logoB;
+        ["nombreEquipoA", partido.equipoA],
+        ["nombreEquipoB", partido.equipoB],
+        ["nombreFooterA", partido.equipoA],
+        ["nombreFooterB", partido.equipoB],
+        ["nombreModalEquipoA", partido.equipoA],
+        ["nombreModalEquipoB", partido.equipoB],
+      ].forEach(([id, text]) => document.getElementById(id).textContent = text);
+      // Actualizar logos
+      document.getElementById("logoFooterA").src  = partido.logoA || "placeholderA.png";
+      document.getElementById("logoFooterB").src  = partido.logoB || "placeholderB.png";
+      document.getElementById("logoEquipoA").src = partido.logoA || "placeholderA.png";
+      document.getElementById("logoEquipoB").src = partido.logoB || "placeholderB.png";
     })
     .catch(err => {
       console.error("❌ Error al cargar datos del partido:", err);
@@ -94,61 +79,50 @@ function cargarDatosPartido(partidoId) {
     });
 }
 
-// ————————— Preview al cambiar de partido en el select —————————
+// ————————— Carga inicial de partidos en el select —————————
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("/api/matches")
+    .then(res => res.json())
+    .then(partidos => {
+      partidoSelect.innerHTML = '';
+      if (partidos.length === 0) {
+        partidoSelect.innerHTML = `<option value="">No hay partidos disponibles</option>`;
+        modalSeleccion.style.display = "flex";
+        return;
+      }
+      partidos.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value       = p.id;
+        opt.textContent = `${p.nombreEquipoA} vs ${p.nombreEquipoB} (${p.fecha} ${p.hora})`;
+        partidoSelect.appendChild(opt);
+      });
+      const pid = localStorage.getItem("partidoActivo");
+      if (pid && partidos.some(p => p.id == pid)) {
+        partidoSelect.value = pid;
+        cargarDatosPartido(pid);
+      } else {
+        setTimeout(() => modalSeleccion.style.display = "flex", 300);
+      }
+    })
+    .catch(err => {
+      console.error("❌ Error al cargar partidos:", err);
+      partidoSelect.innerHTML = `<option value="">Error al obtener partidos</option>`;
+    });
+});
+
+// ———————— Preview al cambiar de partido en el select ————————
 partidoSelect.addEventListener("change", () => {
   const id = partidoSelect.value;
   if (!id) return;
   fetch(`/api/matches/${id}`)
-    .then(res => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
-    })
+    .then(res => res.json())
     .then(p => {
-      // Actualizar preview dentro del modal
-      document.getElementById("nombreModalEquipoA").textContent = p.nombreEquipoA;
-      document.getElementById("logoEquipoA").src             = p.logoA || "placeholderA.png";
-      document.getElementById("nombreModalEquipoB").textContent = p.nombreEquipoB;
-      document.getElementById("logoEquipoB").src             = p.logoB || "placeholderB.png";
+      document.getElementById("nombreModalEquipoA").textContent = p.equipoA;
+      document.getElementById("nombreModalEquipoB").textContent = p.equipoB;
+      document.getElementById("logoEquipoA").src = p.fotoA || "placeholderA.png";
+      document.getElementById("logoEquipoB").src = p.fotoB || "placeholderB.png";
     })
     .catch(err => console.error("❌ Error preview partido:", err));
-});
-
-
-// ————————————————
-//  Carga y render de partidos en el <select>
-// ————————————————
-async function loadPartidosProgramados() {
-  try {
-    const res = await fetch('/api/matches');
-    const partidos = await res.json();
-    partidoSelect.innerHTML = '<option value="">Selecciona un partido</option>';
-    partidos.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value       = p.id;
-      opt.textContent = `${p.nombreEquipoA} vs ${p.nombreEquipoB} (${p.fecha} ${p.hora})`;
-      partidoSelect.appendChild(opt);
-    });
-    // Si hay uno guardado, seleccionarlo
-    const pid = localStorage.getItem("partidoActivo");
-    if (pid && partidos.some(p => p.id == pid)) {
-      partidoSelect.value = pid;
-      cargarDatosPartido(pid);
-    } else {
-      // mostrar modal si no había partido activo
-      setTimeout(() => modalSeleccion.style.display = "flex", 300);
-    }
-  } catch (err) {
-    console.error("❌ Error al cargar partidos programados:", err);
-    partidoSelect.innerHTML = `<option value="">Error al obtener partidos</option>`;
-  }
-}
-
-// ————————————————
-// Al cambiar de partido en el select
-// ————————————————
-partidoSelect.addEventListener('change', () => {
-  const id = partidoSelect.value;
-  if (id) cargarDatosPartido(id);
 });
 
 // ————————— Modal de selección de jugadores —————————
@@ -164,16 +138,16 @@ function abrirModalJugadores(equipoId, equipoLado) {
         card.className  = 'player-card';
         card.dataset.id = j.id;
         card.innerHTML  = `
-          <img src="${j.foto||'/img/playerImg/avatar.png'}" class="foto-jugador"/>
+          <img src="${j.foto||'/img/playerImg/avatar.png'}" class="foto-jugador" />
           <div class="info-nombre">${j.nombre}</div>
           <div class="info-posicion ${positionColors[j.posicion]||''}">${j.posicion}</div>
           <div class="info-pie">${j.pie}</div>
-          <div class="info-numero">${j.numero}</div>
+          <div class="info-numero">#${j.numero}</div>
           <div class="posiciones-select">
             <label><input type="radio" name="pos-${j.id}" value="GK">GK</label>
             <label><input type="radio" name="pos-${j.id}" value="D">D</label>
             <label><input type="radio" name="pos-${j.id}" value="M">M</label>
-            <label><input type="radio" name="pos-${j.id}" value="FW">FW</label>
+            <label><input type="radio" name="pos-${j.id}" value="F">F</label>
           </div>
           <button class="btn-cancha-toggle">Enviar a cancha</button>
         `;
@@ -193,11 +167,11 @@ guardarAlineacionBtn.addEventListener("click", () => {
   const cards = playersContainer.querySelectorAll('.player-card');
   const jugadores = [];
   cards.forEach(card => {
-    const id         = +card.dataset.id;
-    const nombre     = card.querySelector('.info-nombre').textContent;
-    const numero     = card.querySelector('.info-numero').textContent.replace('#','');
-    const foto       = card.querySelector('img').src;
-    const pie        = card.querySelector('.info-pie').textContent;
+    const id       = +card.dataset.id;
+    const nombre   = card.querySelector('.info-nombre').textContent;
+    const numero   = card.querySelector('.info-numero').textContent.replace('#','');
+    const foto     = card.querySelector('img').src;
+    const pie      = card.querySelector('.info-pie').textContent;
     const defaultPos = card.querySelector('.info-posicion').textContent.trim();
     const posSel     = card.querySelector('input[type="radio"]:checked')?.value;
     const enCancha   = card.classList.contains('en-cancha');
@@ -218,6 +192,7 @@ function actualizarVistaJugadores(equipoLado, jugadores) {
   renderJugadoresEnCancha(equipoLado, cancha);
 }
 
+// ————— Renderizado sidebar (cancha / banca) —————
 // ————— Renderizado sidebar (cancha / banca) —————
 function renderSidebarJugadores(equipoLado, jugadoresCancha, jugadoresBanca) {
   const enCancha = document.getElementById(`enCancha${equipoLado}`);
@@ -246,7 +221,7 @@ function renderSidebarJugadores(equipoLado, jugadoresCancha, jugadoresBanca) {
 // ————— Selección de jugador para cambio —————
 function seleccionarParaCambio(el) {
   const tipo = el.dataset.tipo;
-  if (tipo==='cancha') {
+  if (tipo === 'cancha') {
     if (!jugadorCanchaSeleccionado) {
       el.classList.add('selected');
       jugadorCanchaSeleccionado = el;
@@ -273,43 +248,47 @@ function realizarCambio(equipoLado) {
   }
   const enC = document.getElementById(`enCancha${equipoLado}`);
   const enB = document.getElementById(`enBanca${equipoLado}`);
-  // intercambio de posiciones cancha
-  if (jugadorBancaSeleccionado.dataset.tipo==='cancha') {
-    const p1 = jugadorCanchaSeleccionado.dataset.posicion;
-    const p2 = jugadorBancaSeleccionado.dataset.posicion;
-    jugadorCanchaSeleccionado.dataset.posicion = p2;
-    jugadorBancaSeleccionado.dataset.posicion  = p1;
+
+  // intercambio de posiciones si ambos en cancha
+  if (jugadorBancaSeleccionado.dataset.tipo === 'cancha') {
+    const pos1 = jugadorCanchaSeleccionado.dataset.posicion;
+    const pos2 = jugadorBancaSeleccionado.dataset.posicion;
+    jugadorCanchaSeleccionado.dataset.posicion = pos2;
+    jugadorBancaSeleccionado.dataset.posicion  = pos1;
   } else {
-    const posCan = jugadorCanchaSeleccionado.dataset.posicion;
-    jugadorBancaSeleccionado.dataset.posicion = posCan;
+    const posCancha = jugadorCanchaSeleccionado.dataset.posicion;
+    jugadorBancaSeleccionado.dataset.posicion = posCancha;
     enC.appendChild(jugadorBancaSeleccionado);
     enB.appendChild(jugadorCanchaSeleccionado);
     jugadorBancaSeleccionado.dataset.tipo = 'cancha';
     jugadorCanchaSeleccionado.dataset.tipo = 'banca';
   }
-  // reconstruir y refrescar
+
+  // reconstruir lista y refrescar
   const updated = [];
   document.querySelectorAll(`#enCancha${equipoLado} .sidebar-jugador`).forEach(li => {
     updated.push({
-      id:+li.dataset.id,
-      nombre:li.children[2].textContent,
-      numero:li.children[1].textContent.replace('#',''),
-      foto:li.children[0].src,
-      posicion:li.dataset.posicion,
-      enCancha:true
+      id: +li.dataset.id,
+      nombre: li.children[2].textContent,
+      numero: li.children[1].textContent.replace('#',''),
+      foto: li.children[0].src,
+      posicion: li.dataset.posicion,
+      enCancha: true
     });
   });
   document.querySelectorAll(`#enBanca${equipoLado} .sidebar-jugador`).forEach(li => {
     updated.push({
-      id:+li.dataset.id,
-      nombre:li.children[2].textContent,
-      numero:li.children[1].textContent.replace('#',''),
-      foto:li.children[0].src,
-      posicion:li.dataset.posicion,
-      enCancha:false
+      id: +li.dataset.id,
+      nombre: li.children[2].textContent,
+      numero: li.children[1].textContent.replace('#',''),
+      foto: li.children[0].src,
+      posicion: li.dataset.posicion,
+      enCancha: false
     });
   });
   actualizarVistaJugadores(equipoLado, updated);
+
+  // limpiar selección
   jugadorCanchaSeleccionado.classList.remove('selected');
   jugadorBancaSeleccionado.classList.remove('selected');
   jugadorCanchaSeleccionado = null;
@@ -341,10 +320,61 @@ function renderJugadoresEnCancha(equipoLado, jugadores) {
     else            filaArriba.appendChild(card);
   });
 }
+// ————— Cronómetro estilo FIFA con minutos y segundos —————
+let segundosTranscurridos = 0, minutos = 0, intervalo = null;
+function formatearTiempo(mins, secs) {
+  return `${mins}:${String(secs).padStart(2,'0')}'`;
+}
+document.getElementById("btnIniciarTiempo").addEventListener("click", () => {
+  if (!intervalo) intervalo = setInterval(() => {
+    segundosTranscurridos++;
+    if (segundosTranscurridos === 60) { minutos++; segundosTranscurridos = 0; }
+    document.getElementById("minutero").textContent =
+      formatearTiempo(minutos, segundosTranscurridos);
+  }, 1000);
+});
+document.getElementById("btnPausarTiempo").addEventListener("click", () => {
+  clearInterval(intervalo); intervalo = null;
+});
+document.getElementById("btnReiniciarTiempo").addEventListener("click", () => {
+  clearInterval(intervalo); intervalo = null;
+  segundosTranscurridos = minutos = 0;
+  document.getElementById("minutero").textContent = formatearTiempo(0,0);
+});
 
-// ————————————————
-// Arranca la carga de partidos al inicializar
-// ————————————————
-document.addEventListener('DOMContentLoaded', () => {
-  loadPartidosProgramados();
+// ———— Evento Finalizar Partido ————
+document.getElementById("btnFinalizar").addEventListener("click", () => {
+  if (!partidoActivo) return alert("No hay partido activo.");
+  if (!confirm("¿Finalizar partido? Se guardarán estadísticas.")) return;
+  const [gA,gB] = document.getElementById("score").textContent.split(" - ").map(n=>+n);
+  const stats   = obtenerTodasLasEstadisticasRegistradas();
+  fetch(`/api/stats/match/${partidoActivo.id}/complete`, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ marcador:{A:gA,B:gB}, stats })
+  })
+  .then(r => r.ok ? r.json() : Promise.reject("Error"))
+  .then(()=> alert("Partido finalizado y stats guardadas"))
+  .catch(()=> alert("Error al finalizar."));
+});
+function obtenerTodasLasEstadisticasRegistradas(){ return { players:[], teams:[] }; }
+
+// ————— Toggle sidebars —————
+toggleLeft.addEventListener('click', () => {
+  sidebarLeft.classList.toggle('open');
+  toggleLeft.innerHTML = sidebarLeft.classList.contains('open') ? '&#9664;' : '&#9654;';
+});
+toggleRight.addEventListener('click', () => {
+  sidebarRight.classList.toggle('open');
+  toggleRight.innerHTML = sidebarRight.classList.contains('open') ? '&#9654;' : '&#9664;';
+});
+
+// ————— Botón de configuración flotante —————
+btnConfigMain.addEventListener("click", () => configOptions.classList.toggle("show"));
+
+// ————— Abrir modal de jugadores desde el modal principal —————
+document.getElementById("equipoModalA").addEventListener("click", () => {
+  if (partidoActivo?.equipoA_id) abrirModalJugadores(partidoActivo.equipoA_id, 'A');
+});
+document.getElementById("equipoModalB").addEventListener("click", () => {
+  if (partidoActivo?.equipoB_id) abrirModalJugadores(partidoActivo.equipoB_id, 'B');
 });

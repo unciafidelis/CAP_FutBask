@@ -135,7 +135,29 @@ CREATE TABLE IF NOT EXISTS eventos (
 `).run();
 console.log('✅ Tabla "eventos" lista.');
 
+db.prepare(`
+CREATE TABLE IF NOT EXISTS match_logs (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  match_id    INTEGER NOT NULL,
+  timestamp   TEXT    NOT NULL,
+  clock       TEXT,
+  event_type  TEXT    NOT NULL,
+  details     TEXT,               -- JSON string
+  FOREIGN KEY(match_id) REFERENCES matches(id)
+);
+`).run();
+console.log('✅ Tabla "eventos" lista.');
 
+db.prepare(`
+  -- en tu script de inicialización de la BD:
+CREATE TABLE IF NOT EXISTS lineup (
+  match_id INTEGER NOT NULL,
+  team     TEXT    NOT NULL CHECK(team IN ('A','B')),
+  players  TEXT    NOT NULL,         -- JSON.stringify([...])
+  PRIMARY KEY(match_id, team)
+);
+  `).run();
+  console.log('✅ Tabla "lineup" lista.');
 
 // === EXPORTACIÓN DE INSTANCIA DB ===
 module.exports = db;
