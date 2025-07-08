@@ -57,33 +57,62 @@ window.guardarSeleccion = () => {
 // ————————— Cargar datos de un partido —————————
 function cargarDatosPartido(partidoId) {
   fetch(`/api/matches/${partidoId}`)
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
     .then(p => {
       partidoActivo = p;
+      // Guardar IDs de equipos
       localStorage.setItem("equipoA_id", p.equipoA_id);
       localStorage.setItem("equipoB_id", p.equipoB_id);
-      // nombres
+
+      // Actualizar nombres en todos los elementos correspondientes
       [
-        ["nombreEquipoA", p.equipoA],
-        ["nombreEquipoB", p.equipoB],
-        ["nombreFooterA", p.equipoA],
-        ["nombreFooterB", p.equipoB],
-        ["nombreModalEquipoA", p.equipoA],
-        ["nombreModalEquipoB", p.equipoB]
-      ].forEach(([id, txt]) => {
-        document.getElementById(id).textContent = txt;
+        ["nombreEquipoA",      p.nombreEquipoA],
+        ["nombreModalEquipoA", p.nombreEquipoA],
+        ["nombreFooterA",      p.nombreEquipoA],
+        ["nombreEquipoB",      p.nombreEquipoB],
+        ["nombreModalEquipoB", p.nombreEquipoB],
+        ["nombreFooterB",      p.nombreEquipoB]
+      ].forEach(([id, text]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
       });
-      // logos
-      document.getElementById("logoFooterA").src  = p.logoA || "placeholderA.png";
-      document.getElementById("logoFooterB").src  = p.logoB || "placeholderB.png";
-      document.getElementById("logoEquipoA").src = p.logoA || "placeholderA.png";
-      document.getElementById("logoEquipoB").src = p.logoB || "placeholderB.png";
+
+      // Actualizar logos en todos los elementos correspondientes
+      const logoA = p.logoA || "placeholderA.png";
+      const logoB = p.logoB || "placeholderB.png";
+      document.getElementById("logoEquipoA").src  = logoA;
+      document.getElementById("logoFooterA").src = logoA;
+      document.getElementById("logoEquipoB").src  = logoB;
+      document.getElementById("logoFooterB").src = logoB;
     })
     .catch(err => {
       console.error("❌ Error al cargar datos del partido:", err);
       alert("No se pudo cargar la información del partido.");
     });
 }
+
+// ————————— Preview al cambiar de partido en el select —————————
+partidoSelect.addEventListener("change", () => {
+  const id = partidoSelect.value;
+  if (!id) return;
+  fetch(`/api/matches/${id}`)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(p => {
+      // Actualizar preview dentro del modal
+      document.getElementById("nombreModalEquipoA").textContent = p.nombreEquipoA;
+      document.getElementById("logoEquipoA").src             = p.logoA || "placeholderA.png";
+      document.getElementById("nombreModalEquipoB").textContent = p.nombreEquipoB;
+      document.getElementById("logoEquipoB").src             = p.logoB || "placeholderB.png";
+    })
+    .catch(err => console.error("❌ Error preview partido:", err));
+});
+
 
 // ————————————————
 //  Carga y render de partidos en el <select>
