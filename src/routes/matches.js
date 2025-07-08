@@ -4,20 +4,24 @@ const express = require('express');
 module.exports = (db) => {
   const router = express.Router();
 
-  // Obtener todos los partidos con nombres de equipos
+  // 1) Obtener todos los partidos con IDs y nombres de equipos
   router.get('/', (req, res) => {
     try {
-     const rows = db.prepare(`
-  SELECT 
-    m.id, m.fecha, m.hora,
-    m.torneo_id,
-    ta.nombre AS nombreEquipoA,
-    tb.nombre AS nombreEquipoB
-  FROM matches m
-  JOIN teams ta ON m.equipoA = ta.id
-  JOIN teams tb ON m.equipoB = tb.id
-  ORDER BY m.id DESC
-`).all();
+      const rows = db.prepare(`
+        SELECT 
+          m.id,
+          m.fecha,
+          m.hora,
+          m.torneo_id,
+          m.equipoA    AS equipoA_id,
+          m.equipoB    AS equipoB_id,
+          ta.nombre    AS nombreEquipoA,
+          tb.nombre    AS nombreEquipoB
+        FROM matches m
+        JOIN teams ta ON m.equipoA = ta.id
+        JOIN teams tb ON m.equipoB = tb.id
+        ORDER BY m.id DESC
+      `).all();
 
       res.json(rows);
     } catch (err) {
@@ -26,49 +30,54 @@ module.exports = (db) => {
     }
   });
 
-  // Obtener un partido específico con datos de equipos
+  // 2) Obtener un partido específico
   router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  try {
-    const stmt = db.prepare(`
-      SELECT 
-        m.id, m.fecha, m.hora, m.torneo_id,
-        ta.id AS equipoA_id, ta.nombre AS nombreEquipoA, ta.foto AS fotoA,
-        tb.id AS equipoB_id, tb.nombre AS nombreEquipoB, tb.foto AS fotoB
-      FROM matches m
-      JOIN teams ta ON m.equipoA = ta.id
-      JOIN teams tb ON m.equipoB = tb.id
-      WHERE m.id = ?
-    `);
-    const row = stmt.get(id);
-    if (!row) return res.status(404).json({ message: "Partido no encontrado" });
+    const { id } = req.params;
+    try {
+      const stmt = db.prepare(`
+        SELECT 
+          m.id,
+          m.fecha,
+          m.hora,
+          m.torneo_id,
+          m.equipoA    AS equipoA_id,
+          ta.nombre    AS nombreEquipoA,
+          ta.foto      AS fotoA,
+          m.equipoB    AS equipoB_id,
+          tb.nombre    AS nombreEquipoB,
+          tb.foto      AS fotoB
+        FROM matches m
+        JOIN teams ta ON m.equipoA = ta.id
+        JOIN teams tb ON m.equipoB = tb.id
+        WHERE m.id = ?
+      `);
+      const row = stmt.get(id);
+      if (!row) return res.status(404).json({ message: "Partido no encontrado" });
 
-    // Renombramos aquí para que el frontend no falle
-    res.json({
-      id: row.id,
-      equipoA_id: row.equipoA_id,
-      equipoB_id: row.equipoB_id,
-      equipoA: row.nombreEquipoA,   // ✅ nombre esperado por panel.js
-      equipoB: row.nombreEquipoB,
-      logoA: row.fotoA,             // ✅ nombre esperado por panel.js
-      logoB: row.fotoB,
-      fecha: row.fecha,
-      hora: row.hora,
-      torneo_id: row.torneo_id
-    });
-  } catch (err) {
-    console.error("❌ Error al obtener el partido:", err.message);
-    res.status(500).json({ error: "Error interno al obtener el partido" });
-  }
-});
+      res.json({
+        id:            row.id,
+        torneo_id:     row.torneo_id,
+        equipoA_id:    row.equipoA_id,
+        equipoB_id:    row.equipoB_id,
+        nombreEquipoA: row.nombreEquipoA,
+        nombreEquipoB: row.nombreEquipoB,
+        logoA:         row.fotoA,
+        logoB:         row.fotoB,
+        fecha:         row.fecha,
+        hora:          row.hora
+      });
+    } catch (err) {
+      console.error("❌ Error al obtener el partido:", err.message);
+      res.status(500).json({ error: "Error interno al obtener el partido" });
+    }
+  });
 
-  // Crear nuevo partido
+  // 3) Crear nuevo partido
   router.post('/', (req, res) => {
     const { torneo_id, equipoA, equipoB, fecha, hora } = req.body;
     if (!torneo_id || !equipoA || !equipoB || !fecha || !hora) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
-
     try {
       const stmt = db.prepare(`
         INSERT INTO matches (torneo_id, equipoA, equipoB, fecha, hora)
@@ -82,7 +91,31 @@ module.exports = (db) => {
     }
   });
 
-  // Eliminar partido
+  // 4) Actualizar partido existente
+  router.put('/:id', (req, res) => {
+    const { torneo_id, equipoA, equipoB, fecha, hora } = req.body;
+    const { id } = req.params;
+    if (!torneo_id || !equipoA || !equipoB || !fecha || !hora) {
+      return res.status(400).json({ message: 'Faltan campos obligatorios' });
+    }
+    try {
+      const stmt = db.prepare(`
+        UPDATE matches
+        SET torneo_id = ?, equipoA = ?, equipoB = ?, fecha = ?, hora = ?
+        WHERE id = ?
+      `);
+      const result = stmt.run(torneo_id, equipoA, equipoB, fecha, hora, id);
+      if (result.changes === 0) {
+        return res.status(404).json({ message: 'Partido no encontrado' });
+      }
+      res.json({ message: 'Partido actualizado correctamente' });
+    } catch (err) {
+      console.error("❌ Error al actualizar partido:", err.message);
+      res.status(500).json({ message: "Error al actualizar partido" });
+    }
+  });
+
+  // 5) Eliminar partido
   router.delete('/:id', (req, res) => {
     const { id } = req.params;
     try {
