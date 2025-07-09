@@ -18,6 +18,9 @@ const statsRoutes = require('./routes/stats');
 const matchRouter = require('./routes/match');
 const eventRouter = require('./routes/events');
 const logMatchRouter = require('./routes/logMatch');
+const refereesRouter = require('./routes/referees');
+
+
 const app = express();
 
 // === MIDDLEWARE ===
@@ -60,6 +63,7 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/match', matchRouter); // se mantiene para el estado en tiempo real
 app.use('/api/events', eventRouter);
 app.use('/api/logMatch', logMatchRouter(db));
+app.use('/api/referees', refereesRouter(db));
 
 // === RUTAS HTML PROTEGIDAS ===
 app.get('/:file', (req, res) => {

@@ -12,7 +12,8 @@ if (refereeName) {
 }
 
 const pages = [
-  { name: 'inMatch', title: 'En Partido' },
+  { name: 'register', title: 'Arbitros' },
+  { name: 'inMatch', title: 'En vivo' },
   { name: 'player', title: 'Jugador' },
   { name: 'playerStats', title: 'Estadísticas Jugador' },
   { name: 'scheduleMatch', title: 'Programar Partido' },
