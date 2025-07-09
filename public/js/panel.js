@@ -210,41 +210,48 @@ closeModalBtn.addEventListener("click", () => {
 
 // —————— Guardar alineación desde el modal de jugadores ——————
 guardarAlineacionBtn.addEventListener("click", async () => {
-  const cards = Array.from(
-    playersContainer.querySelectorAll('.player-card.in-cancha')
-  );
-  if (cards.length > 5) {
+  // 1) Recolectar TODOS los cards (cancha + banca)
+  const cards = Array.from(playersContainer.querySelectorAll('.player-card'));
+  const jugadores = cards.map(card => {
+    return {
+      id:       +card.dataset.id,
+      nombre:   card.querySelector('.info-nombre').textContent,
+      numero:   card.querySelector('.info-numero').textContent.replace('#',''),
+      foto:     card.querySelector('img').src,
+      posicion: card.dataset.posicion,
+      enCancha: card.classList.contains('in-cancha')
+    };
+  });
+
+  // 2) Validaciones
+  const cancha = jugadores.filter(j => j.enCancha);
+  if (cancha.length > 5) {
     return alert('Solo 5 jugadores pueden quedar en cancha.');
   }
-  const gkCount = cards.filter(c => c.dataset.posicion === 'GK').length;
+  const gkCount = cancha.filter(j => j.posicion === 'GK').length;
   if (gkCount !== 1) {
     return alert('Debe haber exactamente un portero (GK) en cancha.');
   }
 
-  const jugadores = cards.map(card => ({
-    id:       +card.dataset.id,
-    nombre:   card.querySelector('.info-nombre').textContent,
-    numero:   card.querySelector('.info-numero').textContent.replace('#',''),
-    foto:     card.querySelector('img').src,
-    posicion: card.dataset.posicion,
-    enCancha: true
-  }));
-
+  // 3) Enviar TODO al endpoint de lineup
   try {
-    await fetch(
-      `/api/logMatch/matches/${partidoActivo.id}/lineup`,
-      {
-        method:  'POST',
-        headers: { 'Content-Type':'application/json' },
-        body:    JSON.stringify({ team: equipoActualSeleccion, players: jugadores })
-      }
-    );
+    await fetch(`/api/logMatch/matches/${partidoActivo.id}/lineup`, {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json' },
+      body:    JSON.stringify({
+        team:    equipoActualSeleccion,
+        players: jugadores
+      })
+    });
   } catch (e) {
     console.error('Error guardando alineación:', e);
     return alert('Error guardando alineación.');
   }
 
+  // 4) Refrescar sidebar y cancha pasándole el array completo
   actualizarVistaJugadores(equipoActualSeleccion, jugadores);
+
+  // 5) Cerrar modal
   playerModal.classList.add("hidden");
   modalSeleccion.style.display = "flex";
   equipoActualSeleccion = null;
