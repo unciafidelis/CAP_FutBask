@@ -1,4 +1,8 @@
+// js/inMatch.js
+
 document.addEventListener('DOMContentLoaded', init);
+
+let refreshInterval = null;
 
 async function init() {
   const body     = document.getElementById('matchCentre');
@@ -25,58 +29,76 @@ async function init() {
   // Mostrar modal
   modal.classList.add('active');
 
-  // Habilitar botón
+  // Habilitar botón Ver partido
   selector.addEventListener('change', () => {
     btnShow.disabled = !selector.value;
   });
 
-  // Ver partido y arrancar polling
+  // Al hacer clic en "Ver partido"
   btnShow.addEventListener('click', async () => {
     const matchId = selector.value;
     if (!matchId) return alert('Selecciona un partido.');
     body.dataset.matchId = matchId;
     modal.classList.remove('active');
+    if (refreshInterval) clearInterval(refreshInterval);
     await updateAll(matchId);
-    setInterval(() => updateAll(matchId), 5000);
+    refreshInterval = setInterval(() => updateAll(matchId), 5000);
   });
 
-  // Cambiar partido
+  // Botón Cambiar partido (reabre modal)
   btnChange.addEventListener('click', () => {
     modal.classList.add('active');
   });
 }
 
 async function updateAll(matchId) {
+  // 2) Trae datos en paralelo
   const [ match, lineup, events ] = await Promise.all([
     fetchMatch(matchId),
     fetchLineup(matchId),
     fetchEvents(matchId)
   ]);
+
   if (!match) return;
+
+  // 2.1) Construye un mapa id→{name,foto}
+  const playerInfo = {};
+  ['A','B'].forEach(team => {
+    (lineup[team]||[]).forEach(j => {
+      playerInfo[j.id] = { 
+        name: j.nombre,
+        foto: j.foto
+      };
+    });
+  });
+
   renderHeader(match, events);
   renderTabs();
-  renderSummary(events);
+  renderSummary(events, match, playerInfo);
   renderLineup(lineup, match);
-  // stats opcional...
 }
+
+// ——— Fetchers ——————————————————————————————————————————
 
 async function fetchMatch(id) {
   const res = await fetch(`/api/matches/${id}`);
-  if (!res.ok) throw new Error;
-  return await res.json();
-}
-async function fetchLineup(id) {
-  const res = await fetch(`/api/logMatch/matches/${id}/lineup`);
-  if (!res.ok) throw new Error;
-  return await res.json();
-}
-async function fetchEvents(id) {
-  const res = await fetch(`/api/logMatch/matches/${id}/events`);
-  if (!res.ok) throw new Error;
+  if (!res.ok) throw new Error('Error fetching match');
   return await res.json();
 }
 
-// ——— Renderers ——————————————————
+async function fetchLineup(id) {
+  const res = await fetch(`/api/logMatch/matches/${id}/lineup`);
+  if (!res.ok) throw new Error('Error fetching lineup');
+  return await res.json(); // { A: [...], B: [...] }
+}
+
+async function fetchEvents(id) {
+  const res = await fetch(`/api/logMatch/matches/${id}/events`);
+  if (!res.ok) throw new Error('Error fetching events');
+  return await res.json(); // [ ... ]
+}
+
+// ——— Renderers ——————————————————————————————————————————
 
 function renderHeader(m, events) {
   document.getElementById('teamAName').textContent = m.nombreEquipoA;
@@ -104,38 +126,52 @@ function renderTabs() {
   });
 }
 
-function renderSummary(events) {
+function renderSummary(events, match, playerInfo) {
   const container = document.getElementById('actionsComments');
   container.innerHTML = '';
   if (!events.length) return;
-  // ordenar y quedarnos solo con los últimos 5
+
+  // Ordenar cronológicamente y quedarnos con los últimos 5
   events.sort((a,b)=> new Date(a.timestamp) - new Date(b.timestamp));
   const recientes = events.slice(-5);
+
   recientes.forEach(ev => {
     const bubble = document.createElement('div');
     bubble.classList.add('chat-bubble', ev.details.team==='A' ? 'comment-left' : 'comment-right');
 
+    // Obtiene datos del jugador
+    const info = playerInfo[ev.details.playerId] || {};
+    const playerName = ev.details.playerName || info.name || `Jugador ${ev.details.playerId}`;
+    const playerImg  = ev.details.playerFoto || info.foto || 'img/player_placeholder.png';
+
     // Narración estilo comentarista
     let narr = '';
-    switch(ev.eventType) {
+    switch (ev.eventType) {
       case 'goal':
-        narr = `⚽ ${ev.details.playerName} anota${ev.details.autogol ? ' un autogol' : ''}!`;
+        narr = `⚽ ${playerName} ${ev.details.autogol ? 'anota un autogol' : 'marca un gol'}!`;
         break;
       case 'card':
-        narr = `${ev.details.card==='yellow'?'🟨 Tarjeta amarilla':'🟥 Tarjeta roja'} a ${ev.details.playerName}.`;
+      case 'yellow_card':
+        narr = `🟨 Tarjeta amarilla a ${playerName}.`;
+        break;
+      case 'red_card':
+        narr = `🟥 Tarjeta roja a ${playerName}.`;
         break;
       case 'substitution':
-        narr = `🔁 Cambio en ${ev.details.team==='A'?ev.details.teamNameA:ev.details.teamNameB}: sale ${ev.details.fromName}, entra ${ev.details.toName}.`;
+        const teamName = ev.details.team==='A' ? match.nombreEquipoA : match.nombreEquipoB;
+        const fromName = ev.details.fromName  || `#${ev.details.from}`;
+        const toName   = ev.details.toName    || `#${ev.details.to}`;
+        narr = `🔁 Cambio en ${teamName}: sale ${fromName}, entra ${toName}.`;
         break;
       default:
-        narr = `➡️ ${ev.details.playerName} ${ev.details.action}.`;
+        narr = `➡️ ${playerName} ${ev.details.action||''}.`;
     }
 
     bubble.innerHTML = `
-      <img src="${ev.details.playerFoto||'img/player_placeholder.png'}" class="bubble-player-img" alt="${ev.details.playerName}">
+      <img src="${playerImg}" class="bubble-player-img" alt="${playerName}">
       <div class="bubble-content">
         <div class="bubble-text">${narr}</div>
-        <div class="bubble-time">${ev.clock}</div>
+        <div class="bubble-time">${ev.clock||''}</div>
       </div>
     `;
     container.appendChild(bubble);
