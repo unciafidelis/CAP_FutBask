@@ -31,11 +31,6 @@ const btnCambioB           = document.getElementById('btnRealizarCambioB');
 let jugadorCanchaSeleccionado = null;
 let jugadorBancaSeleccionado  = null;
 
-// ————————— Mostrar modal principal al cargar ————————
-window.addEventListener("load", () => {
-  modalSeleccion.style.display = "flex";
-});
-
 // ————————— Control Modal Principal ——————————
 btnAbrirModal.addEventListener("click", () => modalSeleccion.style.display = "flex");
 window.cerrarModal = () => modalSeleccion.style.display = "none";
@@ -111,19 +106,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ———————— Preview al cambiar de partido en el select ————————
-partidoSelect.addEventListener("change", () => {
+// ———————— Preview inmediato al cambiar de partido ————————
+partidoSelect.addEventListener("change", async () => {
   const id = partidoSelect.value;
   if (!id) return;
-  fetch(`/api/matches/${id}`)
-    .then(res => res.json())
-    .then(p => {
-      document.getElementById("nombreModalEquipoA").textContent = p.equipoA;
-      document.getElementById("nombreModalEquipoB").textContent = p.equipoB;
-      document.getElementById("logoEquipoA").src = p.fotoA || "placeholderA.png";
-      document.getElementById("logoEquipoB").src = p.fotoB || "placeholderB.png";
-    })
-    .catch(err => console.error("❌ Error preview partido:", err));
+  try {
+    const res = await fetch(`/api/matches/${id}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const p = await res.json();
+    // Ahora usamos los campos correctos:
+    document.getElementById("nombreModalEquipoA").textContent = p.nombreEquipoA;
+    document.getElementById("nombreModalEquipoB").textContent = p.nombreEquipoB;
+    document.getElementById("logoEquipoA").src = p.logoA || "placeholderA.png";
+    document.getElementById("logoEquipoB").src = p.logoB || "placeholderB.png";
+  } catch (err) {
+    console.error("❌ Error preview partido:", err);
+  }
 });
+
 
 // ————————— Modal de selección de jugadores —————————
 function abrirModalJugadores(equipoId, equipoLado) {
