@@ -739,3 +739,33 @@ body {
   border-radius: 50%;
   object-fit: cover;
 }
+
+.player-card.in-cancha {
+  border: 2px solid var(--highlight);
+}
+.player-card img.foto-jugador {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+.player-card .info-nombre {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.player-card .info-numero {
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.player-card .pos-select {
+  width: 100%;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-light);
+  appearance: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}

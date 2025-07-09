@@ -126,63 +126,130 @@ partidoSelect.addEventListener("change", async () => {
 
 
 // ————————— Modal de selección de jugadores —————————
-function abrirModalJugadores(equipoId, equipoLado) {
+// ————————— Modal de selección de jugadores con radios y limitaciones —————————
+// ————————————————
+// 1) Abrir modal y cargar jugadores con <select> de posición
+// ————————————————
+async function abrirModalJugadores(equipoId, equipoLado) {
   equipoActualSeleccion = equipoLado;
   playerModal.classList.remove("hidden");
   playersContainer.innerHTML = '';
-  fetch(`/api/teams/${equipoId}/players`)
-    .then(res => res.json())
-    .then(jugadores => {
-      jugadores.forEach(j => {
-        const card = document.createElement('div');
-        card.className  = 'player-card';
-        card.dataset.id = j.id;
-        card.innerHTML  = `
-          <img src="${j.foto||'/img/playerImg/avatar.png'}" class="foto-jugador" />
-          <div class="info-nombre">${j.nombre}</div>
-          <div class="info-posicion ${positionColors[j.posicion]||''}">${j.posicion}</div>
-          <div class="info-pie">${j.pie}</div>
-          <div class="info-numero">#${j.numero}</div>
-          <div class="posiciones-select">
-            <label><input type="radio" name="pos-${j.id}" value="GK">GK</label>
-            <label><input type="radio" name="pos-${j.id}" value="D">D</label>
-            <label><input type="radio" name="pos-${j.id}" value="M">M</label>
-            <label><input type="radio" name="pos-${j.id}" value="FW">FW</label>
-          </div>
-          <button class="btn-cancha-toggle">Enviar a cancha</button>
-        `;
-        card.querySelector(".btn-cancha-toggle")
-            .addEventListener("click", () => card.classList.toggle("en-cancha"));
-        playersContainer.appendChild(card);
+
+  try {
+    const res = await fetch(`/api/teams/${equipoId}/players`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const jugadores = await res.json();
+
+    jugadores.forEach(j => {
+      const card = document.createElement('div');
+      card.className  = 'player-card';
+      card.dataset.id = j.id;
+      card.dataset.posicion = 'bench';
+
+      card.innerHTML = `
+        <img src="${j.foto||'/img/playerImg/avatar.png'}" class="foto-jugador" />
+        <div class="info-nombre">${j.nombre}</div>
+        <div class="info-numero">#${j.numero}</div>
+        <select class="pos-select">
+          <option value="bench">Banca</option>
+          <option value="GK">GK</option>
+          <option value="D">D</option>
+          <option value="M">M</option>
+          <option value="FW">FW</option>
+        </select>
+      `;
+
+      // 1.1) Preseleccionar según posición por defecto
+      const sel = card.querySelector('.pos-select');
+      const def = j.posicion || 'bench';
+      sel.value = def;
+      card.dataset.posicion = def;
+      if (def !== 'bench') card.classList.add('in-cancha');
+
+      // 1.2) Cambios en <select>
+      sel.addEventListener('change', () => {
+        const newPos = sel.value;
+        const inCancha = newPos !== 'bench';
+        const canchaCards = playersContainer.querySelectorAll('.player-card.in-cancha');
+
+        // Límite de 5 en cancha
+        if (inCancha && !card.classList.contains('in-cancha') && canchaCards.length >= 5) {
+          alert('Solo 5 jugadores pueden estar en cancha.');
+          sel.value = card.dataset.posicion;
+          return;
+        }
+        // Solo 1 GK
+        if (newPos === 'GK' && (!card.classList.contains('in-cancha') || card.dataset.posicion !== 'GK')) {
+          const gkCount = playersContainer.querySelectorAll(
+            '.player-card.in-cancha[data-posicion="GK"]'
+          ).length;
+          if (gkCount >= 1) {
+            alert('Solo un portero (GK) puede estar en cancha.');
+            sel.value = card.dataset.posicion;
+            return;
+          }
+        }
+
+        // Aplicar cambio
+        card.dataset.posicion = newPos;
+        card.classList.toggle('in-cancha', inCancha);
       });
+
+      playersContainer.appendChild(card);
     });
+  } catch (err) {
+    console.error("❌ Error cargando jugadores:", err);
+    alert("No se pudo cargar la lista de jugadores.");
+  }
 }
+
 closeModalBtn.addEventListener("click", () => {
   playerModal.classList.add("hidden");
   equipoActualSeleccion = null;
 });
 
 // —————— Guardar alineación desde el modal de jugadores ——————
-guardarAlineacionBtn.addEventListener("click", () => {
-  const cards = playersContainer.querySelectorAll('.player-card');
-  const jugadores = [];
-  cards.forEach(card => {
-    const id       = +card.dataset.id;
-    const nombre   = card.querySelector('.info-nombre').textContent;
-    const numero   = card.querySelector('.info-numero').textContent.replace('#','');
-    const foto     = card.querySelector('img').src;
-    const pie      = card.querySelector('.info-pie').textContent;
-    const defaultPos = card.querySelector('.info-posicion').textContent.trim();
-    const posSel     = card.querySelector('input[type="radio"]:checked')?.value;
-    const enCancha   = card.classList.contains('en-cancha');
-    const posicion   = posSel || defaultPos;
-    jugadores.push({ id, nombre, numero, foto, pie, posicion, enCancha });
-  });
+guardarAlineacionBtn.addEventListener("click", async () => {
+  const cards = Array.from(
+    playersContainer.querySelectorAll('.player-card.in-cancha')
+  );
+  if (cards.length > 5) {
+    return alert('Solo 5 jugadores pueden quedar en cancha.');
+  }
+  const gkCount = cards.filter(c => c.dataset.posicion === 'GK').length;
+  if (gkCount !== 1) {
+    return alert('Debe haber exactamente un portero (GK) en cancha.');
+  }
+
+  const jugadores = cards.map(card => ({
+    id:       +card.dataset.id,
+    nombre:   card.querySelector('.info-nombre').textContent,
+    numero:   card.querySelector('.info-numero').textContent.replace('#',''),
+    foto:     card.querySelector('img').src,
+    posicion: card.dataset.posicion,
+    enCancha: true
+  }));
+
+  try {
+    await fetch(
+      `/api/logMatch/matches/${partidoActivo.id}/lineup`,
+      {
+        method:  'POST',
+        headers: { 'Content-Type':'application/json' },
+        body:    JSON.stringify({ team: equipoActualSeleccion, players: jugadores })
+      }
+    );
+  } catch (e) {
+    console.error('Error guardando alineación:', e);
+    return alert('Error guardando alineación.');
+  }
+
   actualizarVistaJugadores(equipoActualSeleccion, jugadores);
   playerModal.classList.add("hidden");
   modalSeleccion.style.display = "flex";
   equipoActualSeleccion = null;
 });
+
 
 // ————— Actualiza sidebar y cancha tras guardar alineación —————
 function actualizarVistaJugadores(equipoLado, jugadores) {
