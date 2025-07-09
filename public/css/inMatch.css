@@ -386,3 +386,139 @@ body {
   }
 }
 
+.tabs {
+  display: flex;
+  background: #333;
+}
+.tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.tab.active {
+  color: var(--text);
+  border-bottom: 3px solid var(--highlight);
+}
+.tab-content {
+  display: none;
+  padding: 16px;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* Chat bubbles */
+.actions-comments-container {
+  padding: 16px;
+}
+.chat-bubble {
+  display: flex;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.chat-bubble.comment-left {
+  align-self: flex-start;
+}
+.chat-bubble.comment-right {
+  align-self: flex-end;
+}
+.bubble-player-img {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 2px solid var(--highlight);
+}
+.bubble-content {
+  display: flex;
+  flex-direction: column;
+}
+.bubble-text {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.bubble-time {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+/* Lineup */
+.lineup-section {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+.team-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.team-logo-sm {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.team-name-sm {
+  font-weight: bold;
+  font-size: 1rem;
+}
+.players-list {
+  background: var(--card-bg);
+  padding: 12px;
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.player-card {
+  display: flex;
+  align-items: center;
+  background: #3a3a3a;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.player-card .card-image img {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.player-card .card-number {
+  width: 24px;
+  font-weight: bold;
+  margin-right: 8px;
+  color: var(--highlight);
+}
+.player-card .card-name {
+  flex: 1;
+}
+.player-card .card-position {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Stats */
+.stats-section {
+  display: flex;
+  gap: 20px;
+}
+.stats-team {
+  flex: 1;
+  background: var(--card-bg);
+  padding: 12px;
+  border-radius: 8px;
+}
+.card-stats div {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 0;
+}
+.card-yellow { color: #fbbf24; }
+.card-red    { color: #f44336; }
