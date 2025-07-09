@@ -134,7 +134,6 @@ body {
 /* === CONTENEDOR DE CONTENIDO CARGADO === */
 .content-display {
   flex: 1;
-  background-color: #e5e6eb;
   height: 100%;
 }
 
