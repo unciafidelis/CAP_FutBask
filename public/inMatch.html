@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Match Centre</title>
   <link rel="stylesheet" href="css/inMatch.css">
+  <link rel="stylesheet" href="css/inMatchStats.css">
+  
 </head>
 <body id="matchCentre" data-match-id="">
 
@@ -16,6 +18,18 @@
         <option value="">Cargando partidos...</option>
       </select>
       <button id="btnSelectMatch" disabled>Ver partido</button>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de fin de partido -->
+  <div id="confirmEndModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3>¿Finalizar partido?</h3>
+      <p>¿Estás seguro de que deseas finalizar el partido?</p>
+      <div class="modal-actions">
+        <button id="confirmEndYes" class="btn-primary">Sí, finalizar</button>
+        <button id="confirmEndNo" class="btn-secondary">Cancelar</button>
+      </div>
     </div>
   </div>
 
@@ -36,14 +50,14 @@
     </div>
   </header>
 
-  <!-- Pestañas -->
+  <!-- Pestañas principales -->
   <nav class="tabs">
     <button class="tab active" data-tab="summary">Resumen</button>
     <button class="tab" data-tab="lineup">Alineaciones</button>
     <button class="tab" data-tab="stats">Estadísticas</button>
   </nav>
 
-  <!-- Contenidos -->
+  <!-- Contenidos principales -->
   <section id="summary" class="tab-content active">
     <h2>Últimas acciones del partido</h2>
     <div id="actionsComments" class="actions-comments-container"></div>
@@ -58,10 +72,92 @@
   </section>
 
   <section id="stats" class="tab-content">
-    <h2>Estadísticas de Jugadores</h2>
-    <div class="stats-section">
-      <div id="statsA" class="stats-team"></div>
-      <div id="statsB" class="stats-team"></div>
+    <h2>Estadísticas de Juego</h2>
+
+    <!-- 1) Tabla de posiciones -->
+    <div class="positions-section">
+      <h3>Posiciones</h3>
+      <table class="positions-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Club</th>
+            <th>PJ</th>
+            <th>G</th>
+            <th>E</th>
+            <th>P</th>
+            <th>DG</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody id="positionsBody">
+          <!-- Se rellena dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2) Top player -->
+    <div class="top-player">
+      <h3>Mejor jugador</h3>
+      <div id="topPlayerCard" class="player-card">
+        <!-- foto, nombre, equipo y puntaje global -->
+      </div>
+    </div>
+
+    <!-- 3) Sub-pestañas de estadísticas -->
+    <nav class="stats-tabs">
+      <button class="stats-tab active" data-stat="goals">Goles</button>
+      <button class="stats-tab" data-stat="assists">Asistencias</button>
+      <button class="stats-tab" data-stat="yellow">Tarjetas amarillas</button>
+      <button class="stats-tab" data-stat="red">Tarjetas rojas</button>
+    </nav>
+
+    <div class="stats-table-container">
+      <!-- Goles -->
+      <table id="goals" class="stats-table">
+        <thead>
+          <tr><th>#</th><th>Jugador</th><th>Goles</th></tr>
+        </thead>
+        <tbody>
+          <!-- dinámico -->
+        </tbody>
+      </table>
+
+      <!-- Asistencias -->
+      <table id="assists" class="stats-table hidden">
+        <thead>
+          <tr><th>#</th><th>Jugador</th><th>Asistencias</th></tr>
+        </thead>
+        <tbody>
+          <!-- dinámico -->
+        </tbody>
+      </table>
+
+      <!-- Tarjetas amarillas -->
+      <table id="yellow" class="stats-table hidden">
+        <thead>
+          <tr><th>#</th><th>Jugador</th><th>Amarillas</th></tr>
+        </thead>
+        <tbody>
+          <!-- dinámico -->
+        </tbody>
+      </table>
+
+      <!-- Tarjetas rojas -->
+      <table id="red" class="stats-table hidden">
+        <thead>
+          <tr><th>#</th><th>Jugador</th><th>Rojas</th></tr>
+        </thead>
+        <tbody>
+          <!-- dinámico -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4) Promedio global -->
+    <div class="stats-average">
+      <h4>Promedio global del torneo</h4>
+      <p id="statsAverage">–</p>
     </div>
   </section>
 
