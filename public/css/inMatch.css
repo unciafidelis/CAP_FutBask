@@ -75,7 +75,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  height: 33vh;
+  height: 90%;
   animation: fadeInUp 0.4s ease-out;
 }
 .team-logo {
@@ -91,14 +91,14 @@ body {
   text-align: center;
 }
 #scoreDisplay {
-  font-size: 5rem;
+  font-size: 15rem;
   font-weight: bold;
   color: var(--accent-orange);
 }
 #matchTime,
 #matchStatus {
   display: block;
-  font-size: 0.9rem;
+  font-size: 4rem;
   color: var(--text-muted);
 }
 
@@ -351,15 +351,17 @@ body {
   padding: 4px 8px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  height: 80%;
   max-width: 30%; /* Ajusta para no ocupar demasiado espacio */
   overflow: hidden;
   animation: fadeInUp 0.3s ease-out;
 }
 
 .match-header .team-logo img {
-  width: 48px;
-  height: 48px;
-  border-radius: 30%; /* redondeo circular para logo */
+  width: 10rem;
+  height: 10rem;
+  border-radius: 10%; /* redondeo circular para logo */
+  justify-content: center;
   object-fit: cover;
   margin-right: 8px;
   border: 2px solid var(--accent-blue);
@@ -368,7 +370,7 @@ body {
 .match-header .team-logo span {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
-  font-size: 1rem; /* la mitad del tamaño de score */
+  font-size: 5rem; /* la mitad del tamaño de score */
   color: var(--text-primary);
   white-space: nowrap;
   text-overflow: ellipsis;

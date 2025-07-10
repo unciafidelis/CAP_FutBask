@@ -1,0 +1,273 @@
+:root {
+  --bg-primary: #1f1f1f;
+  --accent-black: #2b2b2b;
+  --accent-orange: #ff9800;
+  --text-primary: #f1f1f1;
+  --text-muted: #9b9b9b;
+  --accent-blue: #3d5afe;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+}
+html, body {
+  height: 100%; width: 100%;
+  margin: 0;
+}
+body {
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Modal configuración === */
+.modal-overlay {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-overlay.active { display: flex; }
+.modal-content {
+  background: var(--bg-primary);
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%; max-width: 400px;
+  text-align: center;
+}
+.modal-content h2 {
+  margin-bottom: 12px;
+}
+.modal-content label {
+  display: block;
+  text-align: left;
+  margin-top: 8px;
+  color: var(--text-muted);
+}
+.modal-content input {
+  width: 100%; margin-top: 6px;
+  padding: 10px;
+  border: 1px solid var(--text-muted);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+.modal-content button {
+  margin-top: 16px;
+  background: var(--accent-black);
+  border: none;
+  border-radius: 4px;
+  padding: 12px;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content button:hover {
+  background: var(--accent-orange);
+}
+
+/* ——————————————————————
+   1) Cabecera del Torneo
+   —————————————————————— */
+.tournament-header {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 800px;      /* opcional: limita anchura */
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
+  margin-bottom: 2rem;
+}
+
+.tournament-header #tournamentName {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.tournament-header .tournament-logo {
+  height: 5rem;
+  margin-top: 1rem;
+  object-fit: contain;
+}
+
+/* ——————————————————————
+   2) Ajustes del Modal para el nuevo input
+   —————————————————————— */
+.modal-content.modal-config label[for="inputTournamentName"] {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.modal-content.modal-config #inputTournamentName {
+  width: 100%;
+  padding: 8px;
+  margin: 4px 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+
+/* === Header marcador === */
+
+.match-header {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* tu CSS existente: */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  width: 100%;
+  margin-top: 5rem;
+}
+
+/* Contenedor de nombres de equipos: lado a lado */
+.match-header .team-logos {
+  display: flex;
+  justify-content: space-between; /* reparte los tres bloques */
+  width: 100%;
+}
+
+.match-header .team-logo {
+  flex: 0 0 40%;      /* ancho fijo al 40% */
+  text-align: center; /* centra el nombre dentro de su caja */
+}
+
+.match-header .team-logos .separator {
+  flex: 0 0 10%;      /* ancho fijo al 10% */
+  text-align: center; /* centra la barra dentro de su caja */
+  font-size: 2rem;    /* ajusta al tamaño que necesites */
+  line-height: 1;     /* para que quede verticalmente centrado */
+}
+
+/* Cada título de equipo */
+.match-header .team-logo {
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.match-header .team-logo span  {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.match-header .separator{
+    display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+/* Marcador central con borde */
+.match-header .match-score {
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: center;
+  align-items: center;
+  min-width: 200px;
+}
+
+/* Estilos internos del marcador */
+.match-header .match-score #scoreDisplay {
+  display: block;
+  font-size: 17rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--accent-orange);
+}
+.match-header .match-score #matchTime,
+.match-header .match-score #matchStatus {
+  display: block;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* === Tooltip de control === */
+.tooltip-controls {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 1001;
+}
+.gear-btn {
+  background: var(--accent-black);
+  border: none;
+  border-radius: 50%;
+  width: 48px; height: 48px;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.control-menu {
+  display: none;
+  flex-direction: column;
+  background: var(--bg-primary);
+  margin-top: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.control-menu.active { display: flex; }
+.control-menu button {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  padding: 12px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.control-menu button:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* === Botones de gol inferiores === */
+.bottom-goals {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  gap: 1rem;
+  z-index: 1000;
+}
+.bottom-goals button {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.bottom-goals button:hover {
+  color: var(--accent-black);
+}

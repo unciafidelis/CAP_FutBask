@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Marcador en Vivo</title>
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="css/panelScore.css">
+</head>
+<body>
+
+    <!-- Sección Nombre de Torneo -->
+<div class="tournament-header">
+    <img src="img/logoCAP.png" alt="Logo Empresa" class="tournament-logo" />
+    <h1 id="tournamentName">Nombre del Torneo</h1>
+</div>
+
+<!-- Header con marcador -->
+<header class="match-header">
+  <div class="team-logos">
+    <div class="team-logo"><span id="teamAName">Equipo A</span></div>
+    <div class="separator">|</div>
+    <div class="team-logo"><span id="teamBName">Equipo B</span></div>
+  </div>
+  <div class="match-score">
+    <span id="scoreDisplay">0 - 0</span>
+    <span id="matchTime">00:00'</span>
+    <span id="matchStatus">En vivo</span>
+  </div>
+</header>
+
+
+  <!-- Modal de configuración -->
+  <!-- Modal de configuración -->
+<div class="modal-overlay active" id="configModal">
+  <div class="modal-content modal-config">
+    <h2>Configuración de Partido</h2>
+
+    <label for="inputTournamentName">Torneo:</label>
+    <input
+      type="text"
+      id="inputTournamentName"
+      placeholder="Nombre del Torneo"
+    />
+
+    <label for="inputEquipoA">Equipo A:</label>
+    <input
+      type="text"
+      id="inputEquipoA"
+      placeholder="Nombre Equipo A"
+    />
+
+    <label for="inputEquipoB">Equipo B:</label>
+    <input
+      type="text"
+      id="inputEquipoB"
+      placeholder="Nombre Equipo B"
+    />
+
+    <button id="startMatchBtn">
+      <span class="material-icons">play_arrow</span>
+    </button>
+  </div>
+</div>
+
+
+ 
+
+
+  <!-- Tooltip de control -->
+  <div class="tooltip-controls">
+    <button class="gear-btn" id="gearToggle">
+      <span class="material-icons">settings</span>
+    </button>
+    <div class="control-menu" id="controlMenu">
+      <button onclick="toggleTiempo()" title="Pausar/Reanudar">
+        <span class="material-icons" id="toggleIcon">pause</span>
+      </button>
+      <button onclick="finalizarPartido()" title="Finalizar">
+        <span class="material-icons">flag</span>
+      </button>
+      <button id="btnConfigureTeams" title="Configurar Equipos">
+        <span class="material-icons">edit</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Botones de gol -->
+  <div class="bottom-goals">
+    <button onclick="sumarGol('A')" title="Gol Equipo A">
+      A <span class="material-icons">sports_soccer</span> 
+    </button>
+    <button onclick="sumarGol('B')" title="Gol Equipo B">
+      <span class="material-icons">sports_soccer</span> B
+    </button>
+  </div>
+
+  <script src="js/panelScore.js"></script>
+</body>
+</html>
