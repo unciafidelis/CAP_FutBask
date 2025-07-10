@@ -18,9 +18,9 @@
 <!-- Header con marcador -->
 <header class="match-header">
   <div class="team-logos">
-    <div class="team-logo"><span id="teamAName">Equipo A</span></div>
-    <div class="separator">|</div>
-    <div class="team-logo"><span id="teamBName">Equipo B</span></div>
+    <div class="team-logo"> A <span id="teamAName">Equipo A</span></div>
+    <div class="separator"> </div>
+    <div class="team-logo"> B <span id="teamBName">Equipo B</span></div>
   </div>
   <div class="match-score">
     <span id="scoreDisplay">0 - 0</span>
@@ -65,35 +65,61 @@
 
 
  
-
-
-  <!-- Tooltip de control -->
-  <div class="tooltip-controls">
-    <button class="gear-btn" id="gearToggle">
-      <span class="material-icons">settings</span>
+<!-- Botones de gol / puntuación -->
+<div class="bottom-goals">
+  <!-- MODO SOCCER (+1) -->
+  <div class="mode-soccer">
+    <button onclick="sumarPuntos('A',1)" title="Gol A (1 punto)">
+      A <span class="material-icons">sports_soccer</span>
     </button>
-    <div class="control-menu" id="controlMenu">
-      <button onclick="toggleTiempo()" title="Pausar/Reanudar">
-        <span class="material-icons" id="toggleIcon">pause</span>
-      </button>
-      <button onclick="finalizarPartido()" title="Finalizar">
-        <span class="material-icons">flag</span>
-      </button>
-      <button id="btnConfigureTeams" title="Configurar Equipos">
-        <span class="material-icons">edit</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Botones de gol -->
-  <div class="bottom-goals">
-    <button onclick="sumarGol('A')" title="Gol Equipo A">
-      A <span class="material-icons">sports_soccer</span> 
-    </button>
-    <button onclick="sumarGol('B')" title="Gol Equipo B">
+    <button onclick="sumarPuntos('B',1)" title="Gol B (1 punto)">
       <span class="material-icons">sports_soccer</span> B
     </button>
   </div>
+  <!-- MODO MULTI (+1, +2, +3) -->
+  <div class="mode-basketball hidden">
+    <button onclick="sumarPuntos('A',1)" title="+1 punto A">
+     A+1 <span class="material-icons">sports_basketball</span>
+    </button>
+    <button onclick="sumarPuntos('A',2)" title="+2 puntos A">
+      A+2 <span class="material-icons">sports_basketball</span>
+    </button>
+    <button onclick="sumarPuntos('A',3)" title="+3 puntos A">
+      A+3 <span class="material-icons">sports_basketball</span>
+    </button>
+    <button onclick="sumarPuntos('B',1)" title="+1 punto B">
+      <span class="material-icons">sports_basketball</span> B+1 
+    </button>
+    <button onclick="sumarPuntos('B',2)" title="+2 puntos B">
+      <span class="material-icons">sports_basketball</span> B+2
+    </button>
+    <button onclick="sumarPuntos('B',3)" title="+3 puntos B">
+      <span class="material-icons">sports_basketball</span> B+3 
+    </button>
+  </div>
+</div>
+
+<!-- Tooltip de control -->
+<div class="tooltip-controls">
+  <button class="gear-btn" id="gearToggle">
+    <span class="material-icons">settings</span>
+  </button>
+  <div class="control-menu" id="controlMenu">
+    <button onclick="toggleTiempo()" title="Pausar/Reanudar">
+      <span class="material-icons" id="toggleIcon">pause</span>
+    </button>
+    <button onclick="finalizarPartido()" title="Finalizar">
+      <span class="material-icons">flag</span>
+    </button>
+    <!-- NUEVO: Botón para cambiar tipo de marcador -->
+    <button id="btnChangeSport" title="Cambio de deporte">
+      <span class="material-icons">sports</span>
+    </button>
+    <button id="btnConfigureTeams" title="Configurar Equipos">
+      <span class="material-icons">edit</span>
+    </button>
+  </div>
+</div>
 
   <script src="js/panelScore.js"></script>
 </body>

@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('matchStatus').textContent = 'En vivo';
     configModal.classList.remove('active');
     startTimer();
+    actualizarNombresBotones();
   });
 
   // 4) Botones de gol
@@ -97,4 +98,39 @@ function finalizarPartido() {
   intervalo = null;
   document.getElementById('matchStatus').textContent = 'Finalizado';
   alert('Partido Finalizado');
+}
+
+// 7) Obtener el botón de cambio de deporte
+const btnChangeSport = document.getElementById('btnChangeSport');
+btnChangeSport.addEventListener('click', () => {
+  // alterna entre mostrar solo goles de 1 punto y mostrar multi-puntuación
+  document.querySelector('.mode-soccer').classList.toggle('hidden');
+  document.querySelector('.mode-basketball').classList.toggle('hidden');
+});
+
+/**
+ * Suma N puntos al marcador del equipo dado y actualiza.
+ * @param {string} equipo  'A' o 'B'
+ * @param {number} puntos  cantidad de puntos a sumar
+ */
+function sumarPuntos(equipo, puntos) {
+  if (equipo === 'A') golesA += puntos;
+  else golesB += puntos;
+  actualizarMarcador();
+}
+
+function actualizarNombresBotones() {
+  // Obtiene los nombres del header
+  const nombreA = document.querySelector('.match-header #teamAName').textContent;
+  const nombreB = document.querySelector('.match-header #teamBName').textContent;
+
+  // Actualiza todos los spans dentro de .bottom-goals con id="teamAName"
+  document
+    .querySelectorAll('.bottom-goals #teamAName')
+    .forEach(el => el.textContent = nombreA);
+
+  // Actualiza todos los spans dentro de .bottom-goals con id="teamBName"
+  document
+    .querySelectorAll('.bottom-goals #teamBName')
+    .forEach(el => el.textContent = nombreB);
 }
