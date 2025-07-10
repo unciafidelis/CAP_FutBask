@@ -167,7 +167,7 @@ body {
 }
 .match-header .team-logo span  {
   display: block;
-  font-size: 2rem;
+  font-size: 4rem;
   font-weight: bold;
   text-align: center;
 }
@@ -198,8 +198,8 @@ body {
 .match-header .match-score #matchTime,
 .match-header .match-score #matchStatus {
   display: block;
-  font-size: 1.5rem;
-  color: var(--text-muted);
+  font-size: 3rem;
+  color: var(--accent-orange);
   margin-top: 4px;
 }
 
