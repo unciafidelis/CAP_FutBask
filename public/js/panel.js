@@ -267,7 +267,6 @@ function actualizarVistaJugadores(equipoLado, jugadores) {
 }
 
 // ————— Renderizado sidebar (cancha / banca) —————
-// ————— Renderizado sidebar (cancha / banca) —————
 function renderSidebarJugadores(equipoLado, jugadoresCancha, jugadoresBanca) {
   const enCancha = document.getElementById(`enCancha${equipoLado}`);
   const enBanca  = document.getElementById(`enBanca${equipoLado}`);
@@ -427,7 +426,7 @@ toggleRight.addEventListener('click', () => {
 });
 
 // ————— Botón de configuración flotante —————
-btnConfigMain.addEventListener("click", () => configOptions.classList.toggle("show"));
+btnConfigMain.addEventListener("click", () => configOptions.classList.toggle("active"));
 
 // ————— Abrir modal de jugadores desde el modal principal —————
 document.getElementById("equipoModalA").addEventListener("click", () => {

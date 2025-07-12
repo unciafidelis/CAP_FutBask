@@ -19,6 +19,7 @@ const matchRouter = require('./routes/match');
 const eventRouter = require('./routes/events');
 const logMatchRouter = require('./routes/logMatch');
 const refereesRouter = require('./routes/referees');
+const posicionesRouter= require('./routes/posiciones');
 
 
 const app = express();
@@ -64,6 +65,7 @@ app.use('/api/match', matchRouter); // se mantiene para el estado en tiempo real
 app.use('/api/events', eventRouter);
 app.use('/api/logMatch', logMatchRouter(db));
 app.use('/api/referees', refereesRouter(db));
+app.use('/api/posiciones', posicionesRouter);
 
 // === RUTAS HTML PROTEGIDAS ===
 app.get('/:file', (req, res) => {

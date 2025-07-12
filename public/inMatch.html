@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Match Centre</title>
   <link rel="stylesheet" href="css/inMatch.css">
-  <link rel="stylesheet" href="css/inMatchStats.css">
   
 </head>
 <body id="matchCentre" data-match-id="">
@@ -64,12 +63,14 @@
   </section>
 
   <section id="lineup" class="tab-content">
-    <h2>Alineaciones</h2>
-    <div class="lineup-section">
-      <div id="lineupA" class="lineup-card"></div>
-      <div id="lineupB" class="lineup-card"></div>
-    </div>
-  </section>
+  <h2>Alineaciones</h2>
+  <button id="btnReloadLineup" class="reload-btn">Actualizar alineación</button>
+  <div class="lineup-section">
+    <div id="lineupA" class="lineup-card"></div>
+    <div id="lineupB" class="lineup-card"></div>
+  </div>
+</section>
+
 
   <section id="stats" class="tab-content">
     <h2>Estadísticas de Juego</h2>

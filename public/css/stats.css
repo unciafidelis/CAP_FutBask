@@ -330,3 +330,8 @@ button#openManualStats:hover {
     width: 100%;
   }
 }
+
+.tarjetas-panel div{
+  justify-content: center;
+  align-items: center;
+}

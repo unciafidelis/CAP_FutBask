@@ -1,9 +1,27 @@
 /* =================== GLOBAL =================== */
-body {
+:root {
+  --bg-primary: #1f1f1f;
+  --accent-black: #2b2b2b;
+  --accent-orange: #ff9800;
+  --text-primary: #f1f1f1;
+  --text-muted: #9b9b9b;
+  --accent-blue: #3d5afe;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+}
+html, body {
+  height: 100%; width: 100%;
   margin: 0;
+}
+body {
   font-family: 'Roboto', sans-serif;
-  overflow: hidden;
-  background: #eaf4fc;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
 }
 
 /* =================== TOGGLES =================== */
@@ -11,8 +29,8 @@ body {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  background: #333;
-  color: white;
+  background: var(--accent-black);
+  color: var(--text-primary);
   padding: 8px;
   cursor: pointer;
   z-index: 1002;
@@ -33,7 +51,7 @@ body {
   top: 0;
   width: 250px;
   height: 100vh;
-  background: #1f1f1f;
+  background: var(--accent-black);
   box-shadow: 0 0 10px rgba(0,0,0,0.15);
   overflow-y: auto;
   z-index: 1001;
@@ -46,7 +64,7 @@ body {
 .sidebar h3, .subtitulo {
   padding: 1rem;
   margin: 0;
-  color: #fff;
+  color: var(--text-primary);
   font-weight: bold;
 }
 
@@ -58,46 +76,59 @@ body {
 
 .sidebar ul li {
   padding: 5px 0;
-  border-bottom: 1px solid #444;
-  color: #eee;
+  border-bottom: 1px solid var(--accent-black);
+  color: var(--text-primary);
   font-size: 14px;
 }
 
-/* =================== BOTONERA CENTRAL =================== */
-.button-column {
-  position: absolute;
-  top: 42%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 12px 16px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-height: 100vh;
-}
+/* ==============================
+   SIDEBAR: ESTADO DE SELECCIÓN PERMANENTE
+   ============================== */
 
-.action-btn {
-  padding: 10px 18px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #333;
-  background-color: #f1f1f1;
-  border: 1px solid #ccc;
+/* Resalta el elemento seleccionado */
+.sidebar ul li.selected {
+  background-color: var(--accent-orange);
+  color: var(--bg-primary);
   border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-align: center;
-  height: 50px;
 }
 
-.action-btn:hover {
-  background-color: #d0eaff;
-  border-color: #3399ff;
+/* Asegura legibilidad del texto */
+.sidebar ul li.selected a,
+.sidebar ul li.selected span {
+  color: var(--bg-primary);
 }
+
+/* Opcional: animación suave al cambiar selección */
+.sidebar ul li {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Mantiene la selección activa incluso al hacer hover en otros */
+.sidebar ul li:not(.selected):hover {
+  background-color: rgba(61, 90, 254, 0.1); /* hover ligero */
+}
+
+/* Si usas enlaces dentro de <li> */
+.sidebar ul li.selected a {
+  text-decoration: underline;
+}
+
+/* Ejemplo de clase 'selected' en subtítulos */
+.sidebar .subtitulo.selected {
+  background-color: var(--accent-blue);
+  color: var(--bg-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+/* Si quieres bloquear clicks mientras está seleccionado */
+.sidebar ul li.selected {
+  pointer-events: none;
+}
+
+/* =================== BOTONERA CENTRAL =================== */
+
+
 
 /* =================== CANCHA =================== */
 .cancha-container {
@@ -130,7 +161,7 @@ body {
   background: linear-gradient(145deg, #f0d9b5, #d6b375);
   border-radius: 12px;
   text-align: center;
-  color: #000;
+  color: var(--accent-black);
   padding: 8px 6px;
   margin: 4px auto;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -148,7 +179,7 @@ body {
   width: 28px;
   height: 28px;
   background: rgba(0, 0, 0, 0.75);
-  color: #fff;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: bold;
   display: flex;
@@ -170,7 +201,7 @@ body {
 
 .position-M {
   background-color: #f1c40f;
-  color: #333;
+  color: var(--accent-black);
 }
 
 .position-FW {
@@ -216,15 +247,14 @@ body {
   height: 80px;
   overflow: hidden;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--text-primary);
 }
 .card-image img {
   width: 100%; height: 100%; object-fit: cover;
 }
 .card-number {
   margin-top: -25px;
-  background: #1f1f1f;
-  color: #fff;
+  color: var(--accent-black);
   width: 28px;
   height: 28px;
   line-height: 28px;
@@ -235,7 +265,7 @@ body {
   margin-right: auto;
   z-index: 5;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  border: 2px solid #fff;
+  border: 2px solid var(--text-primary);
 }
 .card-name {
   font-size: 13px;
@@ -250,11 +280,11 @@ body {
   font-size: 11px;
 }
 .card-stats div {
-  background: #fff;
   padding: 2px 4px;
   border-radius: 4px;
   display: flex;
   justify-content: space-between;
+  color: var(--accent-black);
 }
 
 /* =================== MARCADOR FIFA =================== */
@@ -264,8 +294,8 @@ body {
   left: 0;
   right: 0;
   height: 16%;
-  background: #111;
-  color: #fff;
+  background: var(--accent-black);
+  color: var(--text-primary);
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -277,7 +307,7 @@ body {
 }
 .minutero {
   text-align: center;
-  color: #00e5ff;
+  color: var(--accent-blue);
   font-weight: bold;
   font-size: 16px;
 }
@@ -294,12 +324,20 @@ body {
 }
 
 /* =================== MODAL CONFIGURACIÓN =================== */
+.modal-content select,
+.modal-content button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: 4px;
+}
 .modal-content.modal-config {
   max-width: 1000px;
-  background-color: #222;
+  background-color: var(--accent-black);
   border-radius: 12px;
   padding: 24px;
-  color: white;
+  color: var(--text-primary);
 }
 .alineacion-config {
   display: flex;
@@ -309,7 +347,7 @@ body {
 }
 .alineacion-equipo {
   width: 48%;
-  background: #1a1a1a;
+  background: var(--bg-primary);
   padding: 12px;
   border-radius: 8px;
 }
@@ -319,8 +357,8 @@ body {
   justify-content: space-between;
   gap: 8px;
   padding: 6px 0;
-  border-bottom: 1px solid #444;
-  color: white;
+  border-bottom: 1px solid var(--accent-black);
+  color: var(--text-primary);
 }
 .jugadores-lista img {
   width: 32px;
@@ -339,7 +377,7 @@ body {
 
 .config-fab .floating-config-btn {
   background: #3d5afe;
-  color: white;
+  color: var(--text-primary);
   border: none;
   border-radius: 50%;
   width: 45px;
@@ -368,8 +406,8 @@ body {
 }
 
 .config-options button {
-  background: #222;
-  color: white;
+  background: var(--accent-black);
+  color: var(--text-primary);
   border: none;
   border-radius: 50%;
   width: 44px;
@@ -399,8 +437,8 @@ body {
 }
 
 .modal-content.modal-config {
-  background: #1f1f1f;
-  color: white;
+  background: var(--accent-black);
+  color: var(--text-primary);
   padding: 20px 30px;
   border-radius: 10px;
   max-width: 960px;
@@ -448,10 +486,10 @@ body {
 
 .modal-content.modal-config {
   max-width: 1000px;
-  background-color: #222;
+  background-color: var(--accent-black);
   border-radius: 12px;
   padding: 24px;
-  color: white;
+  color: var(--text-primary);
   max-height: 90vh;
   overflow-y: auto;
 }
@@ -471,7 +509,7 @@ body {
   border-radius: 12px;
   text-align: center;
   font-family: 'Arial', sans-serif;
-  color: #000;
+  color: var(--accent-black);
   padding: 10px 8px;
   margin: 10px auto;
   padding: 8px 6px;
@@ -482,7 +520,7 @@ body {
   font-size: 13px;
 }
 .jugador-card.seleccionado {
-  border-color: #3d5afe;
+  border-color: var(--accent-blue);
 }
 .jugador-card img {
   width: 80px;
@@ -505,7 +543,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid var(--accent-black);
   padding: 6px 0;
 }
 .jugadores-lista img {
@@ -516,18 +554,18 @@ body {
 }
 
 .jugador-card {
-  background: #333;
+  background: var(--accent-black);
   border-radius: 8px;
   padding: 12px;
   width: 180px;
   margin: 10px;
   text-align: center;
-  color: white;
+  color: var(--accent-black);
   position: relative;
   border: 2px solid transparent;
 }
 .jugador-card.en-cancha {
-  border-color: #3d5afe;
+  border-color: var(--accent-blue);
 }
 .posiciones-select {
   margin-top: 8px;
@@ -537,8 +575,8 @@ body {
 }
 .btn-cancha-toggle {
   margin-top: 10px;
-  background: #3d5afe;
-  color: white;
+  background: var(--accent-black);
+  color: var(--text-primary);
   border: none;
   padding: 6px 12px;
   border-radius: 4px;
@@ -560,10 +598,10 @@ body {
 }
 
 #playerModal .modal-content {
-  background-color: #222;
+  background-color: var(--accent-black);
   padding: 24px;
   border-radius: 12px;
-  color: white;
+  color: var(--text-primary);
   width: 90%;
   max-width: 900px;
   max-height: 90vh;
@@ -579,9 +617,9 @@ body {
   align-items: center;
   gap: 8px;
   padding: 6px;
-  border-bottom: 1px solid #555;
+  border-bottom: 1px solid var(--accent-black);
   cursor: pointer;
-  color: white;
+  color: var(--text-primary);
 }
 
 .sidebar-jugador{
@@ -596,8 +634,8 @@ body {
 }
 
 .sidebar-jugador.seleccionado {
-  background-color: #444;
-  border: 2px solid #3d5afe;
+  background-color: var(--accent-black);
+  border: 2px solid var(--accent-blue);
 }
 
 .card-position {
@@ -632,8 +670,8 @@ body {
   position: relative;
   margin-top: -25px; /* Superpone hacia arriba */
   margin-top: -25px;
-  background: #1f1f1f;
-  color: #fff;
+  background: var(--accent-black);
+  color: var(--text-primary);
   width: 36px;
   height: 36px;
   line-height: 36px;
@@ -668,7 +706,7 @@ body {
 }
 
 .card-stats div {
-  background: #fff;
+  background: var(--text-primary);
   padding: 4px 6px;
   padding: 2px 4px;
   border-radius: 4px;
@@ -755,7 +793,7 @@ body {
   margin-bottom: 4px;
 }
 .player-card .info-numero {
-  color: var(--text-muted);
+  color: var(--accent-black);
   margin-bottom: 8px;
 }
 .player-card .pos-select {
@@ -769,3 +807,300 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
 }
+
+/* === Tooltip de control === */
+.tooltip-controls {
+  position: fixed;         /* más arriba */           /* ajústalo a tu layout */
+  display: flex;
+  flex-direction: row; /* menú arriba, botón abajo */
+  align-items: center;
+  z-index: 1001;
+}
+
+/* botón */
+.gear-btn {
+  background: var(--accent-black);
+  border: none;
+  border-radius: 50%;
+  width: 48px; height: 48px;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* menú */
+/* Asegura que el contenedor posicione relativamente */
+.tooltip-controls {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tooltip flotante */
+.control-menu {
+  position: absolute;
+  bottom: 100%;           /* justo encima del botón */
+  right: 50%;             /* centrado horizontalmente respecto al contenedor */
+  transform: translateX(50%); /* compensa el right:50% */
+  display: none;
+  flex-direction: row;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 2000;
+}
+
+/* Mostrar cuando esté activo/open */
+.tooltip-controls.open .control-menu,
+.control-menu.active {
+  display: flex;
+}
+
+
+/* cuando esté abierto */
+.tooltip-controls.open .control-menu,
+.control-menu.active {
+  display: flex;
+}
+.control-menu.active { display: flex; }
+.control-menu button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 12px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.control-menu button:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/*-----------------*/
+
+/* === Header marcador === */
+
+/* Coloca el header en la parte superior y detrás de .button-column */
+/* ==============================
+   HEADER PARTIDO (DETRÁS del button-column)
+   ============================== */
+.match-header {
+  position: absolute;
+  top: 0;
+  left: 0;           /* ocupar todo el ancho */
+  right: 0;
+  display: flex;
+  justify-content: space-between;  /* extremos */
+  align-items: center;
+  padding: 8px 16px;               /* espacio ligero a los bordes */
+  background: transparent;
+  z-index: 0;                      /* detrás de button-column (que está en z-index:10) */
+}
+
+/* Cada bloque de equipo */
+.match-header .equipo-fifa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Logo pequeño */
+.match-header .logo-mini {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* Nombre de equipo */
+.match-header .equipo-fifa span {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+/* Opcional: si quieres forzar un poco más a los extremos, quita el gap interno */ 
+/* .match-header { padding: 8px; } */
+
+/* Contenedor principal: columna centrada */
+
+.button-column {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+  background: var(--accent-black);
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 100vh;
+}
+
+/* Botones de acción */
+.action-btn {
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-black);
+  background-color: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  height: 50px;
+}
+
+.action-btn:hover {
+  background-color: var(--accent-orange);
+  border-color: var(--accent-orange);
+
+}
+
+
+/* Panel de tarjetas y controles */
+.tarjetas-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Botones de tarjeta */
+.tarjeta-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.tarjeta-btn.amarilla { background: #ffeb3b; }
+.tarjeta-btn.roja     { background: #f44336; }
+.tarjeta-btn:hover    { opacity: 0.8; }
+
+/* Ajuste de tooltip-controls dentro de tarjetas-panel */
+.tooltip-controls {
+  display: flex;
+  flex-direction: column-reverse; /* menú arriba, botón abajo */
+  align-items: center;
+  position: relative;
+}
+
+/* Gear button */
+.gear-btn {
+  background: var(--accent-black);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Menú desplegable */
+.control-menu {
+  display: none;
+  flex-direction: row;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px; /* espacio entre menú y gear-btn */
+}
+.tooltip-controls.open .control-menu,
+.control-menu.active {
+  display: flex;
+}
+
+
+/* Quita el posicionamiento fijo y centra .bottom-goals justo debajo de .button-column */
+.bottom-goals {
+  position: static;           /* ya no flota en la pantalla */
+  transform: none;
+  bottom: auto;
+  left: auto;
+  
+  /* Centrado y tamaño igual a button-column */
+  margin: 8px auto 0;
+  width: 100%;
+  max-width: 280px;           /* mismo ancho que .button-column */
+  
+  /* Diseño en fila */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;                   /* separación entre botones */
+  
+  /* Estilo de contenedor */
+  padding: 8px 12px;
+  border-radius: 6px;
+  z-index: 10;                /* por encima de otros elementos */
+}
+
+
+.button-column-goals .bottom-goals button {
+  margin: 0;
+  padding: 4px 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;   
+  border: 2px solid var(--text-primary);  
+  border-radius: 6px;
+}
+
+.button-column-goals .bottom-goals button:hover {
+  color: var(--accent-orange);
+}
+
+/* Clase utilitaria para ocultar */
+.hidden {
+  display: none !important;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.modal-actions button {
+  background-color: var(--bg-primary);
+  border: none;
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s ease-in-out;
+}
+
+.modal-content button {
+  background-color: var(--bg-primary);
+  border: none;
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s ease-in-out;
+}
+

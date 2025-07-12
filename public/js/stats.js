@@ -1,248 +1,170 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const teamSelect = document.getElementById('teamSelect');
-  const playersList = document.getElementById('playersList');
-  const manualFields = document.getElementById('manualFields');
-  const playerNameHeader = document.getElementById('playerName');
-  const radarChartCanvas = document.getElementById('radarChart');
-  const statsPanel = document.getElementById('statsPanel');
+// routes/stats.js
+const express = require('express');
+const router  = express.Router();
+const db      = require('../db/db');
 
-  let currentChart = null;
-  let equipos = [];
-  let jugadores = [];
-  let estadisticas = [];
-  let selectedJugador = null;
+// === Obtener estadísticas individuales de un jugador ===
+// GET /api/stats/player/:id
+router.get('/player/:id', (req, res) => {
+  const jugador_id = Number(req.params.id);
+  try {
+    const stats = db.prepare(`
+      SELECT nombre, valor
+      FROM estadisticas
+      WHERE jugador_id = ?
+    `).all(jugador_id);
+    res.json(stats);
+  } catch (error) {
+    console.error('Error al obtener estadísticas del jugador:', error);
+    res.status(500).json({ error: 'Error al obtener estadísticas' });
+  }
+});
 
-  async function loadEquipos() {
-    const res = await fetch('/api/teams');
-    equipos = await res.json();
-    renderEquipos();
+// === Obtener promedio de estadísticas por equipo ===
+// GET /api/stats/team/:id
+router.get('/team/:id', (req, res) => {
+  const equipo_id = Number(req.params.id);
+  try {
+    const promedioStats = db.prepare(`
+      SELECT nombre, AVG(valor) AS promedio
+      FROM estadisticas
+      WHERE jugador_id IN (SELECT id FROM jugadores WHERE equipo_id = ?)
+      GROUP BY nombre
+    `).all(equipo_id);
+    res.json(promedioStats);
+  } catch (error) {
+    console.error('Error al obtener estadísticas del equipo:', error);
+    res.status(500).json({ error: 'Error al obtener estadísticas de equipo' });
+  }
+});
+
+// === Guardar estadísticas manuales ===
+// POST /api/stats/manual
+router.post('/manual', (req, res) => {
+  const { jugador_id, estadisticas } = req.body;
+  if (!jugador_id || !Array.isArray(estadisticas)) {
+    return res.status(400).json({ error: 'Datos incompletos' });
   }
 
-  function renderEquipos() {
-    teamSelect.innerHTML = '<option value="">-- Selecciona un equipo --</option>';
-    equipos.forEach(equipo => {
-      const option = document.createElement('option');
-      option.value = equipo.id;
-      option.textContent = equipo.nombre;
-      teamSelect.appendChild(option);
+  const deletePrev = db.prepare(`DELETE FROM estadisticas WHERE jugador_id = ?`);
+  const insert     = db.prepare(`INSERT INTO estadisticas (jugador_id, nombre, valor) VALUES (?, ?, ?)`);
+
+  const transaction = db.transaction(() => {
+    deletePrev.run(jugador_id);
+    for (const stat of estadisticas) {
+      insert.run(jugador_id, stat.nombre, stat.valor);
+    }
+  });
+
+  try {
+    transaction();
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error al guardar estadísticas:', error);
+    res.status(500).json({ error: 'Error interno al guardar' });
+  }
+});
+
+// === Generar tabla de posiciones ===
+// GET /api/stats/tabla-posiciones
+router.get('/tabla-posiciones', (req, res) => {
+  try {
+    const partidos = db.prepare(`SELECT * FROM partidos`).all();
+    const eventos  = db.prepare(`SELECT * FROM eventos`).all();
+
+    const tabla = {};
+    // Inicializa estructura
+    partidos.forEach(p => {
+      tabla[p.equipoA] = tabla[p.equipoA] || { PJ:0, G:0, E:0, P:0, GF:0, GC:0, DG:0, Pts:0 };
+      tabla[p.equipoB] = tabla[p.equipoB] || { PJ:0, G:0, E:0, P:0, GF:0, GC:0, DG:0, Pts:0 };
     });
+    // Acumula goles y autogoles
+    eventos.forEach(e => {
+      if (e.tipo === 'gol')      tabla[e.equipo].GF++;
+      else if (e.tipo === 'autogol') tabla[e.equipo].GC++;
+    });
+    // Calcula PJ, resultados y puntos
+    partidos.forEach(p => {
+      const A = tabla[p.equipoA], B = tabla[p.equipoB];
+      A.PJ++; B.PJ++;
+      const golesA = eventos.filter(e => e.partido_id===p.id && (e.tipo==='gol'&&e.equipo===p.equipoA || e.tipo==='autogol'&&e.equipo===p.equipoB)).length;
+      const golesB = eventos.filter(e => e.partido_id===p.id && (e.tipo==='gol'&&e.equipo===p.equipoB || e.tipo==='autogol'&&e.equipo===p.equipoA)).length;
+      A.GF += golesA; A.GC += golesB;
+      B.GF += golesB; B.GC += golesA;
+      if (golesA > golesB) { A.G++; B.P++; A.Pts += 3; }
+      else if (golesA < golesB) { B.G++; A.P++; B.Pts += 3; }
+      else { A.E++; B.E++; A.Pts++; B.Pts++; }
+    });
+    // DG
+    Object.values(tabla).forEach(r => r.DG = r.GF - r.GC);
+
+    res.json(tabla);
+  } catch (error) {
+    console.error('Error al generar tabla de posiciones:', error);
+    res.status(500).json({ error: 'Error generando tabla de posiciones' });
+  }
+});
+
+// === Finalizar partido y guardar estadísticas completas ===
+// POST /api/stats/match/:matchId/complete
+router.post('/match/:matchId/complete', (req, res) => {
+  const matchId = Number(req.params.matchId);
+  if (isNaN(matchId)) {
+    return res.status(400).json({ error: 'MatchId inválido' });
   }
 
-  teamSelect.addEventListener('change', () => {
-    const teamId = teamSelect.value;
-    if (teamId) loadJugadores(teamId);
-  });
-
-  async function loadJugadores(teamId) {
-    const res = await fetch(`/api/players/byTeam/${teamId}`);
-    jugadores = await res.json();
-    renderJugadores();
-  }
-
-  function renderJugadores() {
-  const playersList = document.getElementById('playersList');
-  playersList.innerHTML = '';
-
-  jugadores.forEach(jugador => {
-    const div = document.createElement('div');
-    div.classList.add('player-entry');
-    div.style.display = 'flex';
-    div.style.alignItems = 'center';
-    div.style.justifyContent = 'space-between';
-    div.style.gap = '10px';
-    div.style.padding = '10px';
-    div.style.backgroundColor = '#1e1e1e';
-    div.style.borderRadius = '8px';
-    div.style.cursor = 'pointer';
-
-    const info = document.createElement('div');
-    info.style.display = 'flex';
-    info.style.alignItems = 'center';
-    info.style.gap = '10px';
-
-    // Logo del equipo (foto_equipo)
-    const img = document.createElement('img');
-    img.src = jugador.foto_equipo || 'img/logoClub.webp';
-    img.className = 'club-photo';
-    img.style.width = '30px';
-    img.style.height = '30px';
-    img.style.borderRadius = '4px';
-
-    // Nombre y número
-    const nameBlock = document.createElement('div');
-    nameBlock.innerHTML = `<strong>#${jugador.numero}</strong> ${jugador.nombre}`;
-    nameBlock.style.fontSize = '0.9rem';
-    nameBlock.style.color = '#fff';
-
-    // Etiqueta de posición
-    const tag = document.createElement('span');
-    tag.className = 'position-tag';
-    tag.textContent = jugador.posicion.slice(0, 2).toUpperCase();
-
-    if (jugador.posicion.toLowerCase().startsWith('p')) tag.classList.add('position-GK');
-    else if (jugador.posicion.toLowerCase().startsWith('d')) tag.classList.add('position-D');
-    else if (jugador.posicion.toLowerCase().startsWith('m')) tag.classList.add('position-M');
-    else if (jugador.posicion.toLowerCase().startsWith('f')) tag.classList.add('position-FW');
-
-    info.appendChild(img);
-    info.appendChild(nameBlock);
-
-    div.appendChild(info);
-    div.appendChild(tag);
-
-    div.onclick = () => mostrarDashboard(jugador);
-
-    playersList.appendChild(div);
-  });
-}
-
-
-
-  function mostrarDashboard(jugador) {
-    selectedJugador = jugador;
-    playerNameHeader.textContent = jugador.nombre;
-    document.getElementById('playerFullName').textContent = jugador.nombre;
-    document.getElementById('playerAge').textContent = jugador.edad || '--';
-    document.getElementById('playerPhoto').src = 'img/avatar-default.png';
-    document.getElementById('playerClubLogo').src = jugador.foto || 'img/logoClub.webp';
-
-    const positionContainer = document.getElementById('playerPositions');
-    positionContainer.innerHTML = '';
-    if (jugador.posicion) {
-      jugador.posicion.split(',').forEach(pos => {
-        const span = document.createElement('span');
-        span.classList.add('badge');
-        span.textContent = pos.trim();
-        positionContainer.appendChild(span);
-      });
+  try {
+    // 1) Recuperar partido de la BD
+    const partido = db.prepare(`
+      SELECT id, equipoA, equipoB, GF_A, GF_B
+      FROM partidos
+      WHERE id = ?
+    `).get(matchId);
+    if (!partido) {
+      return res.status(404).json({ error: 'Partido no encontrado' });
     }
 
-    loadEstadisticas(jugador.id);
-  }
+    // 2) Agregar registro de estadísticas por jugador
+    const statsPorJugador = db.prepare(`
+      SELECT
+        jugador_id,
+        SUM(CASE WHEN tipo = 'gol' THEN 1 ELSE 0 END)        AS goles,
+        SUM(CASE WHEN tipo = 'substitution' THEN 1 ELSE 0 END) AS cambios,
+        SUM(CASE WHEN tarjeta = 'yellow' THEN 1 ELSE 0 END)   AS amarillas,
+        SUM(CASE WHEN tarjeta = 'red' THEN 1 ELSE 0 END)      AS rojas
+      FROM eventos
+      WHERE partido_id = ?
+      GROUP BY jugador_id
+    `).all(matchId);
 
-  async function loadEstadisticas(jugadorId) {
-    const res = await fetch(`/api/stats/${jugadorId}`);
-    const data = await res.json();
-    estadisticas = data;
-    renderEstadisticas();
-  }
-
-  function renderEstadisticas() {
-    statsPanel.innerHTML = '';
-    if (!estadisticas || estadisticas.length === 0) return;
-
-    const statsLabels = estadisticas.map(e => e.nombre);
-    const statsValues = estadisticas.map(e => e.valor);
-
-    if (currentChart) {
-      currentChart.destroy();
-    }
-
-    const ctx = radarChartCanvas.getContext('2d');
-    currentChart = new Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: statsLabels,
-        datasets: [{
-          label: `Estadísticas de ${selectedJugador.nombre}`,
-          data: statsValues,
-          backgroundColor: 'rgba(61, 90, 254, 0.3)',
-          borderColor: '#3d5afe',
-          pointBackgroundColor: '#fff',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        scales: {
-          r: {
-            angleLines: { color: '#ccc' },
-            grid: { color: '#444' },
-            pointLabels: { color: '#ccc' },
-            ticks: {
-              backdropColor: 'transparent',
-              color: '#fff',
-              stepSize: 20,
-              max: 100
-            }
-          }
-        }
+    // 3) Insertar en tabla final
+    const insertFinal = db.prepare(`
+      INSERT INTO estadisticas_completas
+        (match_id, jugador_id, goles, cambios, amarillas, rojas)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+    const trx = db.transaction(rows => {
+      for (const r of rows) {
+        insertFinal.run(
+          matchId,
+          r.jugador_id,
+          r.goles,
+          r.cambios,
+          r.amarillas,
+          r.rojas
+        );
       }
     });
+    trx(statsPorJugador);
+
+    return res.json({
+      success: true,
+      message: 'Partido finalizado y estadísticas completas guardadas.'
+    });
+  } catch (err) {
+    console.error('Error finalizando estadísticas del partido:', err);
+    return res.status(500).json({ error: 'Error interno al completar estadísticas' });
   }
-
-  // Abrir modal de edición manual
-  document.getElementById('openManualStats').addEventListener('click', () => {
-    if (!selectedJugador) {
-      alert('Selecciona un jugador primero');
-      return;
-    }
-
-    const select = document.getElementById('posicionSelect');
-    select.value = selectedJugador.posicion || 'delantero';
-
-    renderManualFields(select.value);
-    document.getElementById('manualModal').classList.remove('hidden');
-  });
-
-  document.getElementById('closeModal').addEventListener('click', () => {
-    document.getElementById('manualModal').classList.add('hidden');
-  });
-
-  document.getElementById('posicionSelect').addEventListener('change', (e) => {
-    renderManualFields(e.target.value);
-  });
-
-  function renderManualFields(posicion) {
-    const campos = {
-      portero: ['Precisión de despeje', 'Fuerza de despeje', 'Salto/físico'],
-      defensa: ['Velocidad', 'Disparo', 'Salto/físico'],
-      mediocampista: ['Velocidad', 'Fuerza de disparo', 'Salto/físico'],
-      delantero: ['Velocidad', 'Fuerza de disparo', 'Salto/físico']
-    };
-
-    manualFields.innerHTML = '';
-    campos[posicion].forEach(campo => {
-      const div = document.createElement('div');
-      div.classList.add('form-group');
-      div.innerHTML = `
-        <label>${campo}</label>
-        <input type="number" min="0" max="100" data-campo="${campo}" required placeholder="0-100">
-      `;
-      manualFields.appendChild(div);
-    });
-  }
-
-  document.getElementById('saveManual').addEventListener('click', async () => {
-    if (!selectedJugador) return;
-
-    const inputs = manualFields.querySelectorAll('input');
-    const body = {
-      jugador_id: selectedJugador.id,
-      estadisticas: []
-    };
-
-    inputs.forEach(input => {
-      body.estadisticas.push({
-        nombre: input.dataset.campo,
-        valor: parseInt(input.value || 0)
-      });
-    });
-
-    const res = await fetch('/api/stats/manual', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    if (res.ok) {
-      alert('Estadísticas guardadas');
-      document.getElementById('manualModal').classList.add('hidden');
-      loadEstadisticas(selectedJugador.id);
-    } else {
-      alert('Error al guardar estadísticas');
-    }
-  });
-
-  // Iniciar carga inicial
-  loadEquipos();
 });
+
+module.exports = router;

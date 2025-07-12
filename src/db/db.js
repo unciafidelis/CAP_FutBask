@@ -159,5 +159,34 @@ CREATE TABLE IF NOT EXISTS lineup (
   `).run();
   console.log('✅ Tabla "lineup" lista.');
 
+  // Al inicializar tu DB:
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS posiciones (
+    torneo  TEXT    NOT NULL,
+    equipo  TEXT    NOT NULL,
+    PJ      INTEGER NOT NULL DEFAULT 0,
+    G       INTEGER NOT NULL DEFAULT 0,
+    E       INTEGER NOT NULL DEFAULT 0,
+    P       INTEGER NOT NULL DEFAULT 0,
+    GF      INTEGER NOT NULL DEFAULT 0,
+    GC      INTEGER NOT NULL DEFAULT 0,
+    DG      INTEGER NOT NULL DEFAULT 0,
+    Pts     INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY(torneo, equipo)
+  )
+`).run();
+console.log('✅ Tabla "posiciones" lista.');
+
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS estadisticas_completas (
+  match_id   INTEGER,
+  jugador_id INTEGER,
+  goles      INTEGER,
+  cambios    INTEGER,
+  amarillas  INTEGER,
+  rojas      INTEGER
+);`).run();
+console.log('✅ Tabla "estadisticas_completas" lista.');
+
 // === EXPORTACIÓN DE INSTANCIA DB ===
 module.exports = db;

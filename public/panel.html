@@ -9,13 +9,25 @@
 </head>
 <body>
 
+
+<header class="match-header">
+     <div class="equipo-fifa">
+    <img id="logoFooterA" src="placeholderA.png" class="logo-mini" />
+    <span id="nombreFooterA">Equipo A</span>
+  </div>
+  <div class="equipo-fifa">
+    <span id="nombreFooterB">Equipo B</span>
+    <img id="logoFooterB" src="placeholderB.png" class="logo-mini" />
+  </div>
+</header>
+
   <!-- Paneles laterales -->
   <div class="toggle toggle-left" id="toggleLeft">&#9654;</div>
   <div class="toggle toggle-right" id="toggleRight">&#9664;</div>
 
   <div class="sidebar sidebar-left" id="sidebarLeft">
     <h3 id="nombreEquipoA">Equipo A</h3>
-    <button id="btnRealizarCambioA">Realizar Cambio</button>
+    <div class="modal-actions"><button id="btnRealizarCambioA">Realizar Cambio</button></div>
     <div class="subtitulo">En cancha</div>
     <ul id="enCanchaA"><li>Sin jugadores</li></ul>
     <div class="subtitulo">En banca</div>
@@ -24,7 +36,7 @@
 
   <div class="sidebar sidebar-right" id="sidebarRight">
     <h3 id="nombreEquipoB">Equipo B</h3>
-    <button id="btnRealizarCambioB">Realizar Cambio</button>
+    <div class="modal-actions"><button id="btnRealizarCambioB">Realizar Cambio</button></div>
     <div class="subtitulo">En cancha</div>
     <ul id="enCanchaB"><li>Sin jugadores</li></ul>
     <div class="subtitulo">En banca</div>
@@ -33,6 +45,8 @@
 
   <!-- Botonera central -->
   <div class="button-column">
+    <div id="score" class="marcador-central">0 - 0</div>
+    <div id="minutero" class="minutero">00'</div>
     <button class="action-btn" data-action="Efectividad">Efectividad</button>
     <button class="action-btn" data-action="ATA">Ataque</button>
     <button class="action-btn" data-action="Clave">Clave</button>
@@ -44,20 +58,55 @@
     <div class="tarjetas-panel">
       <button class="tarjeta-btn amarilla">🟨</button>
       <button class="tarjeta-btn roja">🟥</button>
+      <div class="tooltip-controls">
+        <button id="btnConfigMain" class="gear-btn"><span class="material-icons">settings</span></button>
+        <div class="control-menu" id="configOptions">
+          <button id="btnIniciarTiempo" title="Iniciar"><span class="material-icons">play_arrow</span></button>
+          <button id="btnPausarTiempo" title="Pausar"><span class="material-icons">pause</span></button>
+          <button id="btnReiniciarTiempo" title="Reiniciar"><span class="material-icons">replay</span></button>
+          <button id="btnFinalizar" title="Finalizar"><span class="material-icons">flag</span></button>
+          <button id="btnAbrirModal" title="Configuración"><span class="material-icons">tune</span></button>
+        </div>
+      </div>
+     </div>
+     <div class="button-column-goals">
+      <!-- Botones de gol / puntuación -->
+    <div class="bottom-goals">
+      <!-- MODO SOCCER (+1) -->
+      <div class="mode-soccer">
+        <button id="btnGoalA" title="Gol A (1 punto)">
+        A <span class="material-icons">sports_soccer</span>
+        </button>
+        <button id="btnGoalB" title="Gol B (1 punto)">
+        <span class="material-icons">sports_soccer</span> B
+        </button>
+      </div>
+      <!-- MODO MULTI (+1, +2, +3) -->
+    <div class="mode-basketball hidden">
+      <button onclick="sumarPuntos('A',1)" title="+1 punto A">
+      A+1 <span class="material-icons">sports_basketball</span>
+        </button>
+      <button onclick="sumarPuntos('A',2)" title="+2 puntos A">
+      A+2 <span class="material-icons">sports_basketball</span>
+      </button>
+      <button onclick="sumarPuntos('A',3)" title="+3 puntos A">
+      A+3 <span class="material-icons">sports_basketball</span>
+      </button>
+      <button onclick="sumarPuntos('B',1)" title="+1 punto B">
+      <span class="material-icons">sports_basketball</span> B+1 
+      </button>
+      <button onclick="sumarPuntos('B',2)" title="+2 puntos B">
+      <span class="material-icons">sports_basketball</span> B+2
+      </button>
+      <button onclick="sumarPuntos('B',3)" title="+3 puntos B">
+      <span class="material-icons">sports_basketball</span> B+3 
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- Botón flotante de configuración -->
-  <div class="config-fab">
-    <button id="btnConfigMain" class="floating-config-btn"><span class="material-icons">settings</span></button>
-    <div class="config-options" id="configOptions">
-      <button id="btnIniciarTiempo" title="Iniciar"><span class="material-icons">play_arrow</span></button>
-      <button id="btnPausarTiempo" title="Pausar"><span class="material-icons">pause</span></button>
-      <button id="btnReiniciarTiempo" title="Reiniciar"><span class="material-icons">replay</span></button>
-      <button id="btnFinalizar" title="Finalizar"><span class="material-icons">flag</span></button>
-      <button id="btnAbrirModal" title="Configuración"><span class="material-icons">tune</span></button>
-    </div>
   </div>
+  <!-- Botón flotante de configuración --> 
 
  <!-- Cancha -->
 <div class="cancha-container">
@@ -74,23 +123,6 @@
 
 
   <!-- Integración del marcador FIFA con botones de gol/autogol -->
-<!-- Marcador tipo FIFA -->
-<div class="marcador-fifa">
-  <div class="equipo-fifa">
-    <img id="logoFooterA" src="placeholderA.png" class="logo-mini" />
-    <span id="nombreFooterA">Equipo A</span>
-  </div>
-  <div class="marcador-centro">
-    <button id="btnGoalA" class="goal-btn">⚽</button>
-    <div id="score" class="marcador-central">0 - 0</div>
-    <button id="btnGoalB" class="goal-btn">⚽</button>
-    <div id="minutero" class="minutero">00'</div>
-  </div>
-  <div class="equipo-fifa">
-    <span id="nombreFooterB">Equipo B</span>
-    <img id="logoFooterB" src="placeholderB.png" class="logo-mini" />
-  </div>
-</div>
 
 
   <!-- Modal de configuración del partido -->
@@ -124,7 +156,7 @@
   <div id="playerModal" class="modal hidden">
   <div class="modal-content">
     <h3>Lista de Jugadores</h3>
-    <div id="playersContainer" class="modal-players-list"></div>
+    <div id="playersContainer" class="modal-actions"></div>
     <button id="guardarAlineacion">Guardar Alineación</button>
     <button id="closeModal" class="close-button">Cerrar</button>
   </div>
